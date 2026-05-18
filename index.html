@@ -2,7 +2,6 @@
 <html lang="fr">
 <head>
   <meta charset="UTF-8" />
-  <!-- ZOOM DÉSACTIVÉ SUR MOBILE -->
   <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, minimum-scale=1.0, user-scalable=no" />
   <title>AKIT Commerce — Boutique Mondiale</title>
   <script src="https://unpkg.com/react@18/umd/react.production.min.js"></script>
@@ -15,7 +14,6 @@
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
   <link href="https://fonts.googleapis.com/css2?family=Cinzel:wght@700;900&family=Nunito:wght@400;600;700;800;900&display=swap" rel="stylesheet">
   <style>
-    /* BLOQUER ZOOM TOUCH */
     * { touch-action: pan-x pan-y; }
     *{box-sizing:border-box;margin:0;padding:0;}
     html,body,#root{height:100%;width:100%;}
@@ -28,6 +26,7 @@
     @keyframes fadeUp{from{transform:translateY(24px);opacity:0}to{transform:translateY(0);opacity:1}}
     @keyframes pulse{0%,100%{opacity:1}50%{opacity:0.4}}
     @keyframes spin{from{transform:rotate(0deg)}to{transform:rotate(360deg)}}
+    @keyframes uploadPulse{0%,100%{box-shadow:0 0 0 0 rgba(217,119,6,0.4)}50%{box-shadow:0 0 0 8px rgba(217,119,6,0)}}
     .card-hover{transition:transform .3s cubic-bezier(.34,1.56,.64,1),box-shadow .3s ease;}
     .card-hover:hover{transform:translateY(-6px);box-shadow:0 24px 60px rgba(0,0,0,.6);}
     .btn-gold{background:linear-gradient(135deg,#d97706,#f59e0b,#d97706);transition:filter .2s;}
@@ -39,15 +38,16 @@
     select.input-field option{background:#1a0a00;color:#fff;}
     .modal-overlay{position:fixed;inset:0;background:rgba(0,0,0,0.75);z-index:200;display:flex;align-items:center;justify-content:center;padding:16px;backdrop-filter:blur(6px);}
     .modal-box{background:linear-gradient(135deg,#0e0e26,#1a0a00);border:1px solid rgba(217,119,6,0.35);border-radius:24px;padding:28px 24px;width:100%;max-width:480px;max-height:90vh;overflow-y:auto;animation:fadeUp .4s ease both;}
-
-    /* BANNIÈRE FIXE EN HAUT */
     .banner-fixed{position:fixed;top:0;left:0;right:0;z-index:200;overflow:hidden;background:linear-gradient(90deg,#92400e,#d97706,#f59e0b,#d97706,#92400e);padding:9px 0;border-bottom:1px solid rgba(255,255,255,0.1);}
     .header-fixed{position:fixed;top:38px;left:0;right:0;z-index:199;background:rgba(6,6,20,0.97);backdrop-filter:blur(20px);border-bottom:1px solid rgba(255,255,255,0.05);}
-    .page-content{padding-top:90px;} /* compense bannière+header */
-
-    /* SPINNER */
+    .page-content{padding-top:90px;}
     .spinner{width:36px;height:36px;border:3px solid rgba(217,119,6,0.2);border-top-color:#d97706;border-radius:50%;animation:spin .7s linear infinite;margin:0 auto;}
-
+    .upload-zone{border:2px dashed rgba(217,119,6,0.4);border-radius:16px;padding:20px;text-align:center;cursor:pointer;transition:all .3s;background:rgba(217,119,6,0.04);}
+    .upload-zone:hover{border-color:#d97706;background:rgba(217,119,6,0.08);animation:uploadPulse 1.5s infinite;}
+    .upload-zone.uploading{border-color:#10b981;background:rgba(16,185,129,0.08);animation:uploadPulse 1s infinite;}
+    .upload-zone.done{border-color:#10b981;background:rgba(16,185,129,0.06);animation:none;}
+    .progress-bar{height:4px;background:rgba(255,255,255,0.1);border-radius:4px;overflow:hidden;margin-top:8px;}
+    .progress-fill{height:100%;background:linear-gradient(90deg,#d97706,#f59e0b);border-radius:4px;transition:width .3s ease;}
     @media(max-width:600px){
       .modal-box{padding:20px 16px;border-radius:18px;}
       .grid-stats{grid-template-columns:repeat(2,1fr)!important;}
@@ -64,18 +64,8 @@
   <script>
     // ══════════════════════════════════════════════
     // CONFIGURATION FIREBASE
+    // Remplace par tes vraies valeurs Firebase
     // ══════════════════════════════════════════════
-    // INSTRUCTIONS POUR ACTIVER FIREBASE :
-    // 1. Va sur https://console.firebase.google.com
-    // 2. Clique "Ajouter un projet" → donne un nom (ex: akit-commerce)
-    // 3. Désactive Google Analytics → Créer le projet
-    // 4. Dans le menu gauche → "Firestore Database" → Créer une base
-    //    Choisis "Mode test" (pour commencer) → Emplacement: eur3 (Europe)
-    // 5. Dans le menu gauche → "Paramètres du projet" (⚙️)
-    //    → "Vos applications" → </> Web → Donne un nom → Enregistrer
-    //    → Copie les valeurs firebaseConfig ci-dessous
-    // 6. Remplace les valeurs XXXXXXX par tes vraies valeurs Firebase
-
     const firebaseConfig = {
       apiKey: "REMPLACE_PAR_TON_API_KEY",
       authDomain: "REMPLACE.firebaseapp.com",
@@ -85,7 +75,16 @@
       appId: "REMPLACE_PAR_TON_APP_ID"
     };
 
-    // Initialisation Firebase
+    // ══════════════════════════════════════════════
+    // CONFIGURATION CLOUDINARY — AKIT COMMERCE
+    // Cloud name: dvv8gytfp | Preset: akit-commerce
+    // ══════════════════════════════════════════════
+    window.CLOUDINARY_CONFIG = {
+      cloudName: "dvv8gytfp",
+      uploadPreset: "akit-commerce",
+      folder: "akit-commerce/products"
+    };
+
     let db = null;
     try {
       if (firebaseConfig.apiKey && !firebaseConfig.apiKey.includes("REMPLACE")) {
@@ -98,13 +97,45 @@
     } catch(e) {
       console.error("Erreur Firebase:", e);
     }
+
+    // ══════════════════════════════════════════════
+    // FONCTION UPLOAD CLOUDINARY
+    // Envoie l'image sur Cloudinary → retourne l'URL publique mondiale
+    // ══════════════════════════════════════════════
+    window.uploadToCloudinary = async function(file, onProgress) {
+      const { cloudName, uploadPreset } = window.CLOUDINARY_CONFIG;
+      const url = `https://api.cloudinary.com/v1_1/${cloudName}/image/upload`;
+      const formData = new FormData();
+      formData.append("file", file);
+      formData.append("upload_preset", uploadPreset);
+      formData.append("folder", window.CLOUDINARY_CONFIG.folder);
+
+      return new Promise((resolve, reject) => {
+        const xhr = new XMLHttpRequest();
+        xhr.open("POST", url);
+        xhr.upload.onprogress = (e) => {
+          if (e.lengthComputable && onProgress) {
+            onProgress(Math.round((e.loaded / e.total) * 100));
+          }
+        };
+        xhr.onload = () => {
+          if (xhr.status === 200) {
+            const data = JSON.parse(xhr.responseText);
+            resolve(data.secure_url); // URL HTTPS mondiale
+          } else {
+            reject(new Error("Erreur upload: " + xhr.responseText));
+          }
+        };
+        xhr.onerror = () => reject(new Error("Erreur réseau"));
+        xhr.send(formData);
+      });
+    };
   </script>
   <script type="text/babel">
     const { useState, useEffect, useRef, useCallback } = React;
 
     const WHATSAPP_NUMBER = "237698083058";
 
-    // ══ BLOQUE LE ZOOM CLAVIER/SOURIS ══
     document.addEventListener('keydown', e => {
       if ((e.ctrlKey || e.metaKey) && ['+','-','=','0'].includes(e.key)) e.preventDefault();
     });
@@ -128,16 +159,16 @@
     };
 
     const T = {
-      fr:{ home:"Accueil", payment:"Paiement en ligne", lang:"Langue", favorites:"Favoris", menu:"Menu", search:"Rechercher un produit…", cart:"Panier", addCart:"Ajouter au panier", outStock:"Rupture de stock", total:"Total", checkout:"Commander", remove:"Supprimer", emptyCart:"Votre panier est vide", continueShopping:"Continuer les achats", wishEmpty:"Aucun favori pour l'instant", price:"Prix", noProducts:"Aucun produit disponible.\nL'administrateur ajoutera bientôt des articles.", payTitle:"Paiement Sécurisé", payDesc:"Choisissez votre mode de paiement préféré", orderConfirmed:"Commande confirmée !", orderThank:"Merci pour votre achat. Livraison en cours.", back:"Retour", close:"Fermer", fcfa:"FCFA", addFav:"Ajouté aux favoris", rmFav:"Retiré des favoris", inStock:"En stock", qty:"Qté", filter:"Filtrer", all:"Tous", orderNow:"Commander via WhatsApp", satisfaction:"VOTRE SATISFACTION NOTRE PRIORITÉ", shipping:"Livraison", explore:"Explorer", ville:"Ville", quartier:"Quartier", phone:"Votre numéro de téléphone", orderInfo:"Informations de livraison", orderInfoDesc:"Renseignez vos coordonnées pour la livraison", confirmOrder:"Confirmer et envoyer via WhatsApp", orderDirect:"Commander directement", fillAll:"Veuillez remplir tous les champs", loading:"Chargement des produits…", dbMode:"🔥 Temps réel", localMode:"💾 Local" },
-      en:{ home:"Home", payment:"Online Payment", lang:"Language", favorites:"Favorites", menu:"Menu", search:"Search a product…", cart:"Cart", addCart:"Add to Cart", outStock:"Out of Stock", total:"Total", checkout:"Checkout", remove:"Remove", emptyCart:"Your cart is empty", continueShopping:"Continue Shopping", wishEmpty:"No favorites yet", price:"Price", noProducts:"No products available yet.\nThe admin will add items soon.", payTitle:"Secure Payment", payDesc:"Choose your preferred payment method", orderConfirmed:"Order Confirmed!", orderThank:"Thank you for your purchase. Delivery in progress.", back:"Back", close:"Close", fcfa:"FCFA", addFav:"Added to favorites", rmFav:"Removed from favorites", inStock:"In stock", qty:"Qty", filter:"Filter", all:"All", orderNow:"Order via WhatsApp", satisfaction:"YOUR SATISFACTION OUR PRIORITY", shipping:"Shipping", explore:"Explore", ville:"City", quartier:"Neighborhood", phone:"Your phone number", orderInfo:"Delivery Information", orderInfoDesc:"Fill in your details for delivery", confirmOrder:"Confirm & Send via WhatsApp", orderDirect:"Order Directly", fillAll:"Please fill in all fields", loading:"Loading products…", dbMode:"🔥 Real-time", localMode:"💾 Local" },
-      ar:{ home:"الرئيسية", payment:"الدفع", lang:"اللغة", favorites:"المفضلة", menu:"القائمة", search:"ابحث عن منتج…", cart:"السلة", addCart:"أضف إلى السلة", outStock:"نفذ من المخزون", total:"الإجمالي", checkout:"إتمام الشراء", remove:"حذف", emptyCart:"سلتك فارغة", continueShopping:"مواصلة التسوق", wishEmpty:"لا توجد مفضلة بعد", price:"السعر", noProducts:"لا توجد منتجات حالياً.", payTitle:"دفع آمن", payDesc:"اختر طريقة الدفع", orderConfirmed:"تم تأكيد الطلب!", orderThank:"شكراً لشرائك.", back:"رجوع", close:"إغلاق", fcfa:"فرنك", addFav:"أضيف للمفضلة", rmFav:"حُذف من المفضلة", inStock:"متوفر", qty:"الكمية", filter:"تصفية", all:"الكل", orderNow:"الطلب عبر واتساب", satisfaction:"رضاكم أولويتنا", shipping:"الشحن", explore:"استكشف", ville:"المدينة", quartier:"الحي", phone:"رقم هاتفك", orderInfo:"معلومات التوصيل", orderInfoDesc:"أدخل بياناتك للتوصيل", confirmOrder:"تأكيد وإرسال عبر واتساب", orderDirect:"اطلب مباشرة", fillAll:"يرجى ملء جميع الحقول", loading:"جاري التحميل…", dbMode:"🔥 مباشر", localMode:"💾 محلي" },
-      zh:{ home:"首页", payment:"在线支付", lang:"语言", favorites:"收藏", menu:"菜单", search:"搜索产品…", cart:"购物车", addCart:"加入购物车", outStock:"缺货", total:"总计", checkout:"结账", remove:"删除", emptyCart:"购物车为空", continueShopping:"继续购物", wishEmpty:"暂无收藏", price:"价格", noProducts:"暂无产品。", payTitle:"安全支付", payDesc:"选择您的支付方式", orderConfirmed:"订单已确认！", orderThank:"感谢您的购买。", back:"返回", close:"关闭", fcfa:"非郎", addFav:"已加入收藏", rmFav:"已取消收藏", inStock:"有库存", qty:"数量", filter:"筛选", all:"全部", orderNow:"通过WhatsApp订购", satisfaction:"您的满意是我们的首要任务", shipping:"运费", explore:"探索", ville:"城市", quartier:"街区", phone:"您的电话号码", orderInfo:"配送信息", orderInfoDesc:"填写您的配送信息", confirmOrder:"确认并通过WhatsApp发送", orderDirect:"直接订购", fillAll:"请填写所有字段", loading:"加载中…", dbMode:"🔥 实时", localMode:"💾 本地" },
-      es:{ home:"Inicio", payment:"Pago", lang:"Idioma", favorites:"Favoritos", menu:"Menú", search:"Buscar…", cart:"Carrito", addCart:"Agregar al carrito", outStock:"Sin stock", total:"Total", checkout:"Finalizar", remove:"Eliminar", emptyCart:"Tu carrito está vacío", continueShopping:"Seguir comprando", wishEmpty:"Sin favoritos aún", price:"Precio", noProducts:"Sin productos disponibles.", payTitle:"Pago Seguro", payDesc:"Elige tu método de pago", orderConfirmed:"¡Pedido confirmado!", orderThank:"Gracias por tu compra.", back:"Volver", close:"Cerrar", fcfa:"FCFA", addFav:"Añadido a favoritos", rmFav:"Eliminado de favoritos", inStock:"En stock", qty:"Cant.", filter:"Filtrar", all:"Todos", orderNow:"Pedir por WhatsApp", satisfaction:"TU SATISFACCIÓN NUESTRA PRIORIDAD", shipping:"Envío", explore:"Explorar", ville:"Ciudad", quartier:"Barrio", phone:"Tu número de teléfono", orderInfo:"Información de entrega", orderInfoDesc:"Completa tus datos para la entrega", confirmOrder:"Confirmar y enviar por WhatsApp", orderDirect:"Pedir directamente", fillAll:"Por favor completa todos los campos", loading:"Cargando…", dbMode:"🔥 Tiempo real", localMode:"💾 Local" },
-      pt:{ home:"Início", payment:"Pagamento", lang:"Idioma", favorites:"Favoritos", menu:"Menu", search:"Pesquisar…", cart:"Carrinho", addCart:"Adicionar ao Carrinho", outStock:"Esgotado", total:"Total", checkout:"Finalizar", remove:"Remover", emptyCart:"Seu carrinho está vazio", continueShopping:"Continuar Comprando", wishEmpty:"Sem favoritos ainda", price:"Preço", noProducts:"Sem produtos disponíveis.", payTitle:"Pagamento Seguro", payDesc:"Escolha seu método de pagamento", orderConfirmed:"Pedido confirmado!", orderThank:"Obrigado pela compra.", back:"Voltar", close:"Fechar", fcfa:"FCFA", addFav:"Adicionado aos favoritos", rmFav:"Removido dos favoritos", inStock:"Em estoque", qty:"Qtd", filter:"Filtrar", all:"Todos", orderNow:"Pedir pelo WhatsApp", satisfaction:"SUA SATISFAÇÃO NOSSA PRIORIDADE", shipping:"Frete", explore:"Explorar", ville:"Cidade", quartier:"Bairro", phone:"Seu número de telefone", orderInfo:"Informações de entrega", orderInfoDesc:"Preencha seus dados para a entrega", confirmOrder:"Confirmar e enviar pelo WhatsApp", orderDirect:"Pedir diretamente", fillAll:"Por favor preencha todos os campos", loading:"Carregando…", dbMode:"🔥 Tempo real", localMode:"💾 Local" },
-      de:{ home:"Startseite", payment:"Zahlung", lang:"Sprache", favorites:"Favoriten", menu:"Menü", search:"Produkt suchen…", cart:"Warenkorb", addCart:"In den Warenkorb", outStock:"Nicht vorrätig", total:"Gesamt", checkout:"Zur Kasse", remove:"Entfernen", emptyCart:"Ihr Warenkorb ist leer", continueShopping:"Weiter einkaufen", wishEmpty:"Noch keine Favoriten", price:"Preis", noProducts:"Noch keine Produkte.", payTitle:"Sichere Zahlung", payDesc:"Wählen Sie Ihre Zahlungsmethode", orderConfirmed:"Bestellung bestätigt!", orderThank:"Danke für Ihren Kauf.", back:"Zurück", close:"Schließen", fcfa:"FCFA", addFav:"Zu Favoriten hinzugefügt", rmFav:"Aus Favoriten entfernt", inStock:"Vorrätig", qty:"Menge", filter:"Filtern", all:"Alle", orderNow:"Per WhatsApp bestellen", satisfaction:"IHRE ZUFRIEDENHEIT UNSERE PRIORITÄT", shipping:"Versand", explore:"Erkunden", ville:"Stadt", quartier:"Viertel", phone:"Ihre Telefonnummer", orderInfo:"Lieferinformationen", orderInfoDesc:"Füllen Sie Ihre Lieferdetails aus", confirmOrder:"Bestätigen & per WhatsApp senden", orderDirect:"Direkt bestellen", fillAll:"Bitte füllen Sie alle Felder aus", loading:"Lädt…", dbMode:"🔥 Echtzeit", localMode:"💾 Lokal" },
-      ru:{ home:"Главная", payment:"Оплата", lang:"Язык", favorites:"Избранное", menu:"Меню", search:"Поиск товара…", cart:"Корзина", addCart:"В корзину", outStock:"Нет в наличии", total:"Итого", checkout:"Оформить", remove:"Удалить", emptyCart:"Ваша корзина пуста", continueShopping:"Продолжить покупки", wishEmpty:"Нет избранного", price:"Цена", noProducts:"Товаров пока нет.", payTitle:"Безопасная оплата", payDesc:"Выберите способ оплаты", orderConfirmed:"Заказ подтверждён!", orderThank:"Спасибо за покупку.", back:"Назад", close:"Закрыть", fcfa:"FCFA", addFav:"Добавлено в избранное", rmFav:"Удалено из избранного", inStock:"В наличии", qty:"Кол-во", filter:"Фильтр", all:"Все", orderNow:"Заказать через WhatsApp", satisfaction:"ВАШЕ УДОВЛЕТВОРЕНИЕ — НАШ ПРИОРИТЕТ", shipping:"Доставка", explore:"Исследовать", ville:"Город", quartier:"Район", phone:"Ваш номер телефона", orderInfo:"Информация о доставке", orderInfoDesc:"Заполните данные для доставки", confirmOrder:"Подтвердить и отправить через WhatsApp", orderDirect:"Заказать напрямую", fillAll:"Пожалуйста, заполните все поля", loading:"Загрузка…", dbMode:"🔥 Реальное время", localMode:"💾 Локально" },
-      tr:{ home:"Ana Sayfa", payment:"Ödeme", lang:"Dil", favorites:"Favoriler", menu:"Menü", search:"Ürün ara…", cart:"Sepet", addCart:"Sepete Ekle", outStock:"Stokta Yok", total:"Toplam", checkout:"Sipariş Ver", remove:"Kaldır", emptyCart:"Sepetiniz boş", continueShopping:"Alışverişe Devam", wishEmpty:"Henüz favori yok", price:"Fiyat", noProducts:"Henüz ürün yok.", payTitle:"Güvenli Ödeme", payDesc:"Ödeme yönteminizi seçin", orderConfirmed:"Sipariş Onaylandı!", orderThank:"Satın aldığınız için teşekkürler.", back:"Geri", close:"Kapat", fcfa:"FCFA", addFav:"Favorilere eklendi", rmFav:"Favorilerden kaldırıldı", inStock:"Stokta var", qty:"Adet", filter:"Filtre", all:"Tümü", orderNow:"WhatsApp ile Sipariş Ver", satisfaction:"MEMNUNİYETİNİZ BİZİM ÖNCELİĞİMİZ", shipping:"Kargo", explore:"Keşfet", ville:"Şehir", quartier:"Mahalle", phone:"Telefon numaranız", orderInfo:"Teslimat Bilgileri", orderInfoDesc:"Teslimat için bilgilerinizi doldurun", confirmOrder:"Onayla ve WhatsApp ile gönder", orderDirect:"Direkt Sipariş Ver", fillAll:"Lütfen tüm alanları doldurun", loading:"Yükleniyor…", dbMode:"🔥 Gerçek zamanlı", localMode:"💾 Yerel" },
-      ha:{ home:"Gida", payment:"Biyan Kuɗi", lang:"Harshe", favorites:"Abubuwan da nake so", menu:"Menu", search:"Nemi kaya…", cart:"Kwando", addCart:"Saka cikin Kwando", outStock:"Ba shi da hannun jari", total:"Jimla", checkout:"Yi oda", remove:"Cire", emptyCart:"Kwandon ku ya wofi", continueShopping:"Ci gaba da siya", wishEmpty:"Babu abubuwan da kake so tukuna", price:"Farashin", noProducts:"Babu kaya a yanzu.", payTitle:"Biyan Kuɗi Mai Aminci", payDesc:"Zaɓi hanyar biyan kuɗi", orderConfirmed:"An tabbatar da oda!", orderThank:"Na gode da siyanku.", back:"Koma baya", close:"Rufe", fcfa:"FCFA", addFav:"An ƙara zuwa abubuwan da ake so", rmFav:"An cire daga abubuwan da ake so", inStock:"Yana akwai", qty:"Yawa", filter:"Tace", all:"Duka", orderNow:"Yi Oda ta WhatsApp", satisfaction:"GAMSUWARKU FIFIKON NAMU NE", shipping:"Jigilar kaya", explore:"Bincika", ville:"Birni", quartier:"Unguwa", phone:"Lambar wayar ku", orderInfo:"Bayanan Isar da kaya", orderInfoDesc:"Cika bayananku don isar da kaya", confirmOrder:"Tabbatar & aika ta WhatsApp", orderDirect:"Yi Oda Kai tsaye", fillAll:"Da fatan za a cika duk filayen", loading:"Ana lodawa…", dbMode:"🔥 Kai tsaye", localMode:"💾 Na gida" },
+      fr:{ home:"Accueil", payment:"Paiement en ligne", lang:"Langue", favorites:"Favoris", menu:"Menu", search:"Rechercher un produit…", cart:"Panier", addCart:"Ajouter au panier", outStock:"Rupture de stock", total:"Total", checkout:"Commander", remove:"Supprimer", emptyCart:"Votre panier est vide", continueShopping:"Continuer les achats", wishEmpty:"Aucun favori pour l'instant", price:"Prix", noProducts:"Aucun produit disponible.\nL'administrateur ajoutera bientôt des articles.", payTitle:"Paiement Sécurisé", payDesc:"Choisissez votre mode de paiement préféré", orderConfirmed:"Commande confirmée !", orderThank:"Merci pour votre achat. Livraison en cours.", back:"Retour", close:"Fermer", fcfa:"FCFA", addFav:"Ajouté aux favoris", rmFav:"Retiré des favoris", inStock:"En stock", qty:"Qté", filter:"Filtrer", all:"Tous", orderNow:"Commander via WhatsApp", satisfaction:"VOTRE SATISFACTION NOTRE PRIORITÉ", shipping:"Livraison", explore:"Explorer", ville:"Ville", quartier:"Quartier", phone:"Votre numéro de téléphone", orderInfo:"Informations de livraison", orderInfoDesc:"Renseignez vos coordonnées pour la livraison", confirmOrder:"Confirmer et envoyer via WhatsApp", orderDirect:"Commander directement", fillAll:"Veuillez remplir tous les champs", loading:"Chargement des produits…", dbMode:"🔥 Temps réel", localMode:"💾 Local", uploading:"Upload en cours…", uploadDone:"✅ Image uploadée !", uploadError:"❌ Erreur upload" },
+      en:{ home:"Home", payment:"Online Payment", lang:"Language", favorites:"Favorites", menu:"Menu", search:"Search a product…", cart:"Cart", addCart:"Add to Cart", outStock:"Out of Stock", total:"Total", checkout:"Checkout", remove:"Remove", emptyCart:"Your cart is empty", continueShopping:"Continue Shopping", wishEmpty:"No favorites yet", price:"Price", noProducts:"No products available yet.\nThe admin will add items soon.", payTitle:"Secure Payment", payDesc:"Choose your preferred payment method", orderConfirmed:"Order Confirmed!", orderThank:"Thank you for your purchase. Delivery in progress.", back:"Back", close:"Close", fcfa:"FCFA", addFav:"Added to favorites", rmFav:"Removed from favorites", inStock:"In stock", qty:"Qty", filter:"Filter", all:"All", orderNow:"Order via WhatsApp", satisfaction:"YOUR SATISFACTION OUR PRIORITY", shipping:"Shipping", explore:"Explore", ville:"City", quartier:"Neighborhood", phone:"Your phone number", orderInfo:"Delivery Information", orderInfoDesc:"Fill in your details for delivery", confirmOrder:"Confirm & Send via WhatsApp", orderDirect:"Order Directly", fillAll:"Please fill in all fields", loading:"Loading products…", dbMode:"🔥 Real-time", localMode:"💾 Local", uploading:"Uploading…", uploadDone:"✅ Image uploaded!", uploadError:"❌ Upload error" },
+      ar:{ home:"الرئيسية", payment:"الدفع", lang:"اللغة", favorites:"المفضلة", menu:"القائمة", search:"ابحث عن منتج…", cart:"السلة", addCart:"أضف إلى السلة", outStock:"نفذ من المخزون", total:"الإجمالي", checkout:"إتمام الشراء", remove:"حذف", emptyCart:"سلتك فارغة", continueShopping:"مواصلة التسوق", wishEmpty:"لا توجد مفضلة بعد", price:"السعر", noProducts:"لا توجد منتجات حالياً.", payTitle:"دفع آمن", payDesc:"اختر طريقة الدفع", orderConfirmed:"تم تأكيد الطلب!", orderThank:"شكراً لشرائك.", back:"رجوع", close:"إغلاق", fcfa:"فرنك", addFav:"أضيف للمفضلة", rmFav:"حُذف من المفضلة", inStock:"متوفر", qty:"الكمية", filter:"تصفية", all:"الكل", orderNow:"الطلب عبر واتساب", satisfaction:"رضاكم أولويتنا", shipping:"الشحن", explore:"استكشف", ville:"المدينة", quartier:"الحي", phone:"رقم هاتفك", orderInfo:"معلومات التوصيل", orderInfoDesc:"أدخل بياناتك للتوصيل", confirmOrder:"تأكيد وإرسال عبر واتساب", orderDirect:"اطلب مباشرة", fillAll:"يرجى ملء جميع الحقول", loading:"جاري التحميل…", dbMode:"🔥 مباشر", localMode:"💾 محلي", uploading:"جاري الرفع…", uploadDone:"✅ تم رفع الصورة!", uploadError:"❌ خطأ في الرفع" },
+      zh:{ home:"首页", payment:"在线支付", lang:"语言", favorites:"收藏", menu:"菜单", search:"搜索产品…", cart:"购物车", addCart:"加入购物车", outStock:"缺货", total:"总计", checkout:"结账", remove:"删除", emptyCart:"购物车为空", continueShopping:"继续购物", wishEmpty:"暂无收藏", price:"价格", noProducts:"暂无产品。", payTitle:"安全支付", payDesc:"选择您的支付方式", orderConfirmed:"订单已确认！", orderThank:"感谢您的购买。", back:"返回", close:"关闭", fcfa:"非郎", addFav:"已加入收藏", rmFav:"已取消收藏", inStock:"有库存", qty:"数量", filter:"筛选", all:"全部", orderNow:"通过WhatsApp订购", satisfaction:"您的满意是我们的首要任务", shipping:"运费", explore:"探索", ville:"城市", quartier:"街区", phone:"您的电话号码", orderInfo:"配送信息", orderInfoDesc:"填写您的配送信息", confirmOrder:"确认并通过WhatsApp发送", orderDirect:"直接订购", fillAll:"请填写所有字段", loading:"加载中…", dbMode:"🔥 实时", localMode:"💾 本地", uploading:"上传中…", uploadDone:"✅ 图片已上传!", uploadError:"❌ 上传错误" },
+      es:{ home:"Inicio", payment:"Pago", lang:"Idioma", favorites:"Favoritos", menu:"Menú", search:"Buscar…", cart:"Carrito", addCart:"Agregar al carrito", outStock:"Sin stock", total:"Total", checkout:"Finalizar", remove:"Eliminar", emptyCart:"Tu carrito está vacío", continueShopping:"Seguir comprando", wishEmpty:"Sin favoritos aún", price:"Precio", noProducts:"Sin productos disponibles.", payTitle:"Pago Seguro", payDesc:"Elige tu método de pago", orderConfirmed:"¡Pedido confirmado!", orderThank:"Gracias por tu compra.", back:"Volver", close:"Cerrar", fcfa:"FCFA", addFav:"Añadido a favoritos", rmFav:"Eliminado de favoritos", inStock:"En stock", qty:"Cant.", filter:"Filtrar", all:"Todos", orderNow:"Pedir por WhatsApp", satisfaction:"TU SATISFACCIÓN NUESTRA PRIORIDAD", shipping:"Envío", explore:"Explorar", ville:"Ciudad", quartier:"Barrio", phone:"Tu número de teléfono", orderInfo:"Información de entrega", orderInfoDesc:"Completa tus datos para la entrega", confirmOrder:"Confirmar y enviar por WhatsApp", orderDirect:"Pedir directamente", fillAll:"Por favor completa todos los campos", loading:"Cargando…", dbMode:"🔥 Tiempo real", localMode:"💾 Local", uploading:"Subiendo…", uploadDone:"✅ ¡Imagen subida!", uploadError:"❌ Error al subir" },
+      pt:{ home:"Início", payment:"Pagamento", lang:"Idioma", favorites:"Favoritos", menu:"Menu", search:"Pesquisar…", cart:"Carrinho", addCart:"Adicionar ao Carrinho", outStock:"Esgotado", total:"Total", checkout:"Finalizar", remove:"Remover", emptyCart:"Seu carrinho está vazio", continueShopping:"Continuar Comprando", wishEmpty:"Sem favoritos ainda", price:"Preço", noProducts:"Sem produtos disponíveis.", payTitle:"Pagamento Seguro", payDesc:"Escolha seu método de pagamento", orderConfirmed:"Pedido confirmado!", orderThank:"Obrigado pela compra.", back:"Voltar", close:"Fechar", fcfa:"FCFA", addFav:"Adicionado aos favoritos", rmFav:"Removido dos favoritos", inStock:"Em estoque", qty:"Qtd", filter:"Filtrar", all:"Todos", orderNow:"Pedir pelo WhatsApp", satisfaction:"SUA SATISFAÇÃO NOSSA PRIORIDADE", shipping:"Frete", explore:"Explorar", ville:"Cidade", quartier:"Bairro", phone:"Seu número de telefone", orderInfo:"Informações de entrega", orderInfoDesc:"Preencha seus dados para a entrega", confirmOrder:"Confirmar e enviar pelo WhatsApp", orderDirect:"Pedir diretamente", fillAll:"Por favor preencha todos os campos", loading:"Carregando…", dbMode:"🔥 Tempo real", localMode:"💾 Local", uploading:"Enviando…", uploadDone:"✅ Imagem enviada!", uploadError:"❌ Erro no envio" },
+      de:{ home:"Startseite", payment:"Zahlung", lang:"Sprache", favorites:"Favoriten", menu:"Menü", search:"Produkt suchen…", cart:"Warenkorb", addCart:"In den Warenkorb", outStock:"Nicht vorrätig", total:"Gesamt", checkout:"Zur Kasse", remove:"Entfernen", emptyCart:"Ihr Warenkorb ist leer", continueShopping:"Weiter einkaufen", wishEmpty:"Noch keine Favoriten", price:"Preis", noProducts:"Noch keine Produkte.", payTitle:"Sichere Zahlung", payDesc:"Wählen Sie Ihre Zahlungsmethode", orderConfirmed:"Bestellung bestätigt!", orderThank:"Danke für Ihren Kauf.", back:"Zurück", close:"Schließen", fcfa:"FCFA", addFav:"Zu Favoriten hinzugefügt", rmFav:"Aus Favoriten entfernt", inStock:"Vorrätig", qty:"Menge", filter:"Filtern", all:"Alle", orderNow:"Per WhatsApp bestellen", satisfaction:"IHRE ZUFRIEDENHEIT UNSERE PRIORITÄT", shipping:"Versand", explore:"Erkunden", ville:"Stadt", quartier:"Viertel", phone:"Ihre Telefonnummer", orderInfo:"Lieferinformationen", orderInfoDesc:"Füllen Sie Ihre Lieferdetails aus", confirmOrder:"Bestätigen & per WhatsApp senden", orderDirect:"Direkt bestellen", fillAll:"Bitte füllen Sie alle Felder aus", loading:"Lädt…", dbMode:"🔥 Echtzeit", localMode:"💾 Lokal", uploading:"Hochladen…", uploadDone:"✅ Bild hochgeladen!", uploadError:"❌ Upload-Fehler" },
+      ru:{ home:"Главная", payment:"Оплата", lang:"Язык", favorites:"Избранное", menu:"Меню", search:"Поиск товара…", cart:"Корзина", addCart:"В корзину", outStock:"Нет в наличии", total:"Итого", checkout:"Оформить", remove:"Удалить", emptyCart:"Ваша корзина пуста", continueShopping:"Продолжить покупки", wishEmpty:"Нет избранного", price:"Цена", noProducts:"Товаров пока нет.", payTitle:"Безопасная оплата", payDesc:"Выберите способ оплаты", orderConfirmed:"Заказ подтверждён!", orderThank:"Спасибо за покупку.", back:"Назад", close:"Закрыть", fcfa:"FCFA", addFav:"Добавлено в избранное", rmFav:"Удалено из избранного", inStock:"В наличии", qty:"Кол-во", filter:"Фильтр", all:"Все", orderNow:"Заказать через WhatsApp", satisfaction:"ВАШЕ УДОВЛЕТВОРЕНИЕ — НАШ ПРИОРИТЕТ", shipping:"Доставка", explore:"Исследовать", ville:"Город", quartier:"Район", phone:"Ваш номер телефона", orderInfo:"Информация о доставке", orderInfoDesc:"Заполните данные для доставки", confirmOrder:"Подтвердить и отправить через WhatsApp", orderDirect:"Заказать напрямую", fillAll:"Пожалуйста, заполните все поля", loading:"Загрузка…", dbMode:"🔥 Реальное время", localMode:"💾 Локально", uploading:"Загружается…", uploadDone:"✅ Фото загружено!", uploadError:"❌ Ошибка загрузки" },
+      tr:{ home:"Ana Sayfa", payment:"Ödeme", lang:"Dil", favorites:"Favoriler", menu:"Menü", search:"Ürün ara…", cart:"Sepet", addCart:"Sepete Ekle", outStock:"Stokta Yok", total:"Toplam", checkout:"Sipariş Ver", remove:"Kaldır", emptyCart:"Sepetiniz boş", continueShopping:"Alışverişe Devam", wishEmpty:"Henüz favori yok", price:"Fiyat", noProducts:"Henüz ürün yok.", payTitle:"Güvenli Ödeme", payDesc:"Ödeme yönteminizi seçin", orderConfirmed:"Sipariş Onaylandı!", orderThank:"Satın aldığınız için teşekkürler.", back:"Geri", close:"Kapat", fcfa:"FCFA", addFav:"Favorilere eklendi", rmFav:"Favorilerden kaldırıldı", inStock:"Stokta var", qty:"Adet", filter:"Filtre", all:"Tümü", orderNow:"WhatsApp ile Sipariş Ver", satisfaction:"MEMNUNİYETİNİZ BİZİM ÖNCELİĞİMİZ", shipping:"Kargo", explore:"Keşfet", ville:"Şehir", quartier:"Mahalle", phone:"Telefon numaranız", orderInfo:"Teslimat Bilgileri", orderInfoDesc:"Teslimat için bilgilerinizi doldurun", confirmOrder:"Onayla ve WhatsApp ile gönder", orderDirect:"Direkt Sipariş Ver", fillAll:"Lütfen tüm alanları doldurun", loading:"Yükleniyor…", dbMode:"🔥 Gerçek zamanlı", localMode:"💾 Yerel", uploading:"Yükleniyor…", uploadDone:"✅ Görsel yüklendi!", uploadError:"❌ Yükleme hatası" },
+      ha:{ home:"Gida", payment:"Biyan Kuɗi", lang:"Harshe", favorites:"Abubuwan da nake so", menu:"Menu", search:"Nemi kaya…", cart:"Kwando", addCart:"Saka cikin Kwando", outStock:"Ba shi da hannun jari", total:"Jimla", checkout:"Yi oda", remove:"Cire", emptyCart:"Kwandon ku ya wofi", continueShopping:"Ci gaba da siya", wishEmpty:"Babu abubuwan da kake so tukuna", price:"Farashin", noProducts:"Babu kaya a yanzu.", payTitle:"Biyan Kuɗi Mai Aminci", payDesc:"Zaɓi hanyar biyan kuɗi", orderConfirmed:"An tabbatar da oda!", orderThank:"Na gode da siyanku.", back:"Koma baya", close:"Rufe", fcfa:"FCFA", addFav:"An ƙara zuwa abubuwan da ake so", rmFav:"An cire daga abubuwan da ake so", inStock:"Yana akwai", qty:"Yawa", filter:"Tace", all:"Duka", orderNow:"Yi Oda ta WhatsApp", satisfaction:"GAMSUWARKU FIFIKON NAMU NE", shipping:"Jigilar kaya", explore:"Bincika", ville:"Birni", quartier:"Unguwa", phone:"Lambar wayar ku", orderInfo:"Bayanan Isar da kaya", orderInfoDesc:"Cika bayananku don isar da kaya", confirmOrder:"Tabbatar & aika ta WhatsApp", orderDirect:"Yi Oda Kai tsaye", fillAll:"Da fatan za a cika duk filayen", loading:"Ana lodawa…", dbMode:"🔥 Kai tsaye", localMode:"💾 Na gida", uploading:"Ana ɗora…", uploadDone:"✅ An ɗora hoto!", uploadError:"❌ Kuskuren ɗora" },
     };
 
     const ADMIN_USER = "shérif Traoré";
@@ -154,12 +185,8 @@
 
     const BANNER_TEXT = "🌍  CENTRE DE COMMERCE AKIT — ACCESSIBLE PARTOUT DANS LE MONDE  🌍  VOTRE SATISFACTION NOTRE PRIORITÉ  ✦  LIVRAISON INTERNATIONALE  ✦  PAIEMENT SÉCURISÉ  ✦  RETOURS GRATUITS";
 
-    // ══════════════════════════════════════════════
-    // FONCTIONS BASE DE DONNÉES
-    // ══════════════════════════════════════════════
     const useFirebaseProducts = () => {
       const isFirebase = !!window.db;
-
       const loadProducts = async () => {
         if (isFirebase) {
           const snap = await window.db.collection("products").orderBy("createdAt", "asc").get();
@@ -168,7 +195,6 @@
           try { return JSON.parse(localStorage.getItem("akit_products") || "[]"); } catch { return []; }
         }
       };
-
       const addProduct = async (product) => {
         if (isFirebase) {
           const ref = await window.db.collection("products").add({ ...product, createdAt: firebase.firestore.FieldValue.serverTimestamp() });
@@ -181,7 +207,6 @@
           return id;
         }
       };
-
       const updateProduct = async (id, product) => {
         if (isFirebase) {
           await window.db.collection("products").doc(id).update(product);
@@ -191,7 +216,6 @@
           if (idx !== -1) { products[idx] = { ...products[idx], ...product }; localStorage.setItem("akit_products", JSON.stringify(products)); }
         }
       };
-
       const deleteProduct = async (id) => {
         if (isFirebase) {
           await window.db.collection("products").doc(id).delete();
@@ -200,7 +224,6 @@
           localStorage.setItem("akit_products", JSON.stringify(products.filter(p => p.id !== id)));
         }
       };
-
       const subscribeProducts = (callback) => {
         if (isFirebase) {
           return window.db.collection("products").orderBy("createdAt", "asc").onSnapshot(snap => {
@@ -209,7 +232,6 @@
         }
         return null;
       };
-
       return { isFirebase, loadProducts, addProduct, updateProduct, deleteProduct, subscribeProducts };
     };
 
@@ -242,6 +264,95 @@
         <path d="M17.472 14.382c-.297-.149-1.758-.867-2.03-.967-.273-.099-.471-.148-.67.15-.197.297-.767.966-.94 1.164-.173.199-.347.223-.644.075-.297-.15-1.255-.463-2.39-1.475-.883-.788-1.48-1.761-1.653-2.059-.173-.297-.018-.458.13-.606.134-.133.298-.347.446-.52.149-.174.198-.298.298-.497.099-.198.05-.371-.025-.52-.075-.149-.669-1.612-.916-2.207-.242-.579-.487-.5-.669-.51-.173-.008-.371-.01-.57-.01-.198 0-.52.074-.792.372-.272.297-1.04 1.016-1.04 2.479 0 1.462 1.065 2.875 1.213 3.074.149.198 2.096 3.2 5.077 4.487.709.306 1.262.489 1.694.625.712.227 1.36.195 1.871.118.571-.085 1.758-.719 2.006-1.413.248-.694.248-1.289.173-1.413-.074-.124-.272-.198-.57-.347m-5.421 7.403h-.004a9.87 9.87 0 01-5.031-1.378l-.361-.214-3.741.982.998-3.648-.235-.374a9.86 9.86 0 01-1.51-5.26c.001-5.45 4.436-9.884 9.888-9.884 2.64 0 5.122 1.03 6.988 2.898a9.825 9.825 0 012.893 6.994c-.003 5.45-4.437 9.884-9.885 9.884m8.413-18.297A11.815 11.815 0 0012.05 0C5.495 0 .16 5.335.157 11.892c0 2.096.547 4.142 1.588 5.945L.057 24l6.305-1.654a11.882 11.882 0 005.683 1.448h.005c6.554 0 11.89-5.335 11.893-11.893a11.821 11.821 0 00-3.48-8.413Z"/>
       </svg>
     );
+
+    // ══ COMPOSANT UPLOAD IMAGE CLOUDINARY ══
+    function CloudinaryUpload({ value, onChange, showToast }) {
+      const [uploading, setUploading] = useState(false);
+      const [progress, setProgress] = useState(0);
+      const [dragOver, setDragOver] = useState(false);
+      const inputRef = useRef(null);
+
+      const handleFile = async (file) => {
+        if (!file) return;
+        if (!file.type.startsWith("image/")) { showToast("❌ Fichier non supporté", false); return; }
+        if (file.size > 10 * 1024 * 1024) { showToast("❌ Image trop grande (max 10MB)", false); return; }
+        setUploading(true);
+        setProgress(0);
+        try {
+          const url = await window.uploadToCloudinary(file, (p) => setProgress(p));
+          onChange(url);
+          showToast("✅ Image uploadée sur Cloudinary !");
+        } catch (err) {
+          showToast("❌ Erreur: " + err.message, false);
+        } finally {
+          setUploading(false);
+          setProgress(0);
+        }
+      };
+
+      const onDrop = (e) => {
+        e.preventDefault();
+        setDragOver(false);
+        const file = e.dataTransfer.files[0];
+        if (file) handleFile(file);
+      };
+
+      return (
+        <div>
+          <label style={{fontSize:11,color:"rgba(255,255,255,0.5)",display:"block",marginBottom:6}}>
+            🖼️ Image du produit
+            <span style={{marginLeft:8,fontSize:9,background:"rgba(16,185,129,0.15)",color:"#10b981",borderRadius:6,padding:"1px 6px",border:"1px solid rgba(16,185,129,0.3)"}}>
+              ☁️ Cloudinary · Visible mondialement
+            </span>
+          </label>
+          <div style={{display:"flex",gap:10,alignItems:"flex-start"}}>
+            {/* APERÇU */}
+            <div style={{width:80,height:80,borderRadius:14,background:"rgba(255,255,255,0.06)",border:"2px solid rgba(217,119,6,0.3)",display:"flex",alignItems:"center",justifyContent:"center",overflow:"hidden",flexShrink:0,position:"relative"}}>
+              {value
+                ? <img src={value} alt="" style={{width:"100%",height:"100%",objectFit:"cover"}}/>
+                : <span style={{fontSize:32}}>📦</span>
+              }
+              {uploading && (
+                <div style={{position:"absolute",inset:0,background:"rgba(0,0,0,0.7)",display:"flex",alignItems:"center",justifyContent:"center",borderRadius:12}}>
+                  <div className="spinner" style={{width:24,height:24,borderWidth:2}}/>
+                </div>
+              )}
+            </div>
+            <div style={{flex:1}}>
+              <div
+                className={`upload-zone ${uploading?"uploading":value?"done":""}`}
+                onClick={()=>!uploading&&inputRef.current?.click()}
+                onDragOver={e=>{e.preventDefault();setDragOver(true);}}
+                onDragLeave={()=>setDragOver(false)}
+                onDrop={onDrop}
+                style={{borderColor:dragOver?"#f59e0b":undefined}}
+              >
+                <input ref={inputRef} type="file" accept="image/*" onChange={e=>handleFile(e.target.files[0])} style={{display:"none"}}/>
+                {uploading ? (
+                  <div>
+                    <div style={{fontSize:12,color:"#10b981",fontWeight:700,marginBottom:6}}>⏳ Upload en cours… {progress}%</div>
+                    <div className="progress-bar"><div className="progress-fill" style={{width:`${progress}%`}}/></div>
+                  </div>
+                ) : value ? (
+                  <div style={{fontSize:11,color:"#10b981",fontWeight:700}}>✅ Image uploadée sur Cloudinary</div>
+                ) : (
+                  <div>
+                    <div style={{fontSize:20,marginBottom:4}}>📁</div>
+                    <div style={{fontSize:11,color:"rgba(255,255,255,0.5)",fontWeight:700}}>Cliquer ou glisser-déposer</div>
+                    <div style={{fontSize:9,color:"rgba(255,255,255,0.3)",marginTop:2}}>JPG, PNG, WEBP · max 10MB</div>
+                  </div>
+                )}
+              </div>
+              {value && !uploading && (
+                <button onClick={()=>onChange("")} style={{width:"100%",marginTop:6,padding:"5px 0",borderRadius:8,border:"1px solid rgba(239,68,68,0.4)",background:"rgba(239,68,68,0.08)",color:"#ef4444",cursor:"pointer",fontFamily:"'Nunito',sans-serif",fontWeight:700,fontSize:11}}>
+                  🗑️ Supprimer l'image
+                </button>
+              )}
+            </div>
+          </div>
+        </div>
+      );
+    }
 
     function OrderModal({ cart, cartTotal, t, onClose, onSuccess }) {
       const [ville, setVille] = useState("");
@@ -387,7 +498,6 @@
       const [filterCat, setFilterCat] = useState("all");
       const [orderModal, setOrderModal] = useState(false);
       const [quickOrder, setQuickOrder] = useState(null);
-      const imageInputRef = useRef(null);
       const { isFirebase, loadProducts, addProduct, updateProduct, deleteProduct, subscribeProducts } = useFirebaseProducts();
 
       const emptyForm = { name:"", price:"", category:"", description:"", emoji:"📦", image:"", inStock:true, badge:"", rating:"4.5", reviews:"0" };
@@ -395,18 +505,15 @@
       const t = T[lang] || T.fr;
       const isRTL = lang === "ar";
 
-      // ── CHARGEMENT PRODUITS FIREBASE (temps réel) ──
       useEffect(() => {
         setLoading(true);
         if (isFirebase) {
-          // Abonnement temps réel : les produits se mettent à jour automatiquement pour tous
           const unsub = subscribeProducts((prods) => {
             setProducts(prods);
             setLoading(false);
           });
           return () => unsub && unsub();
         } else {
-          // Mode localStorage (fallback)
           loadProducts().then(prods => {
             setProducts(prods);
             setLoading(false);
@@ -441,15 +548,6 @@
       const loginAdmin = () => {
         if (adminPass===ADMIN_PASS) { setAdminLogged(true); setAdminErr(""); setPage("admin"); setMenuOpen(false); }
         else setAdminErr("❌ Mot de passe incorrect");
-      };
-
-      const handleImageUpload = (e) => {
-        const file = e.target.files[0];
-        if (!file) return;
-        if (file.size > 5*1024*1024) { showToast("Image trop grande (max 5MB)", false); return; }
-        const reader = new FileReader();
-        reader.onload = (ev) => setForm(f=>({...f, image:ev.target.result, emoji:""}));
-        reader.readAsDataURL(file);
       };
 
       const saveProduct = async () => {
@@ -494,9 +592,14 @@
           <div className="glass" style={{borderRadius:24,padding:40,maxWidth:400,width:"100%",animation:"fadeUp .5s ease both",textAlign:"center"}}>
             <div style={{fontSize:56,marginBottom:16}}>🔐</div>
             <div style={{fontFamily:"'Cinzel',serif",fontSize:22,fontWeight:900,marginBottom:4,background:"linear-gradient(135deg,#d97706,#f59e0b)",WebkitBackgroundClip:"text",WebkitTextFillColor:"transparent"}}>ESPACE ADMIN</div>
-            <div style={{color:"rgba(255,255,255,0.4)",fontSize:13,marginBottom:28}}>Réservé à {ADMIN_USER}</div>
-            <div style={{marginBottom:12,fontSize:12,padding:"6px 12px",borderRadius:10,background:isFirebase?"rgba(16,185,129,0.1)":"rgba(217,119,6,0.1)",color:isFirebase?"#10b981":"#f59e0b",border:`1px solid ${isFirebase?"#10b98133":"#d9770633"}`}}>
-              {isFirebase ? "🔥 Firebase connecté — données partagées" : "💾 Mode local — données sur cet appareil"}
+            <div style={{color:"rgba(255,255,255,0.4)",fontSize:13,marginBottom:20}}>Réservé à {ADMIN_USER}</div>
+            <div style={{display:"flex",gap:8,justifyContent:"center",flexWrap:"wrap",marginBottom:20}}>
+              <div style={{fontSize:11,padding:"5px 10px",borderRadius:8,background:isFirebase?"rgba(16,185,129,0.1)":"rgba(217,119,6,0.1)",color:isFirebase?"#10b981":"#f59e0b",border:`1px solid ${isFirebase?"#10b98133":"#d9770633"}`}}>
+                {isFirebase ? "🔥 Firebase connecté" : "💾 Mode local"}
+              </div>
+              <div style={{fontSize:11,padding:"5px 10px",borderRadius:8,background:"rgba(16,185,129,0.1)",color:"#10b981",border:"1px solid rgba(16,185,129,0.2)"}}>
+                ☁️ Cloudinary · dvv8gytfp
+              </div>
             </div>
             <input type="password" placeholder="Mot de passe administrateur" value={adminPass} onChange={e=>setAdminPass(e.target.value)} onKeyDown={e=>e.key==="Enter"&&loginAdmin()} className="input-field" style={{marginBottom:12,textAlign:"center",letterSpacing:4}}/>
             {adminErr&&<div style={{color:"#ef4444",fontSize:13,marginBottom:12}}>{adminErr}</div>}
@@ -514,7 +617,10 @@
               <div style={{width:36,height:36,borderRadius:10,background:"linear-gradient(135deg,#d97706,#f59e0b)",display:"flex",alignItems:"center",justifyContent:"center",fontWeight:900,fontSize:18,color:"#000"}}>A</div>
               <div>
                 <div style={{fontFamily:"'Cinzel',serif",fontSize:14,fontWeight:900,color:"#f59e0b"}}>PANNEAU ADMIN</div>
-                <div style={{fontSize:11,color:isFirebase?"#10b981":"#f59e0b"}}>{isFirebase?"🔥 Firebase — Temps réel":"💾 Mode local"}</div>
+                <div style={{display:"flex",gap:8,marginTop:2}}>
+                  <span style={{fontSize:10,color:isFirebase?"#10b981":"#f59e0b"}}>{isFirebase?"🔥 Firebase":"💾 Local"}</span>
+                  <span style={{fontSize:10,color:"#10b981"}}>☁️ Cloudinary actif</span>
+                </div>
               </div>
             </div>
             <div style={{display:"flex",gap:8,flexWrap:"wrap"}}>
@@ -522,6 +628,14 @@
               <button onClick={()=>{setAdminLogged(false);setPage("home");}} style={{padding:"7px 14px",borderRadius:10,border:"1px solid #ef4444",background:"rgba(239,68,68,0.1)",color:"#ef4444",cursor:"pointer",fontSize:13,fontFamily:"'Nunito',sans-serif"}}>🚪 Déconnexion</button>
             </div>
           </div>
+
+          {/* BANDEAU CLOUDINARY INFO */}
+          <div style={{background:"linear-gradient(90deg,rgba(16,185,129,0.08),rgba(16,185,129,0.15),rgba(16,185,129,0.08))",borderBottom:"1px solid rgba(16,185,129,0.2)",padding:"8px 16px",display:"flex",alignItems:"center",gap:10,flexWrap:"wrap"}}>
+            <span style={{fontSize:16}}>☁️</span>
+            <span style={{fontSize:12,color:"#10b981",fontWeight:700}}>Images hébergées sur Cloudinary — Visibles partout dans le monde</span>
+            <span style={{fontSize:11,color:"rgba(255,255,255,0.4)"}}>Cloud: <strong style={{color:"#fff"}}>dvv8gytfp</strong> · Preset: <strong style={{color:"#fff"}}>akit-commerce</strong> · Dossier: <strong style={{color:"#fff"}}>akit-commerce/products</strong></span>
+          </div>
+
           <div style={{maxWidth:1100,margin:"0 auto",padding:"24px 14px"}}>
             <div className="grid-stats" style={{display:"grid",gridTemplateColumns:"repeat(4,1fr)",gap:12,marginBottom:28}}>
               {[
@@ -544,22 +658,22 @@
                   {editingProduct!==null?"✏️ Modifier le produit":"➕ Ajouter un produit"}
                 </div>
                 <div style={{display:"flex",flexDirection:"column",gap:11}}>
-                  <div>
-                    <label style={{fontSize:11,color:"rgba(255,255,255,0.5)",display:"block",marginBottom:6}}>📸 Image du produit</label>
-                    <div style={{display:"flex",gap:10,alignItems:"flex-start"}}>
-                      <div style={{width:80,height:80,borderRadius:14,background:"rgba(255,255,255,0.06)",border:"2px dashed rgba(217,119,6,0.4)",display:"flex",alignItems:"center",justifyContent:"center",fontSize:form.image?"":40,overflow:"hidden",flexShrink:0,cursor:"pointer"}} onClick={()=>imageInputRef.current?.click()}>
-                        {form.image?<img src={form.image} alt="" style={{width:"100%",height:"100%",objectFit:"cover"}}/>:(form.emoji||"📦")}
-                      </div>
-                      <div style={{flex:1}}>
-                        <input ref={imageInputRef} type="file" accept="image/*" onChange={handleImageUpload} style={{display:"none"}}/>
-                        <button onClick={()=>imageInputRef.current?.click()} style={{width:"100%",padding:"8px 12px",borderRadius:10,border:"1px dashed rgba(217,119,6,0.5)",background:"rgba(217,119,6,0.08)",color:"#f59e0b",cursor:"pointer",fontFamily:"'Nunito',sans-serif",fontWeight:700,fontSize:12,marginBottom:6}}>
-                          📁 Choisir depuis la galerie
-                        </button>
-                        {form.image&&<button onClick={()=>setForm(f=>({...f,image:"",emoji:"📦"}))} style={{width:"100%",padding:"6px 12px",borderRadius:10,border:"1px solid rgba(239,68,68,0.4)",background:"rgba(239,68,68,0.08)",color:"#ef4444",cursor:"pointer",fontFamily:"'Nunito',sans-serif",fontWeight:700,fontSize:11}}>🗑️ Supprimer</button>}
-                        {!form.image&&<><label style={{fontSize:10,color:"rgba(255,255,255,0.4)"}}>Ou saisir un emoji :</label><input className="input-field" value={form.emoji} onChange={e=>setForm(f=>({...f,emoji:e.target.value}))} placeholder="📦" style={{textAlign:"center",fontSize:22,padding:"6px",marginTop:4}}/></>}
-                      </div>
+
+                  {/* UPLOAD CLOUDINARY */}
+                  <CloudinaryUpload
+                    value={form.image}
+                    onChange={(url) => setForm(f=>({...f, image:url, emoji: url ? "" : "📦"}))}
+                    showToast={showToast}
+                  />
+
+                  {/* EMOJI si pas d'image */}
+                  {!form.image && (
+                    <div>
+                      <label style={{fontSize:11,color:"rgba(255,255,255,0.5)",display:"block",marginBottom:4}}>Ou emoji à la place</label>
+                      <input className="input-field" value={form.emoji} onChange={e=>setForm(f=>({...f,emoji:e.target.value}))} placeholder="📦" style={{textAlign:"center",fontSize:22,padding:"6px"}}/>
                     </div>
-                  </div>
+                  )}
+
                   <div style={{display:"grid",gridTemplateColumns:"1fr 1fr",gap:10}}>
                     <div>
                       <label style={{fontSize:11,color:"rgba(255,255,255,0.5)",display:"block",marginBottom:4}}>Badge</label>
@@ -608,8 +722,9 @@
                   </div>
                 ):products.map(p=>(
                   <div key={p.id} style={{display:"flex",gap:12,alignItems:"center",padding:"12px 0",borderBottom:"1px solid rgba(255,255,255,0.06)"}}>
-                    <div style={{width:46,height:46,borderRadius:10,background:"rgba(255,255,255,0.05)",display:"flex",alignItems:"center",justifyContent:"center",flexShrink:0,overflow:"hidden"}}>
+                    <div style={{width:46,height:46,borderRadius:10,background:"rgba(255,255,255,0.05)",display:"flex",alignItems:"center",justifyContent:"center",flexShrink:0,overflow:"hidden",position:"relative"}}>
                       {p.image?<img src={p.image} alt="" style={{width:"100%",height:"100%",objectFit:"cover"}}/>:<span style={{fontSize:26}}>{p.emoji||"📦"}</span>}
+                      {p.image&&<div style={{position:"absolute",bottom:0,right:0,width:14,height:14,borderRadius:"50%",background:"#10b981",display:"flex",alignItems:"center",justifyContent:"center",fontSize:8}}>☁</div>}
                     </div>
                     <div style={{flex:1,minWidth:0}}>
                       <div style={{fontWeight:700,fontSize:13,whiteSpace:"nowrap",overflow:"hidden",textOverflow:"ellipsis"}}>{p.name}</div>
@@ -617,6 +732,7 @@
                       <div style={{display:"flex",gap:5,marginTop:2,flexWrap:"wrap"}}>
                         {p.category&&<span style={{fontSize:9,background:"rgba(99,102,241,0.2)",color:"#818cf8",borderRadius:5,padding:"1px 5px"}}>{p.category}</span>}
                         <span style={{fontSize:9,background:p.inStock?"rgba(16,185,129,0.2)":"rgba(239,68,68,0.2)",color:p.inStock?"#10b981":"#ef4444",borderRadius:5,padding:"1px 5px"}}>{p.inStock?"✅ Stock":"❌ Rupture"}</span>
+                        {p.image&&<span style={{fontSize:9,background:"rgba(16,185,129,0.15)",color:"#10b981",borderRadius:5,padding:"1px 5px"}}>☁️ CDN</span>}
                       </div>
                     </div>
                     <div style={{display:"flex",flexDirection:"column",gap:5}}>
@@ -635,13 +751,10 @@
       // ── BOUTIQUE PRINCIPALE ──
       return (
         <div dir={isRTL?"rtl":"ltr"} style={{minHeight:"100vh",background:"#060614",fontFamily:"'Nunito',sans-serif",color:"#fff",overflowX:"hidden"}}>
-
-          {/* MODALS */}
           {orderModal&&<OrderModal cart={cart} cartTotal={cartTotal} t={t} onClose={()=>setOrderModal(false)} onSuccess={()=>{setCart([]);setOrderModal(false);setPage("orderDone");}}/>}
           {quickOrder&&<QuickOrderModal product={quickOrder} t={t} onClose={()=>setQuickOrder(null)} onSuccess={()=>{setQuickOrder(null);setPage("orderDone");}}/>}
           {menuOpen&&<div onClick={()=>setMenuOpen(false)} style={{position:"fixed",inset:0,background:"rgba(0,0,0,0.65)",zIndex:90,backdropFilter:"blur(4px)"}}/>}
 
-          {/* ── BANNIÈRE FIXE ── */}
           <div className="banner-fixed">
             <div style={{display:"flex",animation:"marquee 28s linear infinite",whiteSpace:"nowrap"}}>
               {[BANNER_TEXT, BANNER_TEXT].map((txt,i)=>(
@@ -650,7 +763,6 @@
             </div>
           </div>
 
-          {/* ── HEADER FIXE ── */}
           <header className="header-fixed header-inner" style={{padding:"10px 14px",display:"flex",alignItems:"center",gap:10}}>
             <button onClick={()=>setMenuOpen(m=>!m)} style={{background:"rgba(255,255,255,0.07)",border:"none",borderRadius:10,width:36,height:36,fontSize:18,cursor:"pointer",display:"flex",alignItems:"center",justifyContent:"center",flexShrink:0}}>☰</button>
             <div style={{display:"flex",alignItems:"center",gap:8,flexShrink:0}}>
@@ -672,14 +784,16 @@
             </div>
           </header>
 
-          {/* MENU LATÉRAL */}
           <div style={{position:"fixed",top:0,left:0,height:"100%",width:270,zIndex:100,background:"linear-gradient(180deg,#0a0a20 0%,#110a00 60%,#0a0a20 100%)",borderRight:"1px solid rgba(217,119,6,0.3)",transform:menuOpen?"translateX(0)":"translateX(-100%)",transition:"transform .35s cubic-bezier(.4,0,.2,1)",display:"flex",flexDirection:"column",boxShadow:menuOpen?"4px 0 40px rgba(0,0,0,0.8)":"none"}}>
             <div style={{padding:"24px 20px 16px",borderBottom:"1px solid rgba(255,255,255,0.07)"}}>
-              <div style={{display:"flex",alignItems:"center",justifyContent:"space-between",marginBottom:16}}>
+              <div style={{display:"flex",alignItems:"center",justifyContent:"space-between",marginBottom:12}}>
                 <div style={{fontFamily:"'Cinzel',serif",fontSize:20,fontWeight:900,background:"linear-gradient(135deg,#d97706,#f59e0b)",WebkitBackgroundClip:"text",WebkitTextFillColor:"transparent"}}>AKIT</div>
                 <button onClick={()=>setMenuOpen(false)} style={{background:"rgba(255,255,255,0.08)",border:"none",color:"#fff",width:32,height:32,borderRadius:8,cursor:"pointer",fontSize:18,display:"flex",alignItems:"center",justifyContent:"center"}}>✕</button>
               </div>
-              <div style={{fontSize:11,color:isFirebase?"#10b981":"#f59e0b"}}>{isFirebase?t.dbMode:t.localMode}</div>
+              <div style={{display:"flex",gap:6,flexWrap:"wrap"}}>
+                <span style={{fontSize:10,color:isFirebase?"#10b981":"#f59e0b"}}>{isFirebase?t.dbMode:t.localMode}</span>
+                <span style={{fontSize:10,color:"#10b981"}}>☁️ Cloudinary</span>
+              </div>
             </div>
             <nav style={{flex:1,padding:"12px",display:"flex",flexDirection:"column",gap:3,overflowY:"auto"}}>
               {[
@@ -709,17 +823,13 @@
               <button onClick={()=>{navTo(adminLogged?"admin":"adminLogin");}} style={{display:"flex",alignItems:"center",gap:10,width:"100%",padding:"10px 14px",borderRadius:12,border:"1px solid rgba(217,119,6,0.3)",background:"rgba(217,119,6,0.08)",color:"#d97706",cursor:"pointer",fontFamily:"'Nunito',sans-serif",fontWeight:700,fontSize:13}}>
                 <span>⚙️</span><span>Admin</span>
               </button>
-              <div style={{marginTop:10,fontSize:10,color:"rgba(255,255,255,0.2)",textAlign:"center",lineHeight:1.5}}>AKIT Commerce © 2026<br/>🌍 Accessible partout</div>
+              <div style={{marginTop:10,fontSize:10,color:"rgba(255,255,255,0.2)",textAlign:"center",lineHeight:1.5}}>AKIT Commerce © 2026<br/>☁️ Cloudinary · dvv8gytfp</div>
             </div>
           </div>
 
-          {/* CONTENU PRINCIPAL — décalé sous bannière+header fixes */}
           <div className="page-content">
-
-            {/* PAGE ACCUEIL */}
             {page==="home"&&(
               <main style={{maxWidth:1100,margin:"0 auto",padding:"0 12px 60px"}}>
-                {/* HERO */}
                 <div style={{margin:"16px 0",borderRadius:24,overflow:"hidden",position:"relative",background:"linear-gradient(135deg,#1a0a00,#2d1600,#0a0a1a)",border:"1px solid rgba(217,119,6,0.25)",padding:"32px 24px"}}>
                   <div style={{position:"absolute",top:0,right:0,width:"50%",height:"100%",background:"radial-gradient(ellipse at right,rgba(217,119,6,0.15),transparent 70%)",pointerEvents:"none"}}/>
                   <div style={{position:"absolute",inset:0,backgroundImage:"linear-gradient(rgba(255,255,255,0.03) 1px,transparent 1px),linear-gradient(90deg,rgba(255,255,255,0.03) 1px,transparent 1px)",backgroundSize:"28px 28px",pointerEvents:"none"}}/>
@@ -736,7 +846,6 @@
                   </div>
                 </div>
 
-                {/* STATS */}
                 <div className="grid-stats" style={{display:"grid",gridTemplateColumns:"repeat(4,1fr)",gap:8,marginBottom:20}}>
                   {[
                     {val:"190+",label:{fr:"Pays",en:"Countries",ar:"دول",zh:"国家",es:"Países",pt:"Países",de:"Länder",ru:"Стран",tr:"Ülke",ha:"Ƙasashe"},icon:"🌍"},
@@ -752,7 +861,6 @@
                   ))}
                 </div>
 
-                {/* CATEGORIES */}
                 {categories.length>1&&(
                   <div style={{display:"flex",gap:7,overflowX:"auto",paddingBottom:6,marginBottom:16}}>
                     {categories.map(c=>(
@@ -763,7 +871,6 @@
                   </div>
                 )}
 
-                {/* PRODUITS */}
                 {loading?(
                   <div style={{textAlign:"center",padding:"60px 20px"}}>
                     <div className="spinner" style={{marginBottom:16}}/>
@@ -809,7 +916,6 @@
               </main>
             )}
 
-            {/* PAGE PANIER */}
             {page==="cart"&&(
               <main style={{maxWidth:700,margin:"0 auto",padding:"24px 12px 80px"}}>
                 <div style={{display:"flex",alignItems:"center",gap:12,marginBottom:22}}>
@@ -861,7 +967,6 @@
               </main>
             )}
 
-            {/* PAGE PAIEMENT */}
             {page==="payment"&&(
               <main style={{maxWidth:560,margin:"0 auto",padding:"24px 12px 80px"}}>
                 <div style={{display:"flex",alignItems:"center",gap:12,marginBottom:24}}>
@@ -891,7 +996,6 @@
               </main>
             )}
 
-            {/* PAGE COMMANDE OK */}
             {page==="orderDone"&&(
               <main style={{maxWidth:500,margin:"0 auto",padding:"60px 20px",textAlign:"center"}}>
                 <div style={{fontSize:80,marginBottom:20,animation:"toastPop .6s cubic-bezier(.34,1.56,.64,1) both"}}>🎉</div>
@@ -902,7 +1006,6 @@
               </main>
             )}
 
-            {/* PAGE FAVORIS */}
             {page==="favorites"&&(
               <main style={{maxWidth:800,margin:"0 auto",padding:"24px 12px 80px"}}>
                 <div style={{display:"flex",alignItems:"center",gap:12,marginBottom:22}}>
@@ -939,12 +1042,12 @@
               </main>
             )}
 
-            {/* FOOTER */}
             {page==="home"&&(
               <footer style={{background:"linear-gradient(180deg,transparent,rgba(0,0,0,0.8))",borderTop:"1px solid rgba(255,255,255,0.05)",padding:"28px 14px",textAlign:"center"}}>
                 <div style={{fontFamily:"'Cinzel',serif",fontSize:22,fontWeight:900,background:"linear-gradient(135deg,#d97706,#f59e0b)",WebkitBackgroundClip:"text",WebkitTextFillColor:"transparent",marginBottom:6}}>AKIT COMMERCE</div>
                 <p style={{fontSize:11,color:"rgba(255,255,255,0.25)",lineHeight:1.8}}>
                   🌍 Accessible partout · 🔒 Paiement sécurisé · 🔄 Retours gratuits<br/>
+                  ☁️ Images hébergées sur Cloudinary — CDN mondial<br/>
                   📱 WhatsApp: +237 698 083 058<br/>
                   © 2026 Centre de Commerce AKIT
                 </p>
