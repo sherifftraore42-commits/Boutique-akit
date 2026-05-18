@@ -1062,6 +1062,35 @@
 
     const root = ReactDOM.createRoot(document.getElementById('root'));
     root.render(React.createElement(AkitCommerce));
+
+    const handleImageUpload = async (e) => {
+  const file = e.target.files[0];
+  if (!file) return;
+  if (file.size > 5 * 1024 * 1024) { showToast("Image trop grande (max 5MB)", false); return; }
+
+  showToast("⏳ Upload en cours…", true);
+
+  if (db && firebase.storage) {
+    // ✅ FIREBASE STORAGE — visible partout dans le monde
+    try {
+      const storage = firebase.storage();
+      const fileName = `products/${Date.now()}_${file.name}`;
+      const ref = storage.ref(fileName);
+      await ref.put(file);
+      const url = await ref.getDownloadURL();
+      setForm(f => ({ ...f, image: url, emoji: "" }));
+      showToast("✅ Image uploadée sur Firebase !", true);
+    } catch (err) {
+      showToast("❌ Erreur upload: " + err.message, false);
+    }
+  } else {
+    // Fallback base64 local
+    const reader = new FileReader();
+    reader.onload = (ev) => setForm(f => ({ ...f, image: ev.target.result, emoji: "" }));
+    reader.readAsDataURL(file);
+  }
+};
+  
   </script>
 </body>
 </html>
