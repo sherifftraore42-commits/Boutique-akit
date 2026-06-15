@@ -1,1096 +1,1149 @@
 <!DOCTYPE html>
 <html lang="fr">
 <head>
-  <meta charset="UTF-8" />
-  <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, minimum-scale=1.0, user-scalable=no" />
-  <title>AKIT Commerce — Boutique Mondiale</title>
-  <script src="https://unpkg.com/react@18/umd/react.production.min.js"></script>
-  <script src="https://unpkg.com/react-dom@18/umd/react-dom.production.min.js"></script>
-  <script src="https://unpkg.com/@babel/standalone/babel.min.js"></script>
-  <!-- FIREBASE -->
-  <script src="https://www.gstatic.com/firebasejs/10.12.0/firebase-app-compat.js"></script>
-  <script src="https://www.gstatic.com/firebasejs/10.12.0/firebase-firestore-compat.js"></script>
-  <link rel="preconnect" href="https://fonts.googleapis.com">
-  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-  <link href="https://fonts.googleapis.com/css2?family=Cinzel:wght@700;900&family=Nunito:wght@400;600;700;800;900&display=swap" rel="stylesheet">
-  <style>
-    * { touch-action: pan-x pan-y; }
-    *{box-sizing:border-box;margin:0;padding:0;}
-    html,body,#root{height:100%;width:100%;}
-    body{background:#060614;color:#fff;font-family:'Nunito',sans-serif;-webkit-tap-highlight-color:transparent;overflow-x:hidden;}
-    ::-webkit-scrollbar{width:3px;height:3px;}
-    ::-webkit-scrollbar-track{background:#0a0a20;}
-    ::-webkit-scrollbar-thumb{background:#d97706;border-radius:2px;}
-    @keyframes marquee{0%{transform:translateX(0)}100%{transform:translateX(-50%)}}
-    @keyframes toastPop{0%{transform:translateX(-50%) scale(0.5);opacity:0}100%{transform:translateX(-50%) scale(1);opacity:1}}
-    @keyframes fadeUp{from{transform:translateY(24px);opacity:0}to{transform:translateY(0);opacity:1}}
-    @keyframes pulse{0%,100%{opacity:1}50%{opacity:0.4}}
-    @keyframes spin{from{transform:rotate(0deg)}to{transform:rotate(360deg)}}
-    @keyframes uploadPulse{0%,100%{box-shadow:0 0 0 0 rgba(217,119,6,0.4)}50%{box-shadow:0 0 0 8px rgba(217,119,6,0)}}
-    .card-hover{transition:transform .3s cubic-bezier(.34,1.56,.64,1),box-shadow .3s ease;}
-    .card-hover:hover{transform:translateY(-6px);box-shadow:0 24px 60px rgba(0,0,0,.6);}
-    .btn-gold{background:linear-gradient(135deg,#d97706,#f59e0b,#d97706);transition:filter .2s;}
-    .btn-gold:hover{filter:brightness(1.15);}
-    .glass{background:rgba(255,255,255,0.04);backdrop-filter:blur(16px);border:1px solid rgba(255,255,255,0.08);}
-    .input-field{background:rgba(255,255,255,0.06);border:1px solid rgba(255,255,255,0.12);border-radius:12px;padding:10px 14px;color:#fff;width:100%;outline:none;font-family:'Nunito',sans-serif;font-size:14px;transition:border-color .2s;}
-    .input-field::placeholder{color:rgba(255,255,255,0.35);}
-    .input-field:focus{border-color:#d97706;}
-    select.input-field option{background:#1a0a00;color:#fff;}
-    .modal-overlay{position:fixed;inset:0;background:rgba(0,0,0,0.75);z-index:200;display:flex;align-items:center;justify-content:center;padding:16px;backdrop-filter:blur(6px);}
-    .modal-box{background:linear-gradient(135deg,#0e0e26,#1a0a00);border:1px solid rgba(217,119,6,0.35);border-radius:24px;padding:28px 24px;width:100%;max-width:480px;max-height:90vh;overflow-y:auto;animation:fadeUp .4s ease both;}
-    .banner-fixed{position:fixed;top:0;left:0;right:0;z-index:200;overflow:hidden;background:linear-gradient(90deg,#92400e,#d97706,#f59e0b,#d97706,#92400e);padding:9px 0;border-bottom:1px solid rgba(255,255,255,0.1);}
-    .header-fixed{position:fixed;top:38px;left:0;right:0;z-index:199;background:rgba(6,6,20,0.97);backdrop-filter:blur(20px);border-bottom:1px solid rgba(255,255,255,0.05);}
-    .page-content{padding-top:90px;}
-    .spinner{width:36px;height:36px;border:3px solid rgba(217,119,6,0.2);border-top-color:#d97706;border-radius:50%;animation:spin .7s linear infinite;margin:0 auto;}
-    .upload-zone{border:2px dashed rgba(217,119,6,0.4);border-radius:16px;padding:20px;text-align:center;cursor:pointer;transition:all .3s;background:rgba(217,119,6,0.04);}
-    .upload-zone:hover{border-color:#d97706;background:rgba(217,119,6,0.08);animation:uploadPulse 1.5s infinite;}
-    .upload-zone.uploading{border-color:#10b981;background:rgba(16,185,129,0.08);animation:uploadPulse 1s infinite;}
-    .upload-zone.done{border-color:#10b981;background:rgba(16,185,129,0.06);animation:none;}
-    .progress-bar{height:4px;background:rgba(255,255,255,0.1);border-radius:4px;overflow:hidden;margin-top:8px;}
-    .progress-fill{height:100%;background:linear-gradient(90deg,#d97706,#f59e0b);border-radius:4px;transition:width .3s ease;}
-    @media(max-width:600px){
-      .modal-box{padding:20px 16px;border-radius:18px;}
-      .grid-stats{grid-template-columns:repeat(2,1fr)!important;}
-      .admin-grid{grid-template-columns:1fr!important;}
-      .products-grid{grid-template-columns:repeat(auto-fill,minmax(145px,1fr))!important;}
-      .hero-btns{flex-direction:column!important;}
-      .header-inner{gap:8px!important;}
-      .search-input{font-size:12px!important;}
-    }
-  </style>
+<meta charset="UTF-8"/>
+<meta name="viewport" content="width=device-width,initial-scale=1.0,maximum-scale=1.0,user-scalable=no"/>
+<title>AKIT Commerce</title>
+<script src="https://unpkg.com/react@18/umd/react.production.min.js"></script>
+<script src="https://unpkg.com/react-dom@18/umd/react-dom.production.min.js"></script>
+<script src="https://unpkg.com/@babel/standalone/babel.min.js"></script>
+<script src="https://www.gstatic.com/firebasejs/10.12.0/firebase-app-compat.js"></script>
+<script src="https://www.gstatic.com/firebasejs/10.12.0/firebase-firestore-compat.js"></script>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Syne:wght@700;800&family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
+<style>
+*{box-sizing:border-box;margin:0;padding:0;-webkit-tap-highlight-color:transparent;}
+*{touch-action:pan-x pan-y;}
+html,body,#root{height:100%;width:100%;}
+body{background:#0C0C0F;color:#F0EDE8;font-family:'Inter',sans-serif;overflow-x:hidden;}
+::-webkit-scrollbar{width:3px;}
+::-webkit-scrollbar-thumb{background:#D4A853;border-radius:2px;}
+
+/* ANIMATIONS */
+@keyframes fadeUp{from{opacity:0;transform:translateY(16px)}to{opacity:1;transform:translateY(0)}}
+@keyframes fadeIn{from{opacity:0}to{opacity:1}}
+@keyframes spin{to{transform:rotate(360deg)}}
+@keyframes shimmer{0%{background-position:200% 0}100%{background-position:-200% 0}}
+@keyframes marquee{0%{transform:translateX(0)}100%{transform:translateX(-50%)}}
+@keyframes pulse{0%,100%{opacity:1}50%{opacity:.5}}
+@keyframes toastIn{from{opacity:0;transform:translateX(-50%) translateY(10px)}to{opacity:1;transform:translateX(-50%) translateY(0)}}
+@keyframes scaleIn{from{opacity:0;transform:scale(.94)}to{opacity:1;transform:scale(1)}}
+
+.anim-up{animation:fadeUp .45s cubic-bezier(.22,1,.36,1) both;}
+.anim-in{animation:fadeIn .3s ease both;}
+.anim-scale{animation:scaleIn .35s cubic-bezier(.22,1,.36,1) both;}
+
+/* TYPOGRAPHY */
+.font-display{font-family:'Syne',sans-serif;}
+
+/* GLASS CARDS */
+.card{background:rgba(255,255,255,0.04);border:1px solid rgba(255,255,255,0.07);border-radius:16px;transition:border-color .2s,transform .25s;}
+.card:hover{border-color:rgba(212,168,83,0.3);transform:translateY(-3px);}
+.card-flat{background:rgba(255,255,255,0.04);border:1px solid rgba(255,255,255,0.07);border-radius:16px;}
+
+/* GOLD ACCENT */
+.gold{color:#D4A853;}
+.gold-bg{background:#D4A853;}
+.btn-gold{background:#D4A853;color:#0C0C0F;font-weight:700;border:none;cursor:pointer;font-family:'Inter',sans-serif;transition:filter .2s,transform .15s;}
+.btn-gold:hover{filter:brightness(1.1);}
+.btn-gold:active{transform:scale(.97);}
+
+/* GHOST BUTTON */
+.btn-ghost{background:rgba(255,255,255,0.06);border:1px solid rgba(255,255,255,0.1);color:#F0EDE8;cursor:pointer;font-family:'Inter',sans-serif;transition:background .2s;}
+.btn-ghost:hover{background:rgba(255,255,255,0.1);}
+
+/* INPUT */
+.inp{width:100%;background:rgba(255,255,255,0.05);border:1px solid rgba(255,255,255,0.1);border-radius:10px;padding:11px 14px;color:#F0EDE8;font-family:'Inter',sans-serif;font-size:14px;outline:none;transition:border-color .2s;}
+.inp:focus{border-color:#D4A853;}
+.inp::placeholder{color:rgba(240,237,232,0.35);}
+select.inp option{background:#1a1a20;}
+
+/* OVERLAY / MODAL */
+.overlay{position:fixed;inset:0;background:rgba(0,0,0,0.8);z-index:300;display:flex;align-items:center;justify-content:center;padding:16px;backdrop-filter:blur(8px);}
+.modal{background:#13131A;border:1px solid rgba(212,168,83,0.25);border-radius:20px;padding:28px 24px;width:100%;max-width:480px;max-height:90vh;overflow-y:auto;animation:scaleIn .3s cubic-bezier(.22,1,.36,1) both;}
+
+/* HEADER */
+.header{position:fixed;top:36px;left:0;right:0;z-index:200;background:rgba(12,12,15,0.95);backdrop-filter:blur(20px);border-bottom:1px solid rgba(255,255,255,0.06);}
+
+/* BANNER */
+.banner{position:fixed;top:0;left:0;right:0;z-index:201;height:36px;overflow:hidden;background:#D4A853;display:flex;align-items:center;}
+
+/* SIDEBAR */
+.sidebar{position:fixed;top:0;left:0;height:100%;width:280px;background:#0C0C0F;border-right:1px solid rgba(255,255,255,0.08);z-index:250;display:flex;flex-direction:column;transition:transform .35s cubic-bezier(.4,0,.2,1);}
+
+/* PRODUCT CARD */
+.pcard{background:rgba(255,255,255,0.035);border:1px solid rgba(255,255,255,0.06);border-radius:16px;overflow:hidden;display:flex;flex-direction:column;transition:transform .25s,border-color .2s;}
+.pcard:hover{transform:translateY(-4px);border-color:rgba(212,168,83,0.3);}
+
+/* BADGE */
+.badge{display:inline-flex;align-items:center;gap:4px;padding:3px 8px;border-radius:20px;font-size:10px;font-weight:700;}
+
+/* TOGGLE */
+.toggle{width:44px;height:24px;border-radius:12px;position:relative;cursor:pointer;transition:background .2s;}
+.toggle-thumb{position:absolute;top:3px;width:18px;height:18px;border-radius:50%;background:#fff;transition:left .2s;}
+
+/* SPINNER */
+.spin{width:32px;height:32px;border:3px solid rgba(212,168,83,.2);border-top-color:#D4A853;border-radius:50%;animation:spin .7s linear infinite;margin:0 auto;}
+
+/* UPLOAD */
+.upload-zone{border:1.5px dashed rgba(212,168,83,0.3);border-radius:14px;padding:20px;text-align:center;cursor:pointer;transition:all .2s;background:rgba(212,168,83,0.03);}
+.upload-zone:hover,.upload-zone.drag{border-color:#D4A853;background:rgba(212,168,83,0.07);}
+
+/* STARS */
+.star{font-size:11px;}
+
+/* SKELETON */
+.skel{background:linear-gradient(90deg,rgba(255,255,255,.04) 25%,rgba(255,255,255,.08) 50%,rgba(255,255,255,.04) 75%);background-size:200% 100%;animation:shimmer 1.5s infinite;border-radius:10px;}
+
+/* PAYMENT METHOD */
+.pmcard{padding:12px 14px;border-radius:12px;border:1.5px solid rgba(255,255,255,0.07);cursor:pointer;transition:all .2s;display:flex;align-items:center;gap:10px;}
+.pmcard.sel{border-color:#D4A853;background:rgba(212,168,83,0.08);}
+
+/* NAV ITEM */
+.nav-item{display:flex;align-items:center;gap:12px;padding:11px 16px;border-radius:12px;border:none;background:transparent;color:#F0EDE8;cursor:pointer;font-family:'Inter',sans-serif;font-size:14px;font-weight:500;width:100%;text-align:left;transition:background .15s;}
+.nav-item:hover{background:rgba(255,255,255,0.06);}
+.nav-item.active{background:rgba(212,168,83,0.12);color:#D4A853;}
+
+/* CATEGORY PILL */
+.cat-pill{padding:6px 15px;border-radius:20px;font-size:12px;font-weight:600;cursor:pointer;border:1px solid rgba(255,255,255,0.1);background:rgba(255,255,255,0.04);color:rgba(240,237,232,.6);transition:all .2s;white-space:nowrap;flex-shrink:0;}
+.cat-pill.active{border-color:#D4A853;background:rgba(212,168,83,0.15);color:#D4A853;}
+
+/* WA ICON */
+.wa-icon svg{display:block;}
+
+/* PROGRESS */
+.prog-bar{height:3px;background:rgba(255,255,255,.1);border-radius:3px;overflow:hidden;margin-top:6px;}
+.prog-fill{height:100%;background:#D4A853;border-radius:3px;transition:width .3s;}
+
+/* RESPONSIVE */
+@media(max-width:600px){
+  .products-grid{grid-template-columns:repeat(auto-fill,minmax(148px,1fr))!important;}
+  .hero-split{flex-direction:column!important;}
+  .stats-row{grid-template-columns:repeat(2,1fr)!important;}
+  .admin-split{grid-template-columns:1fr!important;}
+}
+</style>
 </head>
 <body>
-  <div id="root"></div>
-  <script>
-    // ══════════════════════════════════════════════
-    // CONFIGURATION FIREBASE
-    // Remplace par tes vraies valeurs Firebase
-    // ══════════════════════════════════════════════
-    const firebaseConfig = {
-      apiKey: "REMPLACE_PAR_TON_API_KEY",
-      authDomain: "REMPLACE.firebaseapp.com",
-      projectId: "REMPLACE_PAR_TON_PROJECT_ID",
-      storageBucket: "REMPLACE.appspot.com",
-      messagingSenderId: "REMPLACE_PAR_TON_SENDER_ID",
-      appId: "REMPLACE_PAR_TON_APP_ID"
-    };
+<div id="root"></div>
 
-    // ══════════════════════════════════════════════
-    // CONFIGURATION CLOUDINARY — AKIT COMMERCE
-    // Cloud name: dvv8gytfp | Preset: akit-commerce
-    // ══════════════════════════════════════════════
-    window.CLOUDINARY_CONFIG = {
-      cloudName: "dvv8gytfp",
-      uploadPreset: "akit-commerce",
-      folder: "akit-commerce/products"
-    };
+<script>
+/* ══════════════════════════════════════════════════
+   FIREBASE CONFIG — Remplace par tes vraies valeurs
+══════════════════════════════════════════════════ */
+const firebaseConfig = {
+  apiKey: "REMPLACE_PAR_TON_API_KEY",
+  authDomain: "REMPLACE.firebaseapp.com",
+  projectId: "REMPLACE_PAR_TON_PROJECT_ID",
+  storageBucket: "REMPLACE.appspot.com",
+  messagingSenderId: "000000",
+  appId: "1:000000:web:000000"
+};
 
-    let db = null;
-    try {
-      if (firebaseConfig.apiKey && !firebaseConfig.apiKey.includes("REMPLACE")) {
-        firebase.initializeApp(firebaseConfig);
-        db = firebase.firestore();
-        console.log("✅ Firebase connecté !");
-      } else {
-        console.warn("⚠️ Firebase non configuré — mode localStorage activé");
-      }
-    } catch(e) {
-      console.error("Erreur Firebase:", e);
-    }
+/* ══════════════════════════════════════════════════
+   CLOUDINARY CONFIG
+══════════════════════════════════════════════════ */
+window.CLD = { cloud:"dvv8gytfp", preset:"akit-commerce", folder:"akit-commerce/products" };
 
-    // ══════════════════════════════════════════════
-    // FONCTION UPLOAD CLOUDINARY
-    // Envoie l'image sur Cloudinary → retourne l'URL publique mondiale
-    // ══════════════════════════════════════════════
-    window.uploadToCloudinary = async function(file, onProgress) {
-      const { cloudName, uploadPreset } = window.CLOUDINARY_CONFIG;
-      const url = `https://api.cloudinary.com/v1_1/${cloudName}/image/upload`;
-      const formData = new FormData();
-      formData.append("file", file);
-      formData.append("upload_preset", uploadPreset);
-      formData.append("folder", window.CLOUDINARY_CONFIG.folder);
+window.db = null;
+try {
+  if(!firebaseConfig.apiKey.includes("REMPLACE")){
+    firebase.initializeApp(firebaseConfig);
+    window.db = firebase.firestore();
+  }
+}catch(e){}
 
-      return new Promise((resolve, reject) => {
-        const xhr = new XMLHttpRequest();
-        xhr.open("POST", url);
-        xhr.upload.onprogress = (e) => {
-          if (e.lengthComputable && onProgress) {
-            onProgress(Math.round((e.loaded / e.total) * 100));
-          }
-        };
-        xhr.onload = () => {
-          if (xhr.status === 200) {
-            const data = JSON.parse(xhr.responseText);
-            resolve(data.secure_url); // URL HTTPS mondiale
-          } else {
-            reject(new Error("Erreur upload: " + xhr.responseText));
-          }
-        };
-        xhr.onerror = () => reject(new Error("Erreur réseau"));
-        xhr.send(formData);
-      });
-    };
-  </script>
-  <script type="text/babel">
-    const { useState, useEffect, useRef, useCallback } = React;
+/* ══════════════════════════════════════════════════
+   UPLOAD CLOUDINARY
+══════════════════════════════════════════════════ */
+window.uploadCLD = (file, onProg) => new Promise((ok,err)=>{
+  const fd = new FormData();
+  fd.append("file",file);
+  fd.append("upload_preset",window.CLD.preset);
+  fd.append("folder",window.CLD.folder);
+  const xhr = new XMLHttpRequest();
+  xhr.open("POST",`https://api.cloudinary.com/v1_1/${window.CLD.cloud}/image/upload`);
+  xhr.upload.onprogress=e=>e.lengthComputable&&onProg&&onProg(~~(e.loaded/e.total*100));
+  xhr.onload=()=>xhr.status===200?ok(JSON.parse(xhr.responseText).secure_url):err(new Error("Upload échoué"));
+  xhr.onerror=()=>err(new Error("Réseau"));
+  xhr.send(fd);
+});
 
-    const WHATSAPP_NUMBER = "237698083058";
+/* ══════════════════════════════════════════════════
+   ADMIN SECRET — CHANGE CE CODE POUR TOI SEUL
+   (Ce code n'est JAMAIS affiché dans l'interface)
+══════════════════════════════════════════════════ */
+window.ADMIN_SECRET = "20sherif03";
 
-    document.addEventListener('keydown', e => {
-      if ((e.ctrlKey || e.metaKey) && ['+','-','=','0'].includes(e.key)) e.preventDefault();
-    });
-    document.addEventListener('wheel', e => {
-      if (e.ctrlKey) e.preventDefault();
-    }, { passive: false });
-    document.addEventListener('gesturestart', e => e.preventDefault());
-    document.addEventListener('gesturechange', e => e.preventDefault());
+/* ══════════════════════════════════════════════════
+   WHATSAPP
+══════════════════════════════════════════════════ */
+window.WA = "237698083058";
+</script>
 
-    const LANGS = {
-      fr:{ flag:"🇫🇷", name:"Français" },
-      en:{ flag:"🇬🇧", name:"English" },
-      ar:{ flag:"🇸🇦", name:"العربية" },
-      zh:{ flag:"🇨🇳", name:"中文" },
-      es:{ flag:"🇪🇸", name:"Español" },
-      pt:{ flag:"🇧🇷", name:"Português" },
-      de:{ flag:"🇩🇪", name:"Deutsch" },
-      ru:{ flag:"🇷🇺", name:"Русский" },
-      tr:{ flag:"🇹🇷", name:"Türkçe" },
-      ha:{ flag:"🇳🇬", name:"Hausa" },
-    };
+<script type="text/babel">
+const { useState, useEffect, useRef, useCallback } = React;
 
-    const T = {
-      fr:{ home:"Accueil", payment:"Paiement en ligne", lang:"Langue", favorites:"Favoris", menu:"Menu", search:"Rechercher un produit…", cart:"Panier", addCart:"Ajouter au panier", outStock:"Rupture de stock", total:"Total", checkout:"Commander", remove:"Supprimer", emptyCart:"Votre panier est vide", continueShopping:"Continuer les achats", wishEmpty:"Aucun favori pour l'instant", price:"Prix", noProducts:"Aucun produit disponible.\nL'administrateur ajoutera bientôt des articles.", payTitle:"Paiement Sécurisé", payDesc:"Choisissez votre mode de paiement préféré", orderConfirmed:"Commande confirmée !", orderThank:"Merci pour votre achat. Livraison en cours.", back:"Retour", close:"Fermer", fcfa:"FCFA", addFav:"Ajouté aux favoris", rmFav:"Retiré des favoris", inStock:"En stock", qty:"Qté", filter:"Filtrer", all:"Tous", orderNow:"Commander via WhatsApp", satisfaction:"VOTRE SATISFACTION NOTRE PRIORITÉ", shipping:"Livraison", explore:"Explorer", ville:"Ville", quartier:"Quartier", phone:"Votre numéro de téléphone", orderInfo:"Informations de livraison", orderInfoDesc:"Renseignez vos coordonnées pour la livraison", confirmOrder:"Confirmer et envoyer via WhatsApp", orderDirect:"Commander directement", fillAll:"Veuillez remplir tous les champs", loading:"Chargement des produits…", dbMode:"🔥 Temps réel", localMode:"💾 Local", uploading:"Upload en cours…", uploadDone:"✅ Image uploadée !", uploadError:"❌ Erreur upload" },
-      en:{ home:"Home", payment:"Online Payment", lang:"Language", favorites:"Favorites", menu:"Menu", search:"Search a product…", cart:"Cart", addCart:"Add to Cart", outStock:"Out of Stock", total:"Total", checkout:"Checkout", remove:"Remove", emptyCart:"Your cart is empty", continueShopping:"Continue Shopping", wishEmpty:"No favorites yet", price:"Price", noProducts:"No products available yet.\nThe admin will add items soon.", payTitle:"Secure Payment", payDesc:"Choose your preferred payment method", orderConfirmed:"Order Confirmed!", orderThank:"Thank you for your purchase. Delivery in progress.", back:"Back", close:"Close", fcfa:"FCFA", addFav:"Added to favorites", rmFav:"Removed from favorites", inStock:"In stock", qty:"Qty", filter:"Filter", all:"All", orderNow:"Order via WhatsApp", satisfaction:"YOUR SATISFACTION OUR PRIORITY", shipping:"Shipping", explore:"Explore", ville:"City", quartier:"Neighborhood", phone:"Your phone number", orderInfo:"Delivery Information", orderInfoDesc:"Fill in your details for delivery", confirmOrder:"Confirm & Send via WhatsApp", orderDirect:"Order Directly", fillAll:"Please fill in all fields", loading:"Loading products…", dbMode:"🔥 Real-time", localMode:"💾 Local", uploading:"Uploading…", uploadDone:"✅ Image uploaded!", uploadError:"❌ Upload error" },
-      ar:{ home:"الرئيسية", payment:"الدفع", lang:"اللغة", favorites:"المفضلة", menu:"القائمة", search:"ابحث عن منتج…", cart:"السلة", addCart:"أضف إلى السلة", outStock:"نفذ من المخزون", total:"الإجمالي", checkout:"إتمام الشراء", remove:"حذف", emptyCart:"سلتك فارغة", continueShopping:"مواصلة التسوق", wishEmpty:"لا توجد مفضلة بعد", price:"السعر", noProducts:"لا توجد منتجات حالياً.", payTitle:"دفع آمن", payDesc:"اختر طريقة الدفع", orderConfirmed:"تم تأكيد الطلب!", orderThank:"شكراً لشرائك.", back:"رجوع", close:"إغلاق", fcfa:"فرنك", addFav:"أضيف للمفضلة", rmFav:"حُذف من المفضلة", inStock:"متوفر", qty:"الكمية", filter:"تصفية", all:"الكل", orderNow:"الطلب عبر واتساب", satisfaction:"رضاكم أولويتنا", shipping:"الشحن", explore:"استكشف", ville:"المدينة", quartier:"الحي", phone:"رقم هاتفك", orderInfo:"معلومات التوصيل", orderInfoDesc:"أدخل بياناتك للتوصيل", confirmOrder:"تأكيد وإرسال عبر واتساب", orderDirect:"اطلب مباشرة", fillAll:"يرجى ملء جميع الحقول", loading:"جاري التحميل…", dbMode:"🔥 مباشر", localMode:"💾 محلي", uploading:"جاري الرفع…", uploadDone:"✅ تم رفع الصورة!", uploadError:"❌ خطأ في الرفع" },
-      zh:{ home:"首页", payment:"在线支付", lang:"语言", favorites:"收藏", menu:"菜单", search:"搜索产品…", cart:"购物车", addCart:"加入购物车", outStock:"缺货", total:"总计", checkout:"结账", remove:"删除", emptyCart:"购物车为空", continueShopping:"继续购物", wishEmpty:"暂无收藏", price:"价格", noProducts:"暂无产品。", payTitle:"安全支付", payDesc:"选择您的支付方式", orderConfirmed:"订单已确认！", orderThank:"感谢您的购买。", back:"返回", close:"关闭", fcfa:"非郎", addFav:"已加入收藏", rmFav:"已取消收藏", inStock:"有库存", qty:"数量", filter:"筛选", all:"全部", orderNow:"通过WhatsApp订购", satisfaction:"您的满意是我们的首要任务", shipping:"运费", explore:"探索", ville:"城市", quartier:"街区", phone:"您的电话号码", orderInfo:"配送信息", orderInfoDesc:"填写您的配送信息", confirmOrder:"确认并通过WhatsApp发送", orderDirect:"直接订购", fillAll:"请填写所有字段", loading:"加载中…", dbMode:"🔥 实时", localMode:"💾 本地", uploading:"上传中…", uploadDone:"✅ 图片已上传!", uploadError:"❌ 上传错误" },
-      es:{ home:"Inicio", payment:"Pago", lang:"Idioma", favorites:"Favoritos", menu:"Menú", search:"Buscar…", cart:"Carrito", addCart:"Agregar al carrito", outStock:"Sin stock", total:"Total", checkout:"Finalizar", remove:"Eliminar", emptyCart:"Tu carrito está vacío", continueShopping:"Seguir comprando", wishEmpty:"Sin favoritos aún", price:"Precio", noProducts:"Sin productos disponibles.", payTitle:"Pago Seguro", payDesc:"Elige tu método de pago", orderConfirmed:"¡Pedido confirmado!", orderThank:"Gracias por tu compra.", back:"Volver", close:"Cerrar", fcfa:"FCFA", addFav:"Añadido a favoritos", rmFav:"Eliminado de favoritos", inStock:"En stock", qty:"Cant.", filter:"Filtrar", all:"Todos", orderNow:"Pedir por WhatsApp", satisfaction:"TU SATISFACCIÓN NUESTRA PRIORIDAD", shipping:"Envío", explore:"Explorar", ville:"Ciudad", quartier:"Barrio", phone:"Tu número de teléfono", orderInfo:"Información de entrega", orderInfoDesc:"Completa tus datos para la entrega", confirmOrder:"Confirmar y enviar por WhatsApp", orderDirect:"Pedir directamente", fillAll:"Por favor completa todos los campos", loading:"Cargando…", dbMode:"🔥 Tiempo real", localMode:"💾 Local", uploading:"Subiendo…", uploadDone:"✅ ¡Imagen subida!", uploadError:"❌ Error al subir" },
-      pt:{ home:"Início", payment:"Pagamento", lang:"Idioma", favorites:"Favoritos", menu:"Menu", search:"Pesquisar…", cart:"Carrinho", addCart:"Adicionar ao Carrinho", outStock:"Esgotado", total:"Total", checkout:"Finalizar", remove:"Remover", emptyCart:"Seu carrinho está vazio", continueShopping:"Continuar Comprando", wishEmpty:"Sem favoritos ainda", price:"Preço", noProducts:"Sem produtos disponíveis.", payTitle:"Pagamento Seguro", payDesc:"Escolha seu método de pagamento", orderConfirmed:"Pedido confirmado!", orderThank:"Obrigado pela compra.", back:"Voltar", close:"Fechar", fcfa:"FCFA", addFav:"Adicionado aos favoritos", rmFav:"Removido dos favoritos", inStock:"Em estoque", qty:"Qtd", filter:"Filtrar", all:"Todos", orderNow:"Pedir pelo WhatsApp", satisfaction:"SUA SATISFAÇÃO NOSSA PRIORIDADE", shipping:"Frete", explore:"Explorar", ville:"Cidade", quartier:"Bairro", phone:"Seu número de telefone", orderInfo:"Informações de entrega", orderInfoDesc:"Preencha seus dados para a entrega", confirmOrder:"Confirmar e enviar pelo WhatsApp", orderDirect:"Pedir diretamente", fillAll:"Por favor preencha todos os campos", loading:"Carregando…", dbMode:"🔥 Tempo real", localMode:"💾 Local", uploading:"Enviando…", uploadDone:"✅ Imagem enviada!", uploadError:"❌ Erro no envio" },
-      de:{ home:"Startseite", payment:"Zahlung", lang:"Sprache", favorites:"Favoriten", menu:"Menü", search:"Produkt suchen…", cart:"Warenkorb", addCart:"In den Warenkorb", outStock:"Nicht vorrätig", total:"Gesamt", checkout:"Zur Kasse", remove:"Entfernen", emptyCart:"Ihr Warenkorb ist leer", continueShopping:"Weiter einkaufen", wishEmpty:"Noch keine Favoriten", price:"Preis", noProducts:"Noch keine Produkte.", payTitle:"Sichere Zahlung", payDesc:"Wählen Sie Ihre Zahlungsmethode", orderConfirmed:"Bestellung bestätigt!", orderThank:"Danke für Ihren Kauf.", back:"Zurück", close:"Schließen", fcfa:"FCFA", addFav:"Zu Favoriten hinzugefügt", rmFav:"Aus Favoriten entfernt", inStock:"Vorrätig", qty:"Menge", filter:"Filtern", all:"Alle", orderNow:"Per WhatsApp bestellen", satisfaction:"IHRE ZUFRIEDENHEIT UNSERE PRIORITÄT", shipping:"Versand", explore:"Erkunden", ville:"Stadt", quartier:"Viertel", phone:"Ihre Telefonnummer", orderInfo:"Lieferinformationen", orderInfoDesc:"Füllen Sie Ihre Lieferdetails aus", confirmOrder:"Bestätigen & per WhatsApp senden", orderDirect:"Direkt bestellen", fillAll:"Bitte füllen Sie alle Felder aus", loading:"Lädt…", dbMode:"🔥 Echtzeit", localMode:"💾 Lokal", uploading:"Hochladen…", uploadDone:"✅ Bild hochgeladen!", uploadError:"❌ Upload-Fehler" },
-      ru:{ home:"Главная", payment:"Оплата", lang:"Язык", favorites:"Избранное", menu:"Меню", search:"Поиск товара…", cart:"Корзина", addCart:"В корзину", outStock:"Нет в наличии", total:"Итого", checkout:"Оформить", remove:"Удалить", emptyCart:"Ваша корзина пуста", continueShopping:"Продолжить покупки", wishEmpty:"Нет избранного", price:"Цена", noProducts:"Товаров пока нет.", payTitle:"Безопасная оплата", payDesc:"Выберите способ оплаты", orderConfirmed:"Заказ подтверждён!", orderThank:"Спасибо за покупку.", back:"Назад", close:"Закрыть", fcfa:"FCFA", addFav:"Добавлено в избранное", rmFav:"Удалено из избранного", inStock:"В наличии", qty:"Кол-во", filter:"Фильтр", all:"Все", orderNow:"Заказать через WhatsApp", satisfaction:"ВАШЕ УДОВЛЕТВОРЕНИЕ — НАШ ПРИОРИТЕТ", shipping:"Доставка", explore:"Исследовать", ville:"Город", quartier:"Район", phone:"Ваш номер телефона", orderInfo:"Информация о доставке", orderInfoDesc:"Заполните данные для доставки", confirmOrder:"Подтвердить и отправить через WhatsApp", orderDirect:"Заказать напрямую", fillAll:"Пожалуйста, заполните все поля", loading:"Загрузка…", dbMode:"🔥 Реальное время", localMode:"💾 Локально", uploading:"Загружается…", uploadDone:"✅ Фото загружено!", uploadError:"❌ Ошибка загрузки" },
-      tr:{ home:"Ana Sayfa", payment:"Ödeme", lang:"Dil", favorites:"Favoriler", menu:"Menü", search:"Ürün ara…", cart:"Sepet", addCart:"Sepete Ekle", outStock:"Stokta Yok", total:"Toplam", checkout:"Sipariş Ver", remove:"Kaldır", emptyCart:"Sepetiniz boş", continueShopping:"Alışverişe Devam", wishEmpty:"Henüz favori yok", price:"Fiyat", noProducts:"Henüz ürün yok.", payTitle:"Güvenli Ödeme", payDesc:"Ödeme yönteminizi seçin", orderConfirmed:"Sipariş Onaylandı!", orderThank:"Satın aldığınız için teşekkürler.", back:"Geri", close:"Kapat", fcfa:"FCFA", addFav:"Favorilere eklendi", rmFav:"Favorilerden kaldırıldı", inStock:"Stokta var", qty:"Adet", filter:"Filtre", all:"Tümü", orderNow:"WhatsApp ile Sipariş Ver", satisfaction:"MEMNUNİYETİNİZ BİZİM ÖNCELİĞİMİZ", shipping:"Kargo", explore:"Keşfet", ville:"Şehir", quartier:"Mahalle", phone:"Telefon numaranız", orderInfo:"Teslimat Bilgileri", orderInfoDesc:"Teslimat için bilgilerinizi doldurun", confirmOrder:"Onayla ve WhatsApp ile gönder", orderDirect:"Direkt Sipariş Ver", fillAll:"Lütfen tüm alanları doldurun", loading:"Yükleniyor…", dbMode:"🔥 Gerçek zamanlı", localMode:"💾 Yerel", uploading:"Yükleniyor…", uploadDone:"✅ Görsel yüklendi!", uploadError:"❌ Yükleme hatası" },
-      ha:{ home:"Gida", payment:"Biyan Kuɗi", lang:"Harshe", favorites:"Abubuwan da nake so", menu:"Menu", search:"Nemi kaya…", cart:"Kwando", addCart:"Saka cikin Kwando", outStock:"Ba shi da hannun jari", total:"Jimla", checkout:"Yi oda", remove:"Cire", emptyCart:"Kwandon ku ya wofi", continueShopping:"Ci gaba da siya", wishEmpty:"Babu abubuwan da kake so tukuna", price:"Farashin", noProducts:"Babu kaya a yanzu.", payTitle:"Biyan Kuɗi Mai Aminci", payDesc:"Zaɓi hanyar biyan kuɗi", orderConfirmed:"An tabbatar da oda!", orderThank:"Na gode da siyanku.", back:"Koma baya", close:"Rufe", fcfa:"FCFA", addFav:"An ƙara zuwa abubuwan da ake so", rmFav:"An cire daga abubuwan da ake so", inStock:"Yana akwai", qty:"Yawa", filter:"Tace", all:"Duka", orderNow:"Yi Oda ta WhatsApp", satisfaction:"GAMSUWARKU FIFIKON NAMU NE", shipping:"Jigilar kaya", explore:"Bincika", ville:"Birni", quartier:"Unguwa", phone:"Lambar wayar ku", orderInfo:"Bayanan Isar da kaya", orderInfoDesc:"Cika bayananku don isar da kaya", confirmOrder:"Tabbatar & aika ta WhatsApp", orderDirect:"Yi Oda Kai tsaye", fillAll:"Da fatan za a cika duk filayen", loading:"Ana lodawa…", dbMode:"🔥 Kai tsaye", localMode:"💾 Na gida", uploading:"Ana ɗora…", uploadDone:"✅ An ɗora hoto!", uploadError:"❌ Kuskuren ɗora" },
-    };
+/* ── LANGUAGES ── */
+const LANGS = {
+  fr:{flag:"🇫🇷",n:"Français"},en:{flag:"🇬🇧",n:"English"},
+  ar:{flag:"🇸🇦",n:"العربية"},zh:{flag:"🇨🇳",n:"中文"},
+  es:{flag:"🇪🇸",n:"Español"},pt:{flag:"🇧🇷",n:"Português"},
+  de:{flag:"🇩🇪",n:"Deutsch"},ru:{flag:"🇷🇺",n:"Русский"},
+  tr:{flag:"🇹🇷",n:"Türkçe"},ha:{flag:"🇳🇬",n:"Hausa"},
+};
 
-    const ADMIN_USER = "shérif Traoré";
-    const ADMIN_PASS = "20sherif03";
+const T = {
+  fr:{search:"Rechercher…",cart:"Panier",addCart:"Ajouter",outStock:"Rupture",total:"Total",
+      remove:"Supprimer",emptyCart:"Panier vide",continueShopping:"Continuer",
+      wishEmpty:"Aucun favori",home:"Accueil",payment:"Paiement",favorites:"Favoris",
+      lang:"Langue",payTitle:"Paiement Sécurisé",payDesc:"Choisissez votre mode",
+      orderDone:"Commande envoyée !",orderThank:"Merci ! On vous contacte vite.",
+      shipping:"Livraison",all:"Tout",orderNow:"Commander via WhatsApp",
+      ville:"Ville",quartier:"Quartier",phone:"Téléphone",
+      confirmOrder:"Confirmer & WhatsApp",fillAll:"Remplissez tous les champs",
+      loading:"Chargement…",orderDirect:"Commander",qty:"Qté",
+      addFav:"Ajouté aux favoris",rmFav:"Retiré des favoris",inStock:"En stock",
+      noProducts:"La boutique est en préparation.\nL'admin ajoutera bientôt des articles.",},
+  en:{search:"Search…",cart:"Cart",addCart:"Add to Cart",outStock:"Out of stock",total:"Total",
+      remove:"Remove",emptyCart:"Your cart is empty",continueShopping:"Keep shopping",
+      wishEmpty:"No favorites yet",home:"Home",payment:"Payment",favorites:"Favorites",
+      lang:"Language",payTitle:"Secure Payment",payDesc:"Choose your method",
+      orderDone:"Order sent!",orderThank:"Thank you! We'll contact you shortly.",
+      shipping:"Shipping",all:"All",orderNow:"Order via WhatsApp",
+      ville:"City",quartier:"Neighborhood",phone:"Phone",
+      confirmOrder:"Confirm & WhatsApp",fillAll:"Fill in all fields",
+      loading:"Loading…",orderDirect:"Order Now",qty:"Qty",
+      addFav:"Added to favorites",rmFav:"Removed from favorites",inStock:"In stock",
+      noProducts:"Store is being set up.\nAdmin will add items soon.",},
+  ar:{search:"ابحث…",cart:"السلة",addCart:"أضف",outStock:"نفذ",total:"الإجمالي",
+      remove:"حذف",emptyCart:"السلة فارغة",continueShopping:"تسوق",
+      wishEmpty:"لا مفضلة",home:"الرئيسية",payment:"الدفع",favorites:"المفضلة",
+      lang:"اللغة",payTitle:"دفع آمن",payDesc:"اختر طريقة الدفع",
+      orderDone:"تم الطلب!",orderThank:"شكراً! سنتواصل معك.",
+      shipping:"الشحن",all:"الكل",orderNow:"اطلب عبر واتساب",
+      ville:"المدينة",quartier:"الحي",phone:"الهاتف",
+      confirmOrder:"تأكيد وإرسال",fillAll:"يرجى ملء جميع الحقول",
+      loading:"جاري التحميل…",orderDirect:"اطلب الآن",qty:"كمية",
+      addFav:"أضيف للمفضلة",rmFav:"حُذف",inStock:"متوفر",
+      noProducts:"المتجر قيد الإعداد.",},
+};
+// fallback
+Object.keys(LANGS).forEach(k=>{ if(!T[k]) T[k]={...T.fr}; });
 
-    const PAYMENT_METHODS = [
-      { id:"orange", name:"Orange Money", icon:"🟠", color:"#FF6600" },
-      { id:"mtn",    name:"MTN Mobile Money", icon:"💛", color:"#FFCC00" },
-      { id:"wave",   name:"Wave", icon:"🌊", color:"#1ABCFE" },
-      { id:"moov",   name:"Moov Money", icon:"🔵", color:"#0066FF" },
-      { id:"card",   name:"Carte Bancaire", icon:"💳", color:"#6366f1" },
-      { id:"paypal", name:"PayPal", icon:"🅿️", color:"#003087" },
-    ];
+const PM = [
+  {id:"orange",n:"Orange Money",icon:"🟠",c:"#FF6600"},
+  {id:"mtn",n:"MTN MoMo",icon:"💛",c:"#FFCC00"},
+  {id:"wave",n:"Wave",icon:"🌊",c:"#1ABCFE"},
+  {id:"moov",n:"Moov Money",icon:"🔵",c:"#0066FF"},
+  {id:"card",n:"Carte Bancaire",icon:"💳",c:"#6366f1"},
+  {id:"paypal",n:"PayPal",icon:"🅿️",c:"#003087"},
+];
 
-    const BANNER_TEXT = "🌍  CENTRE DE COMMERCE AKIT — ACCESSIBLE PARTOUT DANS LE MONDE  🌍  VOTRE SATISFACTION NOTRE PRIORITÉ  ✦  LIVRAISON INTERNATIONALE  ✦  PAIEMENT SÉCURISÉ  ✦  RETOURS GRATUITS";
+const BADGES = {
+  nouveau:{bg:"#6366f1",c:"#fff",l:"Nouveau"},
+  promo:{bg:"#ef4444",c:"#fff",l:"Promo"},
+  bestseller:{bg:"#D4A853",c:"#0C0C0F",l:"Best"},
+  luxe:{bg:"#8b5cf6",c:"#fff",l:"Luxe"},
+  tendance:{bg:"#10b981",c:"#fff",l:"Tendance"},
+  exclusif:{bg:"#ec4899",c:"#fff",l:"Exclusif"},
+};
 
-    const useFirebaseProducts = () => {
-      const isFirebase = !!window.db;
-      const loadProducts = async () => {
-        if (isFirebase) {
-          const snap = await window.db.collection("products").orderBy("createdAt", "asc").get();
-          return snap.docs.map(d => ({ ...d.data(), id: d.id }));
-        } else {
-          try { return JSON.parse(localStorage.getItem("akit_products") || "[]"); } catch { return []; }
-        }
-      };
-      const addProduct = async (product) => {
-        if (isFirebase) {
-          const ref = await window.db.collection("products").add({ ...product, createdAt: firebase.firestore.FieldValue.serverTimestamp() });
-          return ref.id;
-        } else {
-          const id = Date.now().toString();
-          const products = JSON.parse(localStorage.getItem("akit_products") || "[]");
-          products.push({ ...product, id });
-          localStorage.setItem("akit_products", JSON.stringify(products));
-          return id;
-        }
-      };
-      const updateProduct = async (id, product) => {
-        if (isFirebase) {
-          await window.db.collection("products").doc(id).update(product);
-        } else {
-          const products = JSON.parse(localStorage.getItem("akit_products") || "[]");
-          const idx = products.findIndex(p => p.id === id);
-          if (idx !== -1) { products[idx] = { ...products[idx], ...product }; localStorage.setItem("akit_products", JSON.stringify(products)); }
-        }
-      };
-      const deleteProduct = async (id) => {
-        if (isFirebase) {
-          await window.db.collection("products").doc(id).delete();
-        } else {
-          const products = JSON.parse(localStorage.getItem("akit_products") || "[]");
-          localStorage.setItem("akit_products", JSON.stringify(products.filter(p => p.id !== id)));
-        }
-      };
-      const subscribeProducts = (callback) => {
-        if (isFirebase) {
-          return window.db.collection("products").orderBy("createdAt", "asc").onSnapshot(snap => {
-            callback(snap.docs.map(d => ({ ...d.data(), id: d.id })));
-          });
-        }
-        return null;
-      };
-      return { isFirebase, loadProducts, addProduct, updateProduct, deleteProduct, subscribeProducts };
-    };
+const BANNER = "✦  AKIT COMMERCE — ACCESSIBLE PARTOUT DANS LE MONDE  ✦  LIVRAISON INTERNATIONALE  ✦  PAIEMENT SÉCURISÉ  ✦  RETOURS GRATUITS  ✦  VOTRE SATISFACTION, NOTRE PRIORITÉ  ✦  ";
 
-    function fmtFCFA(n) { return Number(n).toLocaleString("fr-FR") + " FCFA"; }
+function fmt(n){ return Number(n).toLocaleString("fr-FR")+" FCFA"; }
 
-    function Toast({ msg, ok }) {
-      return (
-        <div style={{position:"fixed",bottom:24,left:"50%",transform:"translateX(-50%)",zIndex:999,animation:"toastPop .35s cubic-bezier(.34,1.56,.64,1) both",pointerEvents:"none"}}>
-          <div style={{display:"flex",alignItems:"center",gap:8,padding:"12px 20px",borderRadius:18,fontSize:14,fontWeight:700,boxShadow:"0 8px 32px rgba(0,0,0,0.5)",background:ok?"linear-gradient(135deg,#10b981,#059669)":"linear-gradient(135deg,#ef4444,#dc2626)",color:"#fff",whiteSpace:"nowrap"}}>
-            <span>{ok?"✅":"❌"}</span> {msg}
+/* ── FIREBASE / LOCALSTORAGE ── */
+function useStore(){
+  const fb = !!window.db;
+  const load = async()=>{
+    if(fb){ const s=await window.db.collection("products").orderBy("createdAt","asc").get(); return s.docs.map(d=>({...d.data(),id:d.id})); }
+    try{ return JSON.parse(localStorage.getItem("akit_p")||"[]"); }catch{ return []; }
+  };
+  const add = async(p)=>{
+    if(fb){ const r=await window.db.collection("products").add({...p,createdAt:firebase.firestore.FieldValue.serverTimestamp()}); return r.id; }
+    const id=Date.now().toString(); const ps=JSON.parse(localStorage.getItem("akit_p")||"[]"); ps.push({...p,id}); localStorage.setItem("akit_p",JSON.stringify(ps)); return id;
+  };
+  const upd = async(id,p)=>{
+    if(fb){ await window.db.collection("products").doc(id).update(p); return; }
+    const ps=JSON.parse(localStorage.getItem("akit_p")||"[]"); const i=ps.findIndex(x=>x.id===id); if(i>=0){ps[i]={...ps[i],...p};localStorage.setItem("akit_p",JSON.stringify(ps));}
+  };
+  const del = async(id)=>{
+    if(fb){ await window.db.collection("products").doc(id).delete(); return; }
+    const ps=JSON.parse(localStorage.getItem("akit_p")||"[]"); localStorage.setItem("akit_p",JSON.stringify(ps.filter(x=>x.id!==id)));
+  };
+  const sub = (cb)=>{
+    if(fb) return window.db.collection("products").orderBy("createdAt","asc").onSnapshot(s=>cb(s.docs.map(d=>({...d.data(),id:d.id}))));
+    return null;
+  };
+  return {fb,load,add,upd,del,sub};
+}
+
+/* ── WA ICON ── */
+const WaIco = ({s=20})=>(
+  <svg width={s} height={s} viewBox="0 0 24 24" fill="currentColor">
+    <path d="M17.472 14.382c-.297-.149-1.758-.867-2.03-.967-.273-.099-.471-.148-.67.15-.197.297-.767.966-.94 1.164-.173.199-.347.223-.644.075-.297-.15-1.255-.463-2.39-1.475-.883-.788-1.48-1.761-1.653-2.059-.173-.297-.018-.458.13-.606.134-.133.298-.347.446-.52.149-.174.198-.298.298-.497.099-.198.05-.371-.025-.52-.075-.149-.669-1.612-.916-2.207-.242-.579-.487-.5-.669-.51-.173-.008-.371-.01-.57-.01-.198 0-.52.074-.792.372-.272.297-1.04 1.016-1.04 2.479 0 1.462 1.065 2.875 1.213 3.074.149.198 2.096 3.2 5.077 4.487.709.306 1.262.489 1.694.625.712.227 1.36.195 1.871.118.571-.085 1.758-.719 2.006-1.413.248-.694.248-1.289.173-1.413-.074-.124-.272-.198-.57-.347m-5.421 7.403h-.004a9.87 9.87 0 01-5.031-1.378l-.361-.214-3.741.982.998-3.648-.235-.374a9.86 9.86 0 01-1.51-5.26c.001-5.45 4.436-9.884 9.888-9.884 2.64 0 5.122 1.03 6.988 2.898a9.825 9.825 0 012.893 6.994c-.003 5.45-4.437 9.884-9.885 9.884m8.413-18.297A11.815 11.815 0 0012.05 0C5.495 0 .16 5.335.157 11.892c0 2.096.547 4.142 1.588 5.945L.057 24l6.305-1.654a11.882 11.882 0 005.683 1.448h.005c6.554 0 11.89-5.335 11.893-11.893a11.821 11.821 0 00-3.48-8.413Z"/>
+  </svg>
+);
+
+/* ── TOAST ── */
+function Toast({msg,ok}){
+  return (
+    <div style={{position:"fixed",bottom:28,left:"50%",zIndex:999,animation:"toastIn .35s ease both",pointerEvents:"none",transform:"translateX(-50%)"}}>
+      <div style={{display:"flex",alignItems:"center",gap:8,padding:"11px 20px",borderRadius:40,fontSize:13,fontWeight:600,background:ok?"#10b981":"#ef4444",color:"#fff",boxShadow:"0 8px 32px rgba(0,0,0,.5)",whiteSpace:"nowrap"}}>
+        {msg}
+      </div>
+    </div>
+  );
+}
+
+/* ── STARS ── */
+function Stars({r}){
+  r=Number(r)||0;
+  return <span style={{letterSpacing:1,color:"#D4A853",fontSize:11}}>{[1,2,3,4,5].map(i=>i<=Math.round(r)?"★":"☆").join("")}</span>;
+}
+
+/* ── CLOUDINARY UPLOAD ── */
+function ImgUpload({value,onChange,showToast}){
+  const [prog,setProg]=useState(0);
+  const [busy,setBusy]=useState(false);
+  const [drag,setDrag]=useState(false);
+  const ref=useRef();
+
+  const handle=async(file)=>{
+    if(!file)return;
+    if(!file.type.startsWith("image/")){showToast("❌ Fichier invalide",false);return;}
+    if(file.size>10*1024*1024){showToast("❌ Max 10MB",false);return;}
+    setBusy(true);setProg(0);
+    try{
+      const url=await window.uploadCLD(file,p=>setProg(p));
+      onChange(url);
+      showToast("✅ Image uploadée !");
+    }catch(e){showToast("❌ "+e.message,false);}
+    finally{setBusy(false);setProg(0);}
+  };
+
+  return (
+    <div>
+      <div style={{fontSize:11,color:"rgba(240,237,232,.5)",marginBottom:6,display:"flex",alignItems:"center",gap:8}}>
+        Image produit
+        <span style={{background:"rgba(16,185,129,.12)",color:"#10b981",border:"1px solid rgba(16,185,129,.25)",borderRadius:6,padding:"1px 7px",fontSize:9}}>☁ CDN mondial</span>
+      </div>
+      <div style={{display:"flex",gap:10,alignItems:"flex-start"}}>
+        <div style={{width:76,height:76,borderRadius:12,background:"rgba(255,255,255,.05)",border:"1px solid rgba(255,255,255,.1)",flexShrink:0,overflow:"hidden",display:"flex",alignItems:"center",justifyContent:"center",position:"relative"}}>
+          {value?<img src={value} alt="" style={{width:"100%",height:"100%",objectFit:"cover"}}/>:<span style={{fontSize:28}}>📦</span>}
+          {busy&&<div style={{position:"absolute",inset:0,background:"rgba(0,0,0,.7)",display:"flex",alignItems:"center",justifyContent:"center"}}><div className="spin" style={{width:22,height:22,borderWidth:2}}/></div>}
+        </div>
+        <div style={{flex:1}}>
+          <div
+            className={`upload-zone${drag?" drag":""}`}
+            onClick={()=>!busy&&ref.current?.click()}
+            onDragOver={e=>{e.preventDefault();setDrag(true);}}
+            onDragLeave={()=>setDrag(false)}
+            onDrop={e=>{e.preventDefault();setDrag(false);handle(e.dataTransfer.files[0]);}}
+          >
+            <input ref={ref} type="file" accept="image/*" onChange={e=>handle(e.target.files[0])} style={{display:"none"}}/>
+            {busy?(
+              <div>
+                <div style={{fontSize:12,color:"#D4A853",fontWeight:600,marginBottom:4}}>Envoi… {prog}%</div>
+                <div className="prog-bar"><div className="prog-fill" style={{width:prog+"%"}}/></div>
+              </div>
+            ):value?(
+              <div style={{fontSize:11,color:"#10b981",fontWeight:600}}>✅ Hébergée sur Cloudinary</div>
+            ):(
+              <div>
+                <div style={{fontSize:13,marginBottom:3}}>📁</div>
+                <div style={{fontSize:11,color:"rgba(240,237,232,.45)",fontWeight:600}}>Cliquer ou glisser</div>
+                <div style={{fontSize:9,color:"rgba(240,237,232,.25)",marginTop:2}}>JPG · PNG · WEBP · max 10MB</div>
+              </div>
+            )}
+          </div>
+          {value&&!busy&&(
+            <button onClick={()=>onChange("")} style={{width:"100%",marginTop:5,padding:"5px 0",borderRadius:8,border:"1px solid rgba(239,68,68,.35)",background:"rgba(239,68,68,.08)",color:"#ef4444",cursor:"pointer",fontFamily:"Inter,sans-serif",fontWeight:600,fontSize:11}}>
+              🗑 Supprimer
+            </button>
+          )}
+        </div>
+      </div>
+    </div>
+  );
+}
+
+/* ── ORDER MODAL (panier complet) ── */
+function OrderModal({cart,total,t,onClose,onDone}){
+  const [v,setV]=useState(""); const [q,setQ]=useState(""); const [p,setP]=useState(""); const [pm,setPm]=useState("orange"); const [err,setErr]=useState("");
+  const send=()=>{
+    if(!v.trim()||!q.trim()||!p.trim()){setErr(t.fillAll);return;}
+    const lines=cart.map(i=>`• ${i.emoji||"📦"} ${i.name} ×${i.qty} = ${fmt(i.price*i.qty)}`).join("\n");
+    const m=PM.find(x=>x.id===pm);
+    const msg=`🛍️ *COMMANDE — AKIT COMMERCE*\n\n${lines}\n\n💰 *TOTAL: ${fmt(total)}*\n💳 ${m.n}\n\n📍 ${v} / ${q}\n📞 ${p}\n\n_AKIT Commerce 🌍_`;
+    window.open(`https://wa.me/${window.WA}?text=${encodeURIComponent(msg)}`,"_blank");
+    onDone();
+  };
+  return (
+    <div className="overlay" onClick={e=>e.target===e.currentTarget&&onClose()}>
+      <div className="modal">
+        <div style={{display:"flex",justifyContent:"space-between",alignItems:"center",marginBottom:18}}>
+          <div className="font-display" style={{fontSize:17,color:"#D4A853"}}>Informations de livraison</div>
+          <button onClick={onClose} className="btn-ghost" style={{width:32,height:32,borderRadius:8,fontSize:16}}>✕</button>
+        </div>
+        <div style={{background:"rgba(255,255,255,.04)",borderRadius:12,padding:"12px 14px",marginBottom:14,border:"1px solid rgba(255,255,255,.06)"}}>
+          {cart.map(i=>(
+            <div key={i.id} style={{display:"flex",justifyContent:"space-between",fontSize:13,padding:"3px 0"}}>
+              <span style={{color:"rgba(240,237,232,.7)"}}>{i.emoji||"📦"} {i.name} ×{i.qty}</span>
+              <span style={{color:"#D4A853",fontWeight:700}}>{fmt(i.price*i.qty)}</span>
+            </div>
+          ))}
+          <div style={{borderTop:"1px solid rgba(255,255,255,.08)",marginTop:8,paddingTop:8,display:"flex",justifyContent:"space-between",fontWeight:700,fontSize:14}}>
+            <span>{t.total}</span><span style={{color:"#D4A853"}}>{fmt(total)}</span>
           </div>
         </div>
-      );
-    }
+        <div style={{display:"flex",flexDirection:"column",gap:10,marginBottom:14}}>
+          <div><label style={{fontSize:11,color:"rgba(240,237,232,.45)",display:"block",marginBottom:4}}>🏙 {t.ville}</label><input className="inp" value={v} onChange={e=>setV(e.target.value)} placeholder="Douala, Yaoundé…"/></div>
+          <div><label style={{fontSize:11,color:"rgba(240,237,232,.45)",display:"block",marginBottom:4}}>🏘 {t.quartier}</label><input className="inp" value={q} onChange={e=>setQ(e.target.value)} placeholder="Akwa, Bonamoussadi…"/></div>
+          <div><label style={{fontSize:11,color:"rgba(240,237,232,.45)",display:"block",marginBottom:4}}>📞 {t.phone}</label><input className="inp" type="tel" value={p} onChange={e=>setP(e.target.value)} placeholder="+237 6XX XXX XXX"/></div>
+        </div>
+        <div style={{marginBottom:14}}>
+          <div style={{fontSize:11,color:"rgba(240,237,232,.45)",marginBottom:8}}>💳 Mode de paiement</div>
+          <div style={{display:"grid",gridTemplateColumns:"1fr 1fr",gap:7}}>
+            {PM.map(m=>(
+              <div key={m.id} className={`pmcard${pm===m.id?" sel":""}`} onClick={()=>setPm(m.id)}>
+                <span style={{fontSize:16}}>{m.icon}</span>
+                <span style={{fontSize:12,fontWeight:600,lineHeight:1.2}}>{m.n}</span>
+              </div>
+            ))}
+          </div>
+        </div>
+        {err&&<div style={{color:"#ef4444",fontSize:12,marginBottom:10,textAlign:"center"}}>{err}</div>}
+        <button onClick={send} style={{width:"100%",padding:"13px 0",borderRadius:13,border:"none",background:"linear-gradient(135deg,#25D366,#128C7E)",color:"#fff",fontWeight:700,fontSize:14,cursor:"pointer",fontFamily:"Inter,sans-serif",display:"flex",alignItems:"center",justifyContent:"center",gap:9}}>
+          <WaIco s={18}/> {t.confirmOrder}
+        </button>
+      </div>
+    </div>
+  );
+}
 
-    function Stars({ r }) {
-      return (
-        <div style={{display:"flex",gap:2}}>
-          {[1,2,3,4,5].map(s=>(
-            <svg key={s} width="12" height="12" viewBox="0 0 24 24" fill={s<=Math.round(r)?"#fbbf24":"#334155"}>
-              <path d="M12 2l3.09 6.26L22 9.27l-5 4.87 1.18 6.88L12 17.77l-6.18 3.25L7 14.14 2 9.27l6.91-1.01L12 2z"/>
-            </svg>
+/* ── QUICK ORDER ── */
+function QuickModal({product,t,onClose,onDone}){
+  const [v,setV]=useState(""); const [q,setQ]=useState(""); const [p,setP]=useState(""); const [qty,setQty]=useState(1); const [pm,setPm]=useState("orange"); const [err,setErr]=useState("");
+  const total=product.price*qty;
+  const send=()=>{
+    if(!v.trim()||!q.trim()||!p.trim()){setErr(t.fillAll);return;}
+    const m=PM.find(x=>x.id===pm);
+    const msg=`🛍️ *COMMANDE DIRECTE — AKIT COMMERCE*\n\n• ${product.emoji||"📦"} *${product.name}* ×${qty} = ${fmt(total)}\n\n💰 *TOTAL: ${fmt(total)}*\n💳 ${m.n}\n\n📍 ${v} / ${q}\n📞 ${p}\n\n_AKIT Commerce 🌍_`;
+    window.open(`https://wa.me/${window.WA}?text=${encodeURIComponent(msg)}`,"_blank");
+    onDone();
+  };
+  return (
+    <div className="overlay" onClick={e=>e.target===e.currentTarget&&onClose()}>
+      <div className="modal">
+        <div style={{display:"flex",justifyContent:"space-between",alignItems:"flex-start",marginBottom:16}}>
+          <div style={{display:"flex",gap:12,alignItems:"center"}}>
+            <div style={{width:52,height:52,borderRadius:12,overflow:"hidden",flexShrink:0,background:"rgba(255,255,255,.05)",display:"flex",alignItems:"center",justifyContent:"center",fontSize:26}}>
+              {product.image?<img src={product.image} alt="" style={{width:"100%",height:"100%",objectFit:"cover"}}/>:product.emoji||"📦"}
+            </div>
+            <div>
+              <div style={{fontWeight:700,fontSize:14}}>{product.name}</div>
+              <div style={{color:"#D4A853",fontWeight:700,fontSize:15}}>{fmt(product.price)}</div>
+            </div>
+          </div>
+          <button onClick={onClose} className="btn-ghost" style={{width:32,height:32,borderRadius:8,fontSize:16,flexShrink:0}}>✕</button>
+        </div>
+        <div style={{display:"flex",alignItems:"center",gap:12,marginBottom:14,background:"rgba(255,255,255,.04)",borderRadius:12,padding:"10px 14px"}}>
+          <span style={{fontSize:13,color:"rgba(240,237,232,.6)",flex:1}}>{t.qty}</span>
+          <button onClick={()=>setQty(n=>Math.max(1,n-1))} className="btn-ghost" style={{width:30,height:30,borderRadius:"50%",fontSize:16,display:"flex",alignItems:"center",justifyContent:"center",padding:0}}>−</button>
+          <span style={{fontWeight:700,fontSize:17,minWidth:22,textAlign:"center"}}>{qty}</span>
+          <button onClick={()=>setQty(n=>n+1)} className="btn-ghost" style={{width:30,height:30,borderRadius:"50%",fontSize:16,display:"flex",alignItems:"center",justifyContent:"center",padding:0}}>+</button>
+          <span style={{fontSize:13,color:"#D4A853",fontWeight:700,minWidth:80,textAlign:"right"}}>{fmt(total)}</span>
+        </div>
+        <div style={{display:"flex",flexDirection:"column",gap:9,marginBottom:14}}>
+          <div><label style={{fontSize:11,color:"rgba(240,237,232,.45)",display:"block",marginBottom:4}}>🏙 {t.ville}</label><input className="inp" value={v} onChange={e=>setV(e.target.value)} placeholder="Douala…"/></div>
+          <div><label style={{fontSize:11,color:"rgba(240,237,232,.45)",display:"block",marginBottom:4}}>🏘 {t.quartier}</label><input className="inp" value={q} onChange={e=>setQ(e.target.value)} placeholder="Akwa…"/></div>
+          <div><label style={{fontSize:11,color:"rgba(240,237,232,.45)",display:"block",marginBottom:4}}>📞 {t.phone}</label><input className="inp" type="tel" value={p} onChange={e=>setP(e.target.value)} placeholder="+237 6XX XXX XXX"/></div>
+        </div>
+        <div style={{marginBottom:13}}>
+          <div style={{fontSize:11,color:"rgba(240,237,232,.45)",marginBottom:7}}>💳 Paiement</div>
+          <div style={{display:"grid",gridTemplateColumns:"1fr 1fr",gap:6}}>
+            {PM.map(m=>(
+              <div key={m.id} className={`pmcard${pm===m.id?" sel":""}`} onClick={()=>setPm(m.id)}>
+                <span style={{fontSize:15}}>{m.icon}</span>
+                <span style={{fontSize:11,fontWeight:600,lineHeight:1.2}}>{m.n}</span>
+              </div>
+            ))}
+          </div>
+        </div>
+        {err&&<div style={{color:"#ef4444",fontSize:12,marginBottom:10,textAlign:"center"}}>{err}</div>}
+        <button onClick={send} style={{width:"100%",padding:"12px 0",borderRadius:13,border:"none",background:"linear-gradient(135deg,#25D366,#128C7E)",color:"#fff",fontWeight:700,fontSize:14,cursor:"pointer",fontFamily:"Inter,sans-serif",display:"flex",alignItems:"center",justifyContent:"center",gap:8}}>
+          <WaIco s={17}/> {t.confirmOrder} — {fmt(total)}
+        </button>
+      </div>
+    </div>
+  );
+}
+
+/* ════════════════════════════════════════════════
+   ADMIN PANEL — Page complète pour toi seul
+════════════════════════════════════════════════ */
+function AdminPanel({products,onBack,onLogout,store,showToast}){
+  const empty={name:"",price:"",category:"",description:"",emoji:"📦",image:"",inStock:true,badge:"",rating:"4.5",reviews:"0"};
+  const [form,setForm]=useState(empty);
+  const [editId,setEditId]=useState(null);
+
+  const save=async()=>{
+    if(!form.name||!form.price){showToast("Nom et prix requis",false);return;}
+    const data={...form,price:Number(form.price)};
+    try{
+      if(editId!==null){
+        await store.upd(editId,data);
+        showToast("✅ Produit modifié !");
+      } else {
+        await store.add(data);
+        showToast("✅ Produit ajouté !");
+      }
+    }catch(e){showToast("❌ "+e.message,false);}
+    setForm(empty);setEditId(null);
+  };
+
+  const del=async(id)=>{
+    try{ await store.del(id); showToast("🗑 Supprimé"); }
+    catch(e){showToast("❌ Erreur",false);}
+  };
+
+  const startEdit=(p)=>{
+    setForm({name:p.name,price:String(p.price),category:p.category||"",description:p.description||"",emoji:p.emoji||"📦",image:p.image||"",inStock:p.inStock,badge:p.badge||"",rating:String(p.rating||4.5),reviews:String(p.reviews||0)});
+    setEditId(p.id);
+    window.scrollTo({top:0,behavior:"smooth"});
+  };
+
+  const stats=[
+    {l:"Produits",v:products.length,icon:"📦",c:"#D4A853"},
+    {l:"En stock",v:products.filter(p=>p.inStock).length,icon:"✅",c:"#10b981"},
+    {l:"Rupture",v:products.filter(p=>!p.inStock).length,icon:"❌",c:"#ef4444"},
+    {l:"Catégories",v:new Set(products.map(p=>p.category).filter(Boolean)).size,icon:"🗂",c:"#6366f1"},
+  ];
+
+  return (
+    <div style={{minHeight:"100vh",background:"#0C0C0F",color:"#F0EDE8",fontFamily:"Inter,sans-serif"}}>
+      {/* ADMIN HEADER */}
+      <div style={{position:"sticky",top:0,zIndex:100,background:"rgba(12,12,15,.97)",backdropFilter:"blur(20px)",borderBottom:"1px solid rgba(212,168,83,.3)",padding:"14px 20px",display:"flex",alignItems:"center",justifyContent:"space-between",gap:12,flexWrap:"wrap"}}>
+        <div style={{display:"flex",alignItems:"center",gap:12}}>
+          <div style={{width:38,height:38,borderRadius:10,background:"#D4A853",display:"flex",alignItems:"center",justifyContent:"center",fontFamily:"Syne,sans-serif",fontWeight:800,fontSize:17,color:"#0C0C0F"}}>A</div>
+          <div>
+            <div className="font-display" style={{fontSize:15,color:"#D4A853",fontWeight:700}}>Panneau Admin — AKIT</div>
+            <div style={{fontSize:11,color:"rgba(240,237,232,.4)"}}>
+              {store.fb?"🔥 Firebase":"💾 Local"} · ☁ Cloudinary
+            </div>
+          </div>
+        </div>
+        <div style={{display:"flex",gap:8}}>
+          <button onClick={onBack} className="btn-ghost" style={{padding:"7px 14px",borderRadius:10,fontSize:13}}>👁 Boutique</button>
+          <button onClick={onLogout} style={{padding:"7px 14px",borderRadius:10,border:"1px solid rgba(239,68,68,.4)",background:"rgba(239,68,68,.08)",color:"#ef4444",cursor:"pointer",fontFamily:"Inter,sans-serif",fontSize:13}}>🚪 Déconnexion</button>
+        </div>
+      </div>
+
+      <div style={{maxWidth:1100,margin:"0 auto",padding:"24px 14px"}}>
+        {/* STATS */}
+        <div className="stats-row" style={{display:"grid",gridTemplateColumns:"repeat(4,1fr)",gap:10,marginBottom:24}}>
+          {stats.map((s,i)=>(
+            <div key={i} style={{background:"rgba(255,255,255,.04)",border:"1px solid rgba(255,255,255,.06)",borderRadius:14,padding:"14px 16px",borderLeft:`3px solid ${s.c}`}}>
+              <div style={{fontSize:22,marginBottom:4}}>{s.icon}</div>
+              <div style={{fontSize:26,fontWeight:700,color:s.c}}>{s.v}</div>
+              <div style={{fontSize:11,color:"rgba(240,237,232,.4)"}}>{s.l}</div>
+            </div>
           ))}
         </div>
-      );
-    }
 
-    const WaIcon = ({size=20}) => (
-      <svg width={size} height={size} viewBox="0 0 24 24" fill="white">
-        <path d="M17.472 14.382c-.297-.149-1.758-.867-2.03-.967-.273-.099-.471-.148-.67.15-.197.297-.767.966-.94 1.164-.173.199-.347.223-.644.075-.297-.15-1.255-.463-2.39-1.475-.883-.788-1.48-1.761-1.653-2.059-.173-.297-.018-.458.13-.606.134-.133.298-.347.446-.52.149-.174.198-.298.298-.497.099-.198.05-.371-.025-.52-.075-.149-.669-1.612-.916-2.207-.242-.579-.487-.5-.669-.51-.173-.008-.371-.01-.57-.01-.198 0-.52.074-.792.372-.272.297-1.04 1.016-1.04 2.479 0 1.462 1.065 2.875 1.213 3.074.149.198 2.096 3.2 5.077 4.487.709.306 1.262.489 1.694.625.712.227 1.36.195 1.871.118.571-.085 1.758-.719 2.006-1.413.248-.694.248-1.289.173-1.413-.074-.124-.272-.198-.57-.347m-5.421 7.403h-.004a9.87 9.87 0 01-5.031-1.378l-.361-.214-3.741.982.998-3.648-.235-.374a9.86 9.86 0 01-1.51-5.26c.001-5.45 4.436-9.884 9.888-9.884 2.64 0 5.122 1.03 6.988 2.898a9.825 9.825 0 012.893 6.994c-.003 5.45-4.437 9.884-9.885 9.884m8.413-18.297A11.815 11.815 0 0012.05 0C5.495 0 .16 5.335.157 11.892c0 2.096.547 4.142 1.588 5.945L.057 24l6.305-1.654a11.882 11.882 0 005.683 1.448h.005c6.554 0 11.89-5.335 11.893-11.893a11.821 11.821 0 00-3.48-8.413Z"/>
-      </svg>
-    );
-
-    // ══ COMPOSANT UPLOAD IMAGE CLOUDINARY ══
-    function CloudinaryUpload({ value, onChange, showToast }) {
-      const [uploading, setUploading] = useState(false);
-      const [progress, setProgress] = useState(0);
-      const [dragOver, setDragOver] = useState(false);
-      const inputRef = useRef(null);
-
-      const handleFile = async (file) => {
-        if (!file) return;
-        if (!file.type.startsWith("image/")) { showToast("❌ Fichier non supporté", false); return; }
-        if (file.size > 10 * 1024 * 1024) { showToast("❌ Image trop grande (max 10MB)", false); return; }
-        setUploading(true);
-        setProgress(0);
-        try {
-          const url = await window.uploadToCloudinary(file, (p) => setProgress(p));
-          onChange(url);
-          showToast("✅ Image uploadée sur Cloudinary !");
-        } catch (err) {
-          showToast("❌ Erreur: " + err.message, false);
-        } finally {
-          setUploading(false);
-          setProgress(0);
-        }
-      };
-
-      const onDrop = (e) => {
-        e.preventDefault();
-        setDragOver(false);
-        const file = e.dataTransfer.files[0];
-        if (file) handleFile(file);
-      };
-
-      return (
-        <div>
-          <label style={{fontSize:11,color:"rgba(255,255,255,0.5)",display:"block",marginBottom:6}}>
-            🖼️ Image du produit
-            <span style={{marginLeft:8,fontSize:9,background:"rgba(16,185,129,0.15)",color:"#10b981",borderRadius:6,padding:"1px 6px",border:"1px solid rgba(16,185,129,0.3)"}}>
-              ☁️ Cloudinary · Visible mondialement
-            </span>
-          </label>
-          <div style={{display:"flex",gap:10,alignItems:"flex-start"}}>
-            {/* APERÇU */}
-            <div style={{width:80,height:80,borderRadius:14,background:"rgba(255,255,255,0.06)",border:"2px solid rgba(217,119,6,0.3)",display:"flex",alignItems:"center",justifyContent:"center",overflow:"hidden",flexShrink:0,position:"relative"}}>
-              {value
-                ? <img src={value} alt="" style={{width:"100%",height:"100%",objectFit:"cover"}}/>
-                : <span style={{fontSize:32}}>📦</span>
-              }
-              {uploading && (
-                <div style={{position:"absolute",inset:0,background:"rgba(0,0,0,0.7)",display:"flex",alignItems:"center",justifyContent:"center",borderRadius:12}}>
-                  <div className="spinner" style={{width:24,height:24,borderWidth:2}}/>
+        <div className="admin-split" style={{display:"grid",gridTemplateColumns:"1fr 1fr",gap:18}}>
+          {/* FORMULAIRE */}
+          <div style={{background:"rgba(255,255,255,.03)",border:"1px solid rgba(255,255,255,.07)",borderRadius:18,padding:22}}>
+            <div className="font-display" style={{fontSize:15,color:"#D4A853",marginBottom:18,fontWeight:700}}>
+              {editId!==null?"✏️ Modifier":"➕ Ajouter un produit"}
+            </div>
+            <div style={{display:"flex",flexDirection:"column",gap:11}}>
+              <ImgUpload value={form.image} onChange={url=>setForm(f=>({...f,image:url,emoji:url?"":f.emoji}))} showToast={showToast}/>
+              {!form.image&&(
+                <div>
+                  <label style={{fontSize:11,color:"rgba(240,237,232,.4)",display:"block",marginBottom:4}}>Emoji (si pas d'image)</label>
+                  <input className="inp" value={form.emoji} onChange={e=>setForm(f=>({...f,emoji:e.target.value}))} placeholder="📦" style={{textAlign:"center",fontSize:22}}/>
                 </div>
               )}
-            </div>
-            <div style={{flex:1}}>
-              <div
-                className={`upload-zone ${uploading?"uploading":value?"done":""}`}
-                onClick={()=>!uploading&&inputRef.current?.click()}
-                onDragOver={e=>{e.preventDefault();setDragOver(true);}}
-                onDragLeave={()=>setDragOver(false)}
-                onDrop={onDrop}
-                style={{borderColor:dragOver?"#f59e0b":undefined}}
-              >
-                <input ref={inputRef} type="file" accept="image/*" onChange={e=>handleFile(e.target.files[0])} style={{display:"none"}}/>
-                {uploading ? (
-                  <div>
-                    <div style={{fontSize:12,color:"#10b981",fontWeight:700,marginBottom:6}}>⏳ Upload en cours… {progress}%</div>
-                    <div className="progress-bar"><div className="progress-fill" style={{width:`${progress}%`}}/></div>
-                  </div>
-                ) : value ? (
-                  <div style={{fontSize:11,color:"#10b981",fontWeight:700}}>✅ Image uploadée sur Cloudinary</div>
-                ) : (
-                  <div>
-                    <div style={{fontSize:20,marginBottom:4}}>📁</div>
-                    <div style={{fontSize:11,color:"rgba(255,255,255,0.5)",fontWeight:700}}>Cliquer ou glisser-déposer</div>
-                    <div style={{fontSize:9,color:"rgba(255,255,255,0.3)",marginTop:2}}>JPG, PNG, WEBP · max 10MB</div>
-                  </div>
-                )}
-              </div>
-              {value && !uploading && (
-                <button onClick={()=>onChange("")} style={{width:"100%",marginTop:6,padding:"5px 0",borderRadius:8,border:"1px solid rgba(239,68,68,0.4)",background:"rgba(239,68,68,0.08)",color:"#ef4444",cursor:"pointer",fontFamily:"'Nunito',sans-serif",fontWeight:700,fontSize:11}}>
-                  🗑️ Supprimer l'image
-                </button>
-              )}
-            </div>
-          </div>
-        </div>
-      );
-    }
-
-    function OrderModal({ cart, cartTotal, t, onClose, onSuccess }) {
-      const [ville, setVille] = useState("");
-      const [quartier, setQuartier] = useState("");
-      const [phone, setPhone] = useState("");
-      const [payMethod, setPayMethod] = useState("orange");
-      const [err, setErr] = useState("");
-
-      const sendWhatsApp = () => {
-        if (!ville.trim() || !quartier.trim() || !phone.trim()) { setErr(t.fillAll); return; }
-        const lines = cart.map(i=>`• ${i.emoji||"📦"} ${i.name} x${i.qty} = ${fmtFCFA(i.price*i.qty)}`).join("\n");
-        const pm = PAYMENT_METHODS.find(m=>m.id===payMethod);
-        const msg = `🛍️ *NOUVELLE COMMANDE — AKIT COMMERCE*\n\n${lines}\n\n💰 *TOTAL: ${fmtFCFA(cartTotal)}*\n💳 *Paiement: ${pm.name}*\n\n📍 *Infos de livraison:*\n🏙️ Ville: ${ville}\n🏘️ Quartier: ${quartier}\n📞 Téléphone: ${phone}\n\n_Commande envoyée depuis AKIT Commerce_ 🌍`;
-        window.open(`https://wa.me/${WHATSAPP_NUMBER}?text=${encodeURIComponent(msg)}`, "_blank");
-        onSuccess();
-      };
-
-      return (
-        <div className="modal-overlay" onClick={e=>e.target===e.currentTarget&&onClose()}>
-          <div className="modal-box">
-            <div style={{display:"flex",justifyContent:"space-between",alignItems:"center",marginBottom:20}}>
-              <div>
-                <div style={{fontFamily:"'Cinzel',serif",fontSize:18,fontWeight:900,color:"#f59e0b"}}>{t.orderInfo}</div>
-                <div style={{fontSize:12,color:"rgba(255,255,255,0.4)",marginTop:2}}>{t.orderInfoDesc}</div>
-              </div>
-              <button onClick={onClose} style={{background:"rgba(255,255,255,0.08)",border:"none",borderRadius:10,width:34,height:34,color:"#fff",cursor:"pointer",fontSize:18,display:"flex",alignItems:"center",justifyContent:"center"}}>✕</button>
-            </div>
-            <div style={{background:"rgba(255,255,255,0.04)",borderRadius:14,padding:"12px 14px",marginBottom:16,border:"1px solid rgba(255,255,255,0.07)"}}>
-              {cart.map(item=>(
-                <div key={item.id} style={{display:"flex",justifyContent:"space-between",padding:"4px 0",fontSize:13}}>
-                  <span style={{color:"rgba(255,255,255,0.7)"}}>{item.emoji||"📦"} {item.name} ×{item.qty}</span>
-                  <span style={{color:"#f59e0b",fontWeight:800}}>{fmtFCFA(item.price*item.qty)}</span>
-                </div>
-              ))}
-              <div style={{borderTop:"1px solid rgba(255,255,255,0.1)",marginTop:8,paddingTop:8,display:"flex",justifyContent:"space-between",fontWeight:900,fontSize:15}}>
-                <span>{t.total}</span>
-                <span style={{color:"#f59e0b",fontFamily:"'Cinzel',serif"}}>{fmtFCFA(cartTotal)}</span>
-              </div>
-            </div>
-            <div style={{display:"flex",flexDirection:"column",gap:10,marginBottom:16}}>
-              <div><label style={{fontSize:11,color:"rgba(255,255,255,0.5)",display:"block",marginBottom:5}}>🏙️ {t.ville} *</label><input className="input-field" value={ville} onChange={e=>setVille(e.target.value)} placeholder="Ex: Douala, Yaoundé…"/></div>
-              <div><label style={{fontSize:11,color:"rgba(255,255,255,0.5)",display:"block",marginBottom:5}}>🏘️ {t.quartier} *</label><input className="input-field" value={quartier} onChange={e=>setQuartier(e.target.value)} placeholder="Ex: Akwa, Cocody…"/></div>
-              <div><label style={{fontSize:11,color:"rgba(255,255,255,0.5)",display:"block",marginBottom:5}}>📞 {t.phone} *</label><input className="input-field" type="tel" value={phone} onChange={e=>setPhone(e.target.value)} placeholder="+237 6XX XXX XXX"/></div>
-            </div>
-            <div style={{marginBottom:16}}>
-              <label style={{fontSize:11,color:"rgba(255,255,255,0.5)",display:"block",marginBottom:8}}>💳 Mode de paiement</label>
-              <div style={{display:"grid",gridTemplateColumns:"1fr 1fr",gap:8}}>
-                {PAYMENT_METHODS.map(m=>(
-                  <button key={m.id} onClick={()=>setPayMethod(m.id)} style={{display:"flex",alignItems:"center",gap:8,padding:"10px 12px",borderRadius:12,border:payMethod===m.id?`2px solid ${m.color}`:"1px solid rgba(255,255,255,0.08)",background:payMethod===m.id?`${m.color}22`:"rgba(255,255,255,0.03)",cursor:"pointer",color:"#fff",fontFamily:"'Nunito',sans-serif",fontWeight:700,fontSize:12,transition:"all .2s"}}>
-                    <span style={{fontSize:18}}>{m.icon}</span>
-                    <span style={{textAlign:"left",lineHeight:1.2}}>{m.name}</span>
-                    {payMethod===m.id&&<span style={{marginLeft:"auto",color:m.color,fontSize:14}}>✓</span>}
-                  </button>
-                ))}
-              </div>
-            </div>
-            {err&&<div style={{color:"#ef4444",fontSize:12,marginBottom:10,textAlign:"center"}}>{err}</div>}
-            <button onClick={sendWhatsApp} style={{width:"100%",padding:"14px 0",borderRadius:14,border:"none",background:"linear-gradient(135deg,#25D366,#128C7E)",color:"#fff",fontWeight:900,fontSize:15,cursor:"pointer",fontFamily:"'Nunito',sans-serif",display:"flex",alignItems:"center",justifyContent:"center",gap:10}}>
-              <WaIcon size={22}/> {t.confirmOrder}
-            </button>
-          </div>
-        </div>
-      );
-    }
-
-    function QuickOrderModal({ product, t, onClose, onSuccess }) {
-      const [ville, setVille] = useState("");
-      const [quartier, setQuartier] = useState("");
-      const [phone, setPhone] = useState("");
-      const [qty, setQty] = useState(1);
-      const [payMethod, setPayMethod] = useState("orange");
-      const [err, setErr] = useState("");
-      const total = product.price * qty;
-
-      const sendWhatsApp = () => {
-        if (!ville.trim() || !quartier.trim() || !phone.trim()) { setErr(t.fillAll); return; }
-        const pm = PAYMENT_METHODS.find(m=>m.id===payMethod);
-        const msg = `🛍️ *COMMANDE DIRECTE — AKIT COMMERCE*\n\n• ${product.emoji||"📦"} *${product.name}* x${qty} = ${fmtFCFA(total)}\n\n💰 *TOTAL: ${fmtFCFA(total)}*\n💳 *Paiement: ${pm.name}*\n\n📍 *Infos de livraison:*\n🏙️ Ville: ${ville}\n🏘️ Quartier: ${quartier}\n📞 Téléphone: ${phone}\n\n_Commande envoyée depuis AKIT Commerce_ 🌍`;
-        window.open(`https://wa.me/${WHATSAPP_NUMBER}?text=${encodeURIComponent(msg)}`, "_blank");
-        onSuccess();
-      };
-
-      return (
-        <div className="modal-overlay" onClick={e=>e.target===e.currentTarget&&onClose()}>
-          <div className="modal-box">
-            <div style={{display:"flex",justifyContent:"space-between",alignItems:"flex-start",marginBottom:18}}>
-              <div style={{display:"flex",gap:12,alignItems:"center"}}>
-                <div style={{width:52,height:52,borderRadius:14,background:"rgba(217,119,6,0.12)",display:"flex",alignItems:"center",justifyContent:"center",fontSize:30,flexShrink:0,overflow:"hidden"}}>
-                  {product.image?<img src={product.image} alt="" style={{width:"100%",height:"100%",objectFit:"cover",borderRadius:14}}/>:product.emoji||"📦"}
+              <div style={{display:"grid",gridTemplateColumns:"1fr 1fr",gap:9}}>
+                <div>
+                  <label style={{fontSize:11,color:"rgba(240,237,232,.4)",display:"block",marginBottom:4}}>Badge</label>
+                  <select className="inp" value={form.badge} onChange={e=>setForm(f=>({...f,badge:e.target.value}))} style={{cursor:"pointer"}}>
+                    <option value="">Aucun</option>
+                    <option value="nouveau">🆕 Nouveau</option>
+                    <option value="promo">🔥 Promo</option>
+                    <option value="bestseller">⭐ Bestseller</option>
+                    <option value="luxe">💎 Luxe</option>
+                    <option value="tendance">📈 Tendance</option>
+                    <option value="exclusif">✨ Exclusif</option>
+                  </select>
                 </div>
                 <div>
-                  <div style={{fontWeight:800,fontSize:14,lineHeight:1.3}}>{product.name}</div>
-                  <div style={{color:"#f59e0b",fontFamily:"'Cinzel',serif",fontWeight:900,fontSize:15}}>{fmtFCFA(product.price)}</div>
+                  <label style={{fontSize:11,color:"rgba(240,237,232,.4)",display:"block",marginBottom:4}}>Catégorie</label>
+                  <input className="inp" value={form.category} onChange={e=>setForm(f=>({...f,category:e.target.value}))} placeholder="Mode, Tech…"/>
                 </div>
               </div>
-              <button onClick={onClose} style={{background:"rgba(255,255,255,0.08)",border:"none",borderRadius:10,width:34,height:34,color:"#fff",cursor:"pointer",fontSize:18,display:"flex",alignItems:"center",justifyContent:"center",flexShrink:0}}>✕</button>
-            </div>
-            <div style={{display:"flex",alignItems:"center",gap:12,marginBottom:16,background:"rgba(255,255,255,0.04)",borderRadius:12,padding:"10px 14px"}}>
-              <span style={{fontSize:13,color:"rgba(255,255,255,0.6)",flex:1}}>{t.qty}</span>
-              <button onClick={()=>setQty(q=>Math.max(1,q-1))} style={{width:32,height:32,borderRadius:"50%",background:"rgba(255,255,255,0.1)",border:"none",color:"#fff",cursor:"pointer",fontWeight:900,fontSize:18,display:"flex",alignItems:"center",justifyContent:"center"}}>−</button>
-              <span style={{fontWeight:900,fontSize:18,minWidth:24,textAlign:"center"}}>{qty}</span>
-              <button onClick={()=>setQty(q=>q+1)} style={{width:32,height:32,borderRadius:"50%",background:"rgba(255,255,255,0.1)",border:"none",color:"#fff",cursor:"pointer",fontWeight:900,fontSize:18,display:"flex",alignItems:"center",justifyContent:"center"}}>+</button>
-              <span style={{fontSize:13,color:"#f59e0b",fontWeight:800,minWidth:80,textAlign:"right"}}>{fmtFCFA(total)}</span>
-            </div>
-            <div style={{display:"flex",flexDirection:"column",gap:10,marginBottom:16}}>
-              <div><label style={{fontSize:11,color:"rgba(255,255,255,0.5)",display:"block",marginBottom:5}}>🏙️ {t.ville} *</label><input className="input-field" value={ville} onChange={e=>setVille(e.target.value)} placeholder="Ex: Douala, Yaoundé…"/></div>
-              <div><label style={{fontSize:11,color:"rgba(255,255,255,0.5)",display:"block",marginBottom:5}}>🏘️ {t.quartier} *</label><input className="input-field" value={quartier} onChange={e=>setQuartier(e.target.value)} placeholder="Ex: Akwa, Bonamoussadi…"/></div>
-              <div><label style={{fontSize:11,color:"rgba(255,255,255,0.5)",display:"block",marginBottom:5}}>📞 {t.phone} *</label><input className="input-field" type="tel" value={phone} onChange={e=>setPhone(e.target.value)} placeholder="+237 6XX XXX XXX"/></div>
-            </div>
-            <div style={{marginBottom:14}}>
-              <label style={{fontSize:11,color:"rgba(255,255,255,0.5)",display:"block",marginBottom:8}}>💳 Mode de paiement</label>
-              <div style={{display:"grid",gridTemplateColumns:"1fr 1fr",gap:6}}>
-                {PAYMENT_METHODS.map(m=>(
-                  <button key={m.id} onClick={()=>setPayMethod(m.id)} style={{display:"flex",alignItems:"center",gap:7,padding:"8px 10px",borderRadius:10,border:payMethod===m.id?`2px solid ${m.color}`:"1px solid rgba(255,255,255,0.08)",background:payMethod===m.id?`${m.color}22`:"rgba(255,255,255,0.03)",cursor:"pointer",color:"#fff",fontFamily:"'Nunito',sans-serif",fontWeight:700,fontSize:11,transition:"all .2s"}}>
-                    <span style={{fontSize:16}}>{m.icon}</span><span style={{textAlign:"left",lineHeight:1.2}}>{m.name}</span>
-                  </button>
-                ))}
-              </div>
-            </div>
-            {err&&<div style={{color:"#ef4444",fontSize:12,marginBottom:10,textAlign:"center"}}>{err}</div>}
-            <button onClick={sendWhatsApp} style={{width:"100%",padding:"13px 0",borderRadius:14,border:"none",background:"linear-gradient(135deg,#25D366,#128C7E)",color:"#fff",fontWeight:900,fontSize:15,cursor:"pointer",fontFamily:"'Nunito',sans-serif",display:"flex",alignItems:"center",justifyContent:"center",gap:10}}>
-              <WaIcon size={20}/> {t.confirmOrder} — {fmtFCFA(total)}
-            </button>
-          </div>
-        </div>
-      );
-    }
-
-    function AkitCommerce() {
-      const [lang, setLang]           = useState("fr");
-      const [menuOpen, setMenuOpen]   = useState(false);
-      const [page, setPage]           = useState("home");
-      const [products, setProducts]   = useState([]);
-      const [loading, setLoading]     = useState(true);
-      const [cart, setCart]           = useState([]);
-      const [wishlist, setWishlist]   = useState([]);
-      const [search, setSearch]       = useState("");
-      const [toast, setToast]         = useState(null);
-      const [adminLogged, setAdminLogged] = useState(false);
-      const [adminPass, setAdminPass] = useState("");
-      const [adminErr, setAdminErr]   = useState("");
-      const [editingProduct, setEditingProduct] = useState(null);
-      const [filterCat, setFilterCat] = useState("all");
-      const [orderModal, setOrderModal] = useState(false);
-      const [quickOrder, setQuickOrder] = useState(null);
-      const { isFirebase, loadProducts, addProduct, updateProduct, deleteProduct, subscribeProducts } = useFirebaseProducts();
-
-      const emptyForm = { name:"", price:"", category:"", description:"", emoji:"📦", image:"", inStock:true, badge:"", rating:"4.5", reviews:"0" };
-      const [form, setForm] = useState(emptyForm);
-      const t = T[lang] || T.fr;
-      const isRTL = lang === "ar";
-
-      useEffect(() => {
-        setLoading(true);
-        if (isFirebase) {
-          const unsub = subscribeProducts((prods) => {
-            setProducts(prods);
-            setLoading(false);
-          });
-          return () => unsub && unsub();
-        } else {
-          loadProducts().then(prods => {
-            setProducts(prods);
-            setLoading(false);
-          });
-        }
-      }, []);
-
-      const showToast = (msg, ok=true) => {
-        setToast({ msg, ok });
-        setTimeout(() => setToast(null), 2800);
-      };
-
-      const addToCart = (p) => {
-        if (!p.inStock) return;
-        setCart(c => {
-          const ex = c.find(x=>x.id===p.id);
-          return ex ? c.map(x=>x.id===p.id?{...x,qty:x.qty+1}:x) : [...c,{...p,qty:1}];
-        });
-        showToast(`${p.emoji||"📦"} ${t.addCart}`);
-      };
-      const rmCart = (id) => setCart(c=>c.filter(x=>x.id!==id));
-      const updQty = (id, d) => setCart(c=>c.map(x=>x.id===id?{...x,qty:Math.max(1,x.qty+d)}:x));
-      const cartTotal = cart.reduce((s,x)=>s+Number(x.price)*x.qty,0);
-      const cartCount = cart.reduce((s,x)=>s+x.qty,0);
-
-      const toggleWish = (p) => {
-        const has = wishlist.find(x=>x.id===p.id);
-        setWishlist(w=>has?w.filter(x=>x.id!==p.id):[...w,p]);
-        showToast(has?t.rmFav:t.addFav, true);
-      };
-
-      const loginAdmin = () => {
-        if (adminPass===ADMIN_PASS) { setAdminLogged(true); setAdminErr(""); setPage("admin"); setMenuOpen(false); }
-        else setAdminErr("❌ Mot de passe incorrect");
-      };
-
-      const saveProduct = async () => {
-        if (!form.name || !form.price) { showToast("Nom et prix requis", false); return; }
-        const productData = { ...form, price: Number(form.price) };
-        try {
-          if (editingProduct !== null) {
-            await updateProduct(editingProduct, productData);
-            if (!isFirebase) setProducts(ps=>ps.map(p=>p.id===editingProduct?{...productData,id:editingProduct}:p));
-            showToast("✅ Produit modifié !");
-          } else {
-            const newId = await addProduct(productData);
-            if (!isFirebase) setProducts(ps=>[...ps, {...productData, id:newId}]);
-            showToast("✅ Produit ajouté !");
-          }
-        } catch(e) { showToast("❌ Erreur: " + e.message, false); }
-        setForm(emptyForm);
-        setEditingProduct(null);
-      };
-
-      const handleDeleteProduct = async (id) => {
-        try {
-          await deleteProduct(id);
-          if (!isFirebase) setProducts(ps=>ps.filter(p=>p.id!==id));
-          showToast("🗑️ Produit supprimé");
-        } catch(e) { showToast("❌ Erreur suppression", false); }
-      };
-
-      const startEdit = (p) => {
-        setForm({ name:p.name, price:String(p.price), category:p.category||"", description:p.description||"", emoji:p.emoji||"📦", image:p.image||"", inStock:p.inStock, badge:p.badge||"", rating:String(p.rating||4.5), reviews:String(p.reviews||0) });
-        setEditingProduct(p.id);
-        window.scrollTo({top:0,behavior:"smooth"});
-      };
-
-      const categories = ["all", ...Array.from(new Set(products.map(p=>p.category).filter(Boolean)))];
-      const filtered = products.filter(p=>(filterCat==="all"||p.category===filterCat)&&(search===""||p.name.toLowerCase().includes(search.toLowerCase())));
-      const navTo = (p) => { setPage(p); setMenuOpen(false); };
-
-      // ── ADMIN LOGIN ──
-      if (page === "adminLogin") return (
-        <div style={{minHeight:"100vh",background:"#060614",display:"flex",alignItems:"center",justifyContent:"center",padding:24,fontFamily:"'Nunito',sans-serif"}}>
-          <div className="glass" style={{borderRadius:24,padding:40,maxWidth:400,width:"100%",animation:"fadeUp .5s ease both",textAlign:"center"}}>
-            <div style={{fontSize:56,marginBottom:16}}>🔐</div>
-            <div style={{fontFamily:"'Cinzel',serif",fontSize:22,fontWeight:900,marginBottom:4,background:"linear-gradient(135deg,#d97706,#f59e0b)",WebkitBackgroundClip:"text",WebkitTextFillColor:"transparent"}}>ESPACE ADMIN</div>
-            <div style={{color:"rgba(255,255,255,0.4)",fontSize:13,marginBottom:20}}>Réservé à {ADMIN_USER}</div>
-            <div style={{display:"flex",gap:8,justifyContent:"center",flexWrap:"wrap",marginBottom:20}}>
-              <div style={{fontSize:11,padding:"5px 10px",borderRadius:8,background:isFirebase?"rgba(16,185,129,0.1)":"rgba(217,119,6,0.1)",color:isFirebase?"#10b981":"#f59e0b",border:`1px solid ${isFirebase?"#10b98133":"#d9770633"}`}}>
-                {isFirebase ? "🔥 Firebase connecté" : "💾 Mode local"}
-              </div>
-              <div style={{fontSize:11,padding:"5px 10px",borderRadius:8,background:"rgba(16,185,129,0.1)",color:"#10b981",border:"1px solid rgba(16,185,129,0.2)"}}>
-                ☁️ Cloudinary · dvv8gytfp
-              </div>
-            </div>
-            <input type="password" placeholder="Mot de passe administrateur" value={adminPass} onChange={e=>setAdminPass(e.target.value)} onKeyDown={e=>e.key==="Enter"&&loginAdmin()} className="input-field" style={{marginBottom:12,textAlign:"center",letterSpacing:4}}/>
-            {adminErr&&<div style={{color:"#ef4444",fontSize:13,marginBottom:12}}>{adminErr}</div>}
-            <button onClick={loginAdmin} className="btn-gold" style={{width:"100%",padding:"12px 0",borderRadius:12,border:"none",fontWeight:900,fontSize:15,color:"#000",cursor:"pointer",marginBottom:12,fontFamily:"'Nunito',sans-serif"}}>CONNEXION</button>
-            <button onClick={()=>setPage("home")} style={{background:"none",border:"none",color:"rgba(255,255,255,0.4)",cursor:"pointer",fontSize:13,fontFamily:"'Nunito',sans-serif"}}>← Retour à la boutique</button>
-          </div>
-        </div>
-      );
-
-      // ── ADMIN PANEL ──
-      if (page === "admin" && adminLogged) return (
-        <div style={{minHeight:"100vh",background:"#060614",fontFamily:"'Nunito',sans-serif",color:"#fff"}}>
-          <div style={{background:"linear-gradient(90deg,#1a0a00,#2d1600,#1a0a00)",borderBottom:"2px solid #d97706",padding:"14px 16px",display:"flex",alignItems:"center",justifyContent:"space-between",position:"sticky",top:0,zIndex:100,flexWrap:"wrap",gap:10}}>
-            <div style={{display:"flex",alignItems:"center",gap:12}}>
-              <div style={{width:36,height:36,borderRadius:10,background:"linear-gradient(135deg,#d97706,#f59e0b)",display:"flex",alignItems:"center",justifyContent:"center",fontWeight:900,fontSize:18,color:"#000"}}>A</div>
               <div>
-                <div style={{fontFamily:"'Cinzel',serif",fontSize:14,fontWeight:900,color:"#f59e0b"}}>PANNEAU ADMIN</div>
-                <div style={{display:"flex",gap:8,marginTop:2}}>
-                  <span style={{fontSize:10,color:isFirebase?"#10b981":"#f59e0b"}}>{isFirebase?"🔥 Firebase":"💾 Local"}</span>
-                  <span style={{fontSize:10,color:"#10b981"}}>☁️ Cloudinary actif</span>
+                <label style={{fontSize:11,color:"rgba(240,237,232,.4)",display:"block",marginBottom:4}}>Nom du produit *</label>
+                <input className="inp" value={form.name} onChange={e=>setForm(f=>({...f,name:e.target.value}))} placeholder="Ex: Sac cuir premium"/>
+              </div>
+              <div>
+                <label style={{fontSize:11,color:"rgba(240,237,232,.4)",display:"block",marginBottom:4}}>Prix (FCFA) *</label>
+                <input className="inp" type="number" value={form.price} onChange={e=>setForm(f=>({...f,price:e.target.value}))} placeholder="25000"/>
+              </div>
+              <div style={{display:"grid",gridTemplateColumns:"1fr 1fr",gap:9}}>
+                <div>
+                  <label style={{fontSize:11,color:"rgba(240,237,232,.4)",display:"block",marginBottom:4}}>Note (0-5)</label>
+                  <input className="inp" type="number" min="0" max="5" step="0.1" value={form.rating} onChange={e=>setForm(f=>({...f,rating:e.target.value}))}/>
+                </div>
+                <div>
+                  <label style={{fontSize:11,color:"rgba(240,237,232,.4)",display:"block",marginBottom:4}}>Nb avis</label>
+                  <input className="inp" type="number" value={form.reviews} onChange={e=>setForm(f=>({...f,reviews:e.target.value}))}/>
                 </div>
               </div>
-            </div>
-            <div style={{display:"flex",gap:8,flexWrap:"wrap"}}>
-              <button onClick={()=>setPage("home")} style={{padding:"7px 14px",borderRadius:10,border:"1px solid rgba(255,255,255,0.15)",background:"rgba(255,255,255,0.05)",color:"#fff",cursor:"pointer",fontSize:13,fontFamily:"'Nunito',sans-serif"}}>👁 Boutique</button>
-              <button onClick={()=>{setAdminLogged(false);setPage("home");}} style={{padding:"7px 14px",borderRadius:10,border:"1px solid #ef4444",background:"rgba(239,68,68,0.1)",color:"#ef4444",cursor:"pointer",fontSize:13,fontFamily:"'Nunito',sans-serif"}}>🚪 Déconnexion</button>
-            </div>
-          </div>
-
-          {/* BANDEAU CLOUDINARY INFO */}
-          <div style={{background:"linear-gradient(90deg,rgba(16,185,129,0.08),rgba(16,185,129,0.15),rgba(16,185,129,0.08))",borderBottom:"1px solid rgba(16,185,129,0.2)",padding:"8px 16px",display:"flex",alignItems:"center",gap:10,flexWrap:"wrap"}}>
-            <span style={{fontSize:16}}>☁️</span>
-            <span style={{fontSize:12,color:"#10b981",fontWeight:700}}>Images hébergées sur Cloudinary — Visibles partout dans le monde</span>
-            <span style={{fontSize:11,color:"rgba(255,255,255,0.4)"}}>Cloud: <strong style={{color:"#fff"}}>dvv8gytfp</strong> · Preset: <strong style={{color:"#fff"}}>akit-commerce</strong> · Dossier: <strong style={{color:"#fff"}}>akit-commerce/products</strong></span>
-          </div>
-
-          <div style={{maxWidth:1100,margin:"0 auto",padding:"24px 14px"}}>
-            <div className="grid-stats" style={{display:"grid",gridTemplateColumns:"repeat(4,1fr)",gap:12,marginBottom:28}}>
-              {[
-                {label:"Produits",val:products.length,icon:"📦",color:"#6366f1"},
-                {label:"En stock",val:products.filter(p=>p.inStock).length,icon:"✅",color:"#10b981"},
-                {label:"Rupture",val:products.filter(p=>!p.inStock).length,icon:"❌",color:"#ef4444"},
-                {label:"Catégories",val:new Set(products.map(p=>p.category).filter(Boolean)).size,icon:"🗂️",color:"#f59e0b"},
-              ].map((s,i)=>(
-                <div key={i} className="glass" style={{borderRadius:16,padding:"14px 16px",borderLeft:`3px solid ${s.color}`}}>
-                  <div style={{fontSize:22,marginBottom:4}}>{s.icon}</div>
-                  <div style={{fontSize:26,fontWeight:900,color:s.color}}>{s.val}</div>
-                  <div style={{fontSize:11,color:"rgba(255,255,255,0.5)"}}>{s.label}</div>
-                </div>
-              ))}
-            </div>
-            <div className="admin-grid" style={{display:"grid",gridTemplateColumns:"1fr 1fr",gap:18}}>
-              {/* FORMULAIRE */}
-              <div className="glass" style={{borderRadius:20,padding:22}}>
-                <div style={{fontFamily:"'Cinzel',serif",fontSize:15,fontWeight:900,marginBottom:18,color:"#f59e0b"}}>
-                  {editingProduct!==null?"✏️ Modifier le produit":"➕ Ajouter un produit"}
-                </div>
-                <div style={{display:"flex",flexDirection:"column",gap:11}}>
-
-                  {/* UPLOAD CLOUDINARY */}
-                  <CloudinaryUpload
-                    value={form.image}
-                    onChange={(url) => setForm(f=>({...f, image:url, emoji: url ? "" : "📦"}))}
-                    showToast={showToast}
-                  />
-
-                  {/* EMOJI si pas d'image */}
-                  {!form.image && (
-                    <div>
-                      <label style={{fontSize:11,color:"rgba(255,255,255,0.5)",display:"block",marginBottom:4}}>Ou emoji à la place</label>
-                      <input className="input-field" value={form.emoji} onChange={e=>setForm(f=>({...f,emoji:e.target.value}))} placeholder="📦" style={{textAlign:"center",fontSize:22,padding:"6px"}}/>
-                    </div>
-                  )}
-
-                  <div style={{display:"grid",gridTemplateColumns:"1fr 1fr",gap:10}}>
-                    <div>
-                      <label style={{fontSize:11,color:"rgba(255,255,255,0.5)",display:"block",marginBottom:4}}>Badge</label>
-                      <select className="input-field" value={form.badge} onChange={e=>setForm(f=>({...f,badge:e.target.value}))} style={{cursor:"pointer"}}>
-                        <option value="">Aucun</option>
-                        <option value="nouveau">🆕 Nouveau</option>
-                        <option value="promo">🔥 Promo</option>
-                        <option value="bestseller">⭐ Bestseller</option>
-                        <option value="luxe">💎 Luxe</option>
-                        <option value="tendance">📈 Tendance</option>
-                        <option value="exclusif">✨ Exclusif</option>
-                      </select>
-                    </div>
-                    <div>
-                      <label style={{fontSize:11,color:"rgba(255,255,255,0.5)",display:"block",marginBottom:4}}>Catégorie</label>
-                      <input className="input-field" value={form.category} onChange={e=>setForm(f=>({...f,category:e.target.value}))} placeholder="Mode, Tech…"/>
-                    </div>
-                  </div>
-                  <div><label style={{fontSize:11,color:"rgba(255,255,255,0.5)",display:"block",marginBottom:4}}>Nom du produit *</label><input className="input-field" value={form.name} onChange={e=>setForm(f=>({...f,name:e.target.value}))} placeholder="Ex: Sac à main cuir premium"/></div>
-                  <div><label style={{fontSize:11,color:"rgba(255,255,255,0.5)",display:"block",marginBottom:4}}>Prix (FCFA) *</label><input className="input-field" type="number" value={form.price} onChange={e=>setForm(f=>({...f,price:e.target.value}))} placeholder="25000"/></div>
-                  <div style={{display:"grid",gridTemplateColumns:"1fr 1fr",gap:10}}>
-                    <div><label style={{fontSize:11,color:"rgba(255,255,255,0.5)",display:"block",marginBottom:4}}>Note (sur 5)</label><input className="input-field" type="number" min="0" max="5" step="0.1" value={form.rating} onChange={e=>setForm(f=>({...f,rating:e.target.value}))} placeholder="4.5"/></div>
-                    <div><label style={{fontSize:11,color:"rgba(255,255,255,0.5)",display:"block",marginBottom:4}}>Nombre d'avis</label><input className="input-field" type="number" value={form.reviews} onChange={e=>setForm(f=>({...f,reviews:e.target.value}))} placeholder="0"/></div>
-                  </div>
-                  <div><label style={{fontSize:11,color:"rgba(255,255,255,0.5)",display:"block",marginBottom:4}}>Description</label><textarea className="input-field" value={form.description} onChange={e=>setForm(f=>({...f,description:e.target.value}))} placeholder="Décrivez le produit…" rows={2} style={{resize:"vertical"}}/></div>
-                  <div style={{display:"flex",alignItems:"center",gap:10}}>
-                    <label style={{fontSize:13,color:"rgba(255,255,255,0.7)"}}>En stock</label>
-                    <div onClick={()=>setForm(f=>({...f,inStock:!f.inStock}))} style={{width:44,height:24,borderRadius:12,background:form.inStock?"#10b981":"#374151",cursor:"pointer",position:"relative",transition:"background .2s"}}>
-                      <div style={{position:"absolute",top:3,left:form.inStock?22:3,width:18,height:18,borderRadius:"50%",background:"#fff",transition:"left .2s"}}/>
-                    </div>
-                    <span style={{fontSize:12,color:form.inStock?"#10b981":"#ef4444"}}>{form.inStock?"Disponible":"Indisponible"}</span>
-                  </div>
-                  <div style={{display:"flex",gap:10,marginTop:4}}>
-                    <button onClick={saveProduct} className="btn-gold" style={{flex:1,padding:"11px 0",borderRadius:12,border:"none",fontWeight:900,fontSize:14,color:"#000",cursor:"pointer",fontFamily:"'Nunito',sans-serif"}}>{editingProduct!==null?"💾 Enregistrer":"➕ Ajouter"}</button>
-                    {editingProduct!==null&&<button onClick={()=>{setForm(emptyForm);setEditingProduct(null);}} style={{padding:"11px 16px",borderRadius:12,border:"1px solid rgba(255,255,255,0.15)",background:"rgba(255,255,255,0.05)",color:"#fff",cursor:"pointer",fontFamily:"'Nunito',sans-serif",fontSize:14}}>Annuler</button>}
-                  </div>
-                </div>
+              <div>
+                <label style={{fontSize:11,color:"rgba(240,237,232,.4)",display:"block",marginBottom:4}}>Description</label>
+                <textarea className="inp" value={form.description} onChange={e=>setForm(f=>({...f,description:e.target.value}))} placeholder="Décrivez le produit…" rows={2} style={{resize:"vertical"}}/>
               </div>
-              {/* LISTE PRODUITS */}
-              <div className="glass" style={{borderRadius:20,padding:22,maxHeight:700,overflowY:"auto"}}>
-                <div style={{fontFamily:"'Cinzel',serif",fontSize:15,fontWeight:900,marginBottom:18,color:"#f59e0b"}}>📦 Produits ({products.length})</div>
-                {products.length===0?(
-                  <div style={{textAlign:"center",color:"rgba(255,255,255,0.3)",padding:40}}>
-                    <div style={{fontSize:40,marginBottom:12}}>📭</div>
-                    <p style={{fontSize:14}}>Aucun produit encore.</p>
-                  </div>
-                ):products.map(p=>(
-                  <div key={p.id} style={{display:"flex",gap:12,alignItems:"center",padding:"12px 0",borderBottom:"1px solid rgba(255,255,255,0.06)"}}>
-                    <div style={{width:46,height:46,borderRadius:10,background:"rgba(255,255,255,0.05)",display:"flex",alignItems:"center",justifyContent:"center",flexShrink:0,overflow:"hidden",position:"relative"}}>
-                      {p.image?<img src={p.image} alt="" style={{width:"100%",height:"100%",objectFit:"cover"}}/>:<span style={{fontSize:26}}>{p.emoji||"📦"}</span>}
-                      {p.image&&<div style={{position:"absolute",bottom:0,right:0,width:14,height:14,borderRadius:"50%",background:"#10b981",display:"flex",alignItems:"center",justifyContent:"center",fontSize:8}}>☁</div>}
-                    </div>
-                    <div style={{flex:1,minWidth:0}}>
-                      <div style={{fontWeight:700,fontSize:13,whiteSpace:"nowrap",overflow:"hidden",textOverflow:"ellipsis"}}>{p.name}</div>
-                      <div style={{fontSize:12,color:"#f59e0b",fontWeight:800}}>{fmtFCFA(p.price)}</div>
-                      <div style={{display:"flex",gap:5,marginTop:2,flexWrap:"wrap"}}>
-                        {p.category&&<span style={{fontSize:9,background:"rgba(99,102,241,0.2)",color:"#818cf8",borderRadius:5,padding:"1px 5px"}}>{p.category}</span>}
-                        <span style={{fontSize:9,background:p.inStock?"rgba(16,185,129,0.2)":"rgba(239,68,68,0.2)",color:p.inStock?"#10b981":"#ef4444",borderRadius:5,padding:"1px 5px"}}>{p.inStock?"✅ Stock":"❌ Rupture"}</span>
-                        {p.image&&<span style={{fontSize:9,background:"rgba(16,185,129,0.15)",color:"#10b981",borderRadius:5,padding:"1px 5px"}}>☁️ CDN</span>}
-                      </div>
-                    </div>
-                    <div style={{display:"flex",flexDirection:"column",gap:5}}>
-                      <button onClick={()=>startEdit(p)} style={{padding:"5px 10px",borderRadius:8,border:"1px solid #6366f1",background:"rgba(99,102,241,0.15)",color:"#818cf8",cursor:"pointer",fontSize:11,fontFamily:"'Nunito',sans-serif",fontWeight:700}}>✏️</button>
-                      <button onClick={()=>handleDeleteProduct(p.id)} style={{padding:"5px 10px",borderRadius:8,border:"1px solid #ef4444",background:"rgba(239,68,68,0.15)",color:"#ef4444",cursor:"pointer",fontSize:11,fontFamily:"'Nunito',sans-serif",fontWeight:700}}>🗑️</button>
-                    </div>
-                  </div>
-                ))}
+              <div style={{display:"flex",alignItems:"center",gap:10}}>
+                <span style={{fontSize:13,color:"rgba(240,237,232,.7)"}}>En stock</span>
+                <div className="toggle" style={{background:form.inStock?"#10b981":"#374151"}} onClick={()=>setForm(f=>({...f,inStock:!f.inStock}))}>
+                  <div className="toggle-thumb" style={{left:form.inStock?22:3}}/>
+                </div>
+                <span style={{fontSize:12,color:form.inStock?"#10b981":"#ef4444"}}>{form.inStock?"Disponible":"Rupture"}</span>
+              </div>
+              <div style={{display:"flex",gap:9,marginTop:4}}>
+                <button onClick={save} className="btn-gold" style={{flex:1,padding:"11px 0",borderRadius:12,fontSize:14}}>{editId!==null?"💾 Enregistrer":"➕ Ajouter"}</button>
+                {editId!==null&&<button onClick={()=>{setForm(empty);setEditId(null);}} className="btn-ghost" style={{padding:"11px 16px",borderRadius:12,fontSize:13}}>Annuler</button>}
               </div>
             </div>
           </div>
-          {toast&&<Toast msg={toast.msg} ok={toast.ok}/>}
+
+          {/* LISTE */}
+          <div style={{background:"rgba(255,255,255,.03)",border:"1px solid rgba(255,255,255,.07)",borderRadius:18,padding:22,maxHeight:680,overflowY:"auto"}}>
+            <div className="font-display" style={{fontSize:15,color:"#D4A853",marginBottom:18,fontWeight:700}}>📦 Produits ({products.length})</div>
+            {products.length===0?(
+              <div style={{textAlign:"center",padding:"40px 20px",color:"rgba(240,237,232,.25)"}}>
+                <div style={{fontSize:36,marginBottom:10}}>📭</div>
+                <p style={{fontSize:13}}>Aucun produit encore.</p>
+              </div>
+            ):products.map(p=>(
+              <div key={p.id} style={{display:"flex",gap:11,alignItems:"center",padding:"11px 0",borderBottom:"1px solid rgba(255,255,255,.05)"}}>
+                <div style={{width:44,height:44,borderRadius:10,overflow:"hidden",flexShrink:0,background:"rgba(255,255,255,.05)",display:"flex",alignItems:"center",justifyContent:"center",fontSize:22,position:"relative"}}>
+                  {p.image?<img src={p.image} alt="" style={{width:"100%",height:"100%",objectFit:"cover"}}/>:p.emoji||"📦"}
+                  {p.image&&<div style={{position:"absolute",bottom:0,right:0,width:13,height:13,borderRadius:"50%",background:"#10b981",fontSize:8,display:"flex",alignItems:"center",justifyContent:"center"}}>☁</div>}
+                </div>
+                <div style={{flex:1,minWidth:0}}>
+                  <div style={{fontWeight:600,fontSize:13,overflow:"hidden",textOverflow:"ellipsis",whiteSpace:"nowrap"}}>{p.name}</div>
+                  <div style={{fontSize:12,color:"#D4A853",fontWeight:700}}>{fmt(p.price)}</div>
+                  <div style={{display:"flex",gap:4,marginTop:3,flexWrap:"wrap"}}>
+                    {p.category&&<span style={{fontSize:9,background:"rgba(99,102,241,.2)",color:"#818cf8",borderRadius:5,padding:"1px 5px"}}>{p.category}</span>}
+                    <span style={{fontSize:9,background:p.inStock?"rgba(16,185,129,.2)":"rgba(239,68,68,.2)",color:p.inStock?"#10b981":"#ef4444",borderRadius:5,padding:"1px 5px"}}>{p.inStock?"✅ Stock":"❌ Rupture"}</span>
+                  </div>
+                </div>
+                <div style={{display:"flex",flexDirection:"column",gap:5}}>
+                  <button onClick={()=>startEdit(p)} style={{padding:"5px 9px",borderRadius:7,border:"1px solid #6366f1",background:"rgba(99,102,241,.12)",color:"#818cf8",cursor:"pointer",fontSize:11}}>✏️</button>
+                  <button onClick={()=>del(p.id)} style={{padding:"5px 9px",borderRadius:7,border:"1px solid #ef4444",background:"rgba(239,68,68,.12)",color:"#ef4444",cursor:"pointer",fontSize:11}}>🗑</button>
+                </div>
+              </div>
+            ))}
+          </div>
         </div>
-      );
+      </div>
+    </div>
+  );
+}
 
-      // ── BOUTIQUE PRINCIPALE ──
-      return (
-        <div dir={isRTL?"rtl":"ltr"} style={{minHeight:"100vh",background:"#060614",fontFamily:"'Nunito',sans-serif",color:"#fff",overflowX:"hidden"}}>
-          {orderModal&&<OrderModal cart={cart} cartTotal={cartTotal} t={t} onClose={()=>setOrderModal(false)} onSuccess={()=>{setCart([]);setOrderModal(false);setPage("orderDone");}}/>}
-          {quickOrder&&<QuickOrderModal product={quickOrder} t={t} onClose={()=>setQuickOrder(null)} onSuccess={()=>{setQuickOrder(null);setPage("orderDone");}}/>}
-          {menuOpen&&<div onClick={()=>setMenuOpen(false)} style={{position:"fixed",inset:0,background:"rgba(0,0,0,0.65)",zIndex:90,backdropFilter:"blur(4px)"}}/>}
+/* ════════════════════════════════════════════════
+   ADMIN LOGIN — PAGE SECRÈTE
+   Accessible uniquement via code caché
+════════════════════════════════════════════════ */
+function AdminLogin({onSuccess,onBack}){
+  const [pass,setPass]=useState("");
+  const [err,setErr]=useState("");
+  const [shake,setShake]=useState(false);
 
-          <div className="banner-fixed">
-            <div style={{display:"flex",animation:"marquee 28s linear infinite",whiteSpace:"nowrap"}}>
-              {[BANNER_TEXT, BANNER_TEXT].map((txt,i)=>(
-                <span key={i} style={{paddingRight:80,fontSize:12,fontWeight:800,color:"#000",letterSpacing:"0.05em",flexShrink:0}}>{txt}</span>
-              ))}
-            </div>
+  const attempt=()=>{
+    if(pass===window.ADMIN_SECRET){ onSuccess(); }
+    else {
+      setErr("Code incorrect");
+      setShake(true);
+      setPass("");
+      setTimeout(()=>setShake(false),600);
+    }
+  };
+
+  return (
+    <div style={{minHeight:"100vh",background:"#0C0C0F",display:"flex",alignItems:"center",justifyContent:"center",padding:20,fontFamily:"Inter,sans-serif"}}>
+      <div style={{width:"100%",maxWidth:360,animation:"fadeUp .5s ease both"}}>
+        <div style={{textAlign:"center",marginBottom:32}}>
+          <div style={{width:60,height:60,borderRadius:16,background:"rgba(212,168,83,.1)",border:"1px solid rgba(212,168,83,.25)",display:"flex",alignItems:"center",justifyContent:"center",fontSize:28,margin:"0 auto 16px"}}>🔐</div>
+          <div className="font-display" style={{fontSize:24,color:"#D4A853",fontWeight:800,marginBottom:4}}>Accès Administrateur</div>
+          <div style={{fontSize:13,color:"rgba(240,237,232,.4)"}}>Réservé au propriétaire AKIT</div>
+        </div>
+        <div style={{background:"rgba(255,255,255,.04)",border:"1px solid rgba(255,255,255,.08)",borderRadius:16,padding:"24px 20px",..( shake?{animation:"none",transform:"translateX(0)"}:{})}}>
+          <div style={{marginBottom:14}}>
+            <input
+              className="inp"
+              type="password"
+              value={pass}
+              onChange={e=>{setPass(e.target.value);setErr("");}}
+              onKeyDown={e=>e.key==="Enter"&&attempt()}
+              placeholder="Code secret admin…"
+              style={{textAlign:"center",letterSpacing:4,fontSize:16}}
+              autoComplete="new-password"
+            />
           </div>
+          {err&&<div style={{color:"#ef4444",fontSize:12,textAlign:"center",marginBottom:10}}>{err}</div>}
+          <button onClick={attempt} className="btn-gold" style={{width:"100%",padding:"12px 0",borderRadius:12,fontSize:14}}>Accéder au panneau</button>
+        </div>
+        <button onClick={onBack} style={{display:"block",margin:"16px auto 0",background:"none",border:"none",color:"rgba(240,237,232,.35)",cursor:"pointer",fontSize:13,fontFamily:"Inter,sans-serif"}}>← Retour à la boutique</button>
+      </div>
+    </div>
+  );
+}
 
-          <header className="header-fixed header-inner" style={{padding:"10px 14px",display:"flex",alignItems:"center",gap:10}}>
-            <button onClick={()=>setMenuOpen(m=>!m)} style={{background:"rgba(255,255,255,0.07)",border:"none",borderRadius:10,width:36,height:36,fontSize:18,cursor:"pointer",display:"flex",alignItems:"center",justifyContent:"center",flexShrink:0}}>☰</button>
-            <div style={{display:"flex",alignItems:"center",gap:8,flexShrink:0}}>
-              <div style={{width:34,height:34,borderRadius:10,background:"linear-gradient(135deg,#d97706,#f59e0b)",display:"flex",alignItems:"center",justifyContent:"center",fontFamily:"'Cinzel',serif",fontWeight:900,fontSize:16,color:"#000"}}>A</div>
-            </div>
-            <div style={{flex:1,position:"relative"}}>
-              <span style={{position:"absolute",left:10,top:"50%",transform:"translateY(-50%)",fontSize:14,color:"rgba(255,255,255,0.35)"}}>🔍</span>
-              <input className="search-input" value={search} onChange={e=>setSearch(e.target.value)} placeholder={t.search} style={{width:"100%",background:"rgba(255,255,255,0.06)",border:"1px solid rgba(255,255,255,0.1)",borderRadius:10,paddingLeft:34,paddingRight:10,paddingTop:8,paddingBottom:8,color:"#fff",outline:"none",fontFamily:"'Nunito',sans-serif",fontSize:13}}/>
-            </div>
-            <div style={{display:"flex",gap:6,flexShrink:0}}>
-              <button onClick={()=>navTo("favorites")} style={{position:"relative",background:"rgba(255,255,255,0.05)",border:"1px solid rgba(255,255,255,0.08)",borderRadius:10,width:36,height:36,fontSize:16,cursor:"pointer",display:"flex",alignItems:"center",justifyContent:"center"}}>
-                ❤️
-                {wishlist.length>0&&<span style={{position:"absolute",top:-4,right:-4,background:"#ef4444",color:"#fff",borderRadius:"50%",width:15,height:15,fontSize:8,fontWeight:900,display:"flex",alignItems:"center",justifyContent:"center"}}>{wishlist.length}</span>}
-              </button>
-              <button onClick={()=>navTo("cart")} style={{position:"relative",background:"rgba(255,255,255,0.05)",border:"1px solid rgba(255,255,255,0.08)",borderRadius:10,width:36,height:36,fontSize:16,cursor:"pointer",display:"flex",alignItems:"center",justifyContent:"center"}}>
-                🛒
-                {cartCount>0&&<span style={{position:"absolute",top:-4,right:-4,background:"#d97706",color:"#000",borderRadius:"50%",width:15,height:15,fontSize:8,fontWeight:900,display:"flex",alignItems:"center",justifyContent:"center"}}>{cartCount}</span>}
-              </button>
-            </div>
-          </header>
+/* ════════════════════════════════════════════════
+   APP PRINCIPALE
+════════════════════════════════════════════════ */
+function App(){
+  const [lang,setLang]=useState("fr");
+  const [page,setPage]=useState("home");
+  const [products,setProducts]=useState([]);
+  const [loading,setLoading]=useState(true);
+  const [cart,setCart]=useState([]);
+  const [wish,setWish]=useState([]);
+  const [search,setSearch]=useState("");
+  const [toast,setToast]=useState(null);
+  const [adminLogged,setAdminLogged]=useState(false);
+  const [filterCat,setFilterCat]=useState("all");
+  const [orderModal,setOrderModal]=useState(false);
+  const [quickProd,setQuickProd]=useState(null);
+  const [menuOpen,setMenuOpen]=useState(false);
+  /* SECRET ADMIN ACCESS — triple-tap logo */
+  const [tapCount,setTapCount]=useState(0);
+  const tapTimer=useRef(null);
 
-          <div style={{position:"fixed",top:0,left:0,height:"100%",width:270,zIndex:100,background:"linear-gradient(180deg,#0a0a20 0%,#110a00 60%,#0a0a20 100%)",borderRight:"1px solid rgba(217,119,6,0.3)",transform:menuOpen?"translateX(0)":"translateX(-100%)",transition:"transform .35s cubic-bezier(.4,0,.2,1)",display:"flex",flexDirection:"column",boxShadow:menuOpen?"4px 0 40px rgba(0,0,0,0.8)":"none"}}>
-            <div style={{padding:"24px 20px 16px",borderBottom:"1px solid rgba(255,255,255,0.07)"}}>
-              <div style={{display:"flex",alignItems:"center",justifyContent:"space-between",marginBottom:12}}>
-                <div style={{fontFamily:"'Cinzel',serif",fontSize:20,fontWeight:900,background:"linear-gradient(135deg,#d97706,#f59e0b)",WebkitBackgroundClip:"text",WebkitTextFillColor:"transparent"}}>AKIT</div>
-                <button onClick={()=>setMenuOpen(false)} style={{background:"rgba(255,255,255,0.08)",border:"none",color:"#fff",width:32,height:32,borderRadius:8,cursor:"pointer",fontSize:18,display:"flex",alignItems:"center",justifyContent:"center"}}>✕</button>
-              </div>
-              <div style={{display:"flex",gap:6,flexWrap:"wrap"}}>
-                <span style={{fontSize:10,color:isFirebase?"#10b981":"#f59e0b"}}>{isFirebase?t.dbMode:t.localMode}</span>
-                <span style={{fontSize:10,color:"#10b981"}}>☁️ Cloudinary</span>
-              </div>
-            </div>
-            <nav style={{flex:1,padding:"12px",display:"flex",flexDirection:"column",gap:3,overflowY:"auto"}}>
-              {[
-                {icon:"🏠",label:t.home,action:()=>navTo("home")},
-                {icon:"💳",label:t.payment,action:()=>navTo("payment")},
-                {icon:"❤️",label:t.favorites,action:()=>navTo("favorites"),badge:wishlist.length||null},
-                {icon:"🛒",label:t.cart,action:()=>navTo("cart"),badge:cartCount||null},
-              ].map((item,i)=>(
-                <button key={i} onClick={item.action} style={{display:"flex",alignItems:"center",gap:14,padding:"12px 16px",borderRadius:14,border:"none",background:"rgba(255,255,255,0.03)",color:"#fff",cursor:"pointer",textAlign:"left",fontFamily:"'Nunito',sans-serif",fontWeight:700,fontSize:15,width:"100%",position:"relative"}}>
-                  <span style={{fontSize:20}}>{item.icon}</span>
-                  <span>{item.label}</span>
-                  {item.badge?<span style={{marginLeft:"auto",background:"#d97706",color:"#000",borderRadius:"50%",width:20,height:20,fontSize:11,fontWeight:900,display:"flex",alignItems:"center",justifyContent:"center"}}>{item.badge}</span>:null}
+  const store=useStore();
+  const t=T[lang]||T.fr;
+  const isRTL=lang==="ar";
+
+  useEffect(()=>{
+    setLoading(true);
+    if(store.fb){
+      const unsub=store.sub(ps=>{setProducts(ps);setLoading(false);});
+      return ()=>unsub&&unsub();
+    } else {
+      store.load().then(ps=>{setProducts(ps);setLoading(false);});
+    }
+  },[]);
+
+  const showToast=(msg,ok=true)=>{
+    setToast({msg,ok});
+    setTimeout(()=>setToast(null),2600);
+  };
+
+  /* ── TRIPLE-TAP SUR LE LOGO = ACCÈS ADMIN SECRET ── */
+  const handleLogoTap=()=>{
+    const next=tapCount+1;
+    setTapCount(next);
+    clearTimeout(tapTimer.current);
+    if(next>=3){
+      setTapCount(0);
+      setPage("adminLogin");
+      setMenuOpen(false);
+    } else {
+      tapTimer.current=setTimeout(()=>setTapCount(0),1000);
+    }
+  };
+
+  /* CART */
+  const addCart=p=>{
+    if(!p.inStock)return;
+    setCart(c=>{const e=c.find(x=>x.id===p.id);return e?c.map(x=>x.id===p.id?{...x,qty:x.qty+1}:x):[...c,{...p,qty:1}];});
+    showToast(`${p.emoji||"📦"} ${t.addCart}`);
+  };
+  const rmCart=id=>setCart(c=>c.filter(x=>x.id!==id));
+  const updQty=(id,d)=>setCart(c=>c.map(x=>x.id===id?{...x,qty:Math.max(1,x.qty+d)}:x));
+  const cartTotal=cart.reduce((s,x)=>s+Number(x.price)*x.qty,0);
+  const cartCount=cart.reduce((s,x)=>s+x.qty,0);
+
+  /* WISHLIST */
+  const toggleWish=p=>{
+    const has=wish.find(x=>x.id===p.id);
+    setWish(w=>has?w.filter(x=>x.id!==p.id):[...w,p]);
+    showToast(has?t.rmFav:t.addFav);
+  };
+
+  const navTo=p=>{setPage(p);setMenuOpen(false);};
+  const cats=["all",...Array.from(new Set(products.map(p=>p.category).filter(Boolean)))];
+  const filtered=products.filter(p=>(filterCat==="all"||p.category===filterCat)&&(search===""||p.name.toLowerCase().includes(search.toLowerCase())));
+
+  /* ══ ADMIN PAGES ══ */
+  if(page==="adminLogin") return <AdminLogin onSuccess={()=>{setAdminLogged(true);setPage("admin");}} onBack={()=>setPage("home")}/>;
+  if(page==="admin"&&adminLogged) return (
+    <>
+      <AdminPanel products={products} onBack={()=>setPage("home")} onLogout={()=>{setAdminLogged(false);setPage("home");}} store={store} showToast={showToast}/>
+      {toast&&<Toast msg={toast.msg} ok={toast.ok}/>}
+    </>
+  );
+
+  /* ══ BOUTIQUE ══ */
+  return (
+    <div dir={isRTL?"rtl":"ltr"} style={{minHeight:"100vh",background:"#0C0C0F",color:"#F0EDE8",fontFamily:"Inter,sans-serif"}}>
+      {orderModal&&<OrderModal cart={cart} total={cartTotal} t={t} onClose={()=>setOrderModal(false)} onDone={()=>{setCart([]);setOrderModal(false);setPage("orderDone");}}/>}
+      {quickProd&&<QuickModal product={quickProd} t={t} onClose={()=>setQuickProd(null)} onDone={()=>{setQuickProd(null);setPage("orderDone");}}/>}
+
+      {/* BACKDROP SIDEBAR */}
+      {menuOpen&&<div onClick={()=>setMenuOpen(false)} style={{position:"fixed",inset:0,background:"rgba(0,0,0,.7)",zIndex:240,backdropFilter:"blur(4px)"}}/>}
+
+      {/* ═══ BANNER ═══ */}
+      <div className="banner">
+        <div style={{display:"flex",animation:"marquee 30s linear infinite",whiteSpace:"nowrap"}}>
+          {[BANNER,BANNER].map((txt,i)=>(
+            <span key={i} style={{paddingRight:60,fontSize:11,fontWeight:700,color:"#0C0C0F",letterSpacing:".05em",flexShrink:0}}>{txt}</span>
+          ))}
+        </div>
+      </div>
+
+      {/* ═══ HEADER ═══ */}
+      <header className="header" style={{padding:"8px 14px",display:"flex",alignItems:"center",gap:10}}>
+        <button onClick={()=>setMenuOpen(m=>!m)} className="btn-ghost" style={{width:36,height:36,borderRadius:10,fontSize:18,display:"flex",alignItems:"center",justifyContent:"center",padding:0,flexShrink:0}}>☰</button>
+
+        {/* LOGO — TRIPLE-TAP POUR ADMIN */}
+        <div onClick={handleLogoTap} style={{width:36,height:36,borderRadius:10,background:"#D4A853",display:"flex",alignItems:"center",justifyContent:"center",cursor:"pointer",flexShrink:0,userSelect:"none"}}>
+          <span className="font-display" style={{fontSize:16,fontWeight:800,color:"#0C0C0F"}}>A</span>
+        </div>
+
+        <input
+          value={search}
+          onChange={e=>setSearch(e.target.value)}
+          placeholder={t.search}
+          style={{flex:1,background:"rgba(255,255,255,.06)",border:"1px solid rgba(255,255,255,.09)",borderRadius:10,padding:"8px 12px",color:"#F0EDE8",fontFamily:"Inter,sans-serif",fontSize:13,outline:"none"}}
+        />
+
+        <button onClick={()=>navTo("favorites")} style={{position:"relative",background:"rgba(255,255,255,.05)",border:"1px solid rgba(255,255,255,.08)",borderRadius:10,width:36,height:36,fontSize:15,cursor:"pointer",display:"flex",alignItems:"center",justifyContent:"center",flexShrink:0}}>
+          ❤️
+          {wish.length>0&&<span style={{position:"absolute",top:-4,right:-4,background:"#ef4444",color:"#fff",borderRadius:"50%",width:15,height:15,fontSize:8,fontWeight:700,display:"flex",alignItems:"center",justifyContent:"center"}}>{wish.length}</span>}
+        </button>
+        <button onClick={()=>navTo("cart")} style={{position:"relative",background:"rgba(255,255,255,.05)",border:"1px solid rgba(255,255,255,.08)",borderRadius:10,width:36,height:36,fontSize:15,cursor:"pointer",display:"flex",alignItems:"center",justifyContent:"center",flexShrink:0}}>
+          🛒
+          {cartCount>0&&<span style={{position:"absolute",top:-4,right:-4,background:"#D4A853",color:"#0C0C0F",borderRadius:"50%",width:15,height:15,fontSize:8,fontWeight:700,display:"flex",alignItems:"center",justifyContent:"center"}}>{cartCount}</span>}
+        </button>
+      </header>
+
+      {/* ═══ SIDEBAR ═══ */}
+      <div className="sidebar" style={{transform:menuOpen?"translateX(0)":"translateX(-100%)"}}>
+        <div style={{padding:"20px 16px 14px",borderBottom:"1px solid rgba(255,255,255,.07)"}}>
+          <div style={{display:"flex",alignItems:"center",justifyContent:"space-between",marginBottom:10}}>
+            <span className="font-display" style={{fontSize:22,fontWeight:800,color:"#D4A853"}}>AKIT</span>
+            <button onClick={()=>setMenuOpen(false)} className="btn-ghost" style={{width:32,height:32,borderRadius:8,fontSize:16,padding:0,display:"flex",alignItems:"center",justifyContent:"center"}}>✕</button>
+          </div>
+          <div style={{display:"flex",gap:6}}>
+            <span style={{fontSize:10,padding:"3px 8px",borderRadius:6,background:store.fb?"rgba(16,185,129,.1)":"rgba(212,168,83,.1)",color:store.fb?"#10b981":"#D4A853",border:`1px solid ${store.fb?"rgba(16,185,129,.25)":"rgba(212,168,83,.25)"}`}}>
+              {store.fb?"🔥 Firebase":"💾 Local"}
+            </span>
+          </div>
+        </div>
+
+        <nav style={{flex:1,padding:"12px 10px",display:"flex",flexDirection:"column",gap:3,overflowY:"auto"}}>
+          {[
+            {icon:"🏠",label:t.home,p:"home"},
+            {icon:"💳",label:t.payment,p:"payment"},
+            {icon:"❤️",label:t.favorites,p:"favorites",badge:wish.length||null},
+            {icon:"🛒",label:t.cart,p:"cart",badge:cartCount||null},
+          ].map((item,i)=>(
+            <button key={i} className={`nav-item${page===item.p?" active":""}`} onClick={()=>navTo(item.p)}>
+              <span style={{fontSize:18}}>{item.icon}</span>
+              <span>{item.label}</span>
+              {item.badge?<span style={{marginLeft:"auto",background:"#D4A853",color:"#0C0C0F",borderRadius:"50%",width:20,height:20,fontSize:11,fontWeight:700,display:"flex",alignItems:"center",justifyContent:"center"}}>{item.badge}</span>:null}
+            </button>
+          ))}
+
+          <div style={{marginTop:8,borderTop:"1px solid rgba(255,255,255,.06)",paddingTop:10}}>
+            <div style={{fontSize:10,color:"rgba(240,237,232,.3)",padding:"4px 16px 6px",fontWeight:600,letterSpacing:".06em",textTransform:"uppercase"}}>🌐 {t.lang}</div>
+            <div style={{maxHeight:230,overflowY:"auto",borderRadius:10,border:"1px solid rgba(255,255,255,.06)",background:"rgba(0,0,0,.25)"}}>
+              {Object.entries(LANGS).map(([k,v])=>(
+                <button key={k} onClick={()=>{setLang(k);setMenuOpen(false);}} style={{display:"flex",alignItems:"center",gap:10,width:"100%",padding:"9px 14px",border:"none",background:lang===k?"rgba(212,168,83,.18)":"transparent",color:lang===k?"#D4A853":"rgba(240,237,232,.6)",cursor:"pointer",fontFamily:"Inter,sans-serif",fontWeight:lang===k?700:400,fontSize:13}}>
+                  <span style={{fontSize:16}}>{v.flag}</span><span>{v.n}</span>{lang===k&&<span style={{marginLeft:"auto",fontSize:13}}>✓</span>}
                 </button>
               ))}
-              <div style={{marginTop:4}}>
-                <div style={{fontSize:11,color:"rgba(255,255,255,0.3)",padding:"8px 16px 4px"}}>🌐 {t.lang}</div>
-                <div style={{maxHeight:250,overflowY:"auto",borderRadius:12,border:"1px solid rgba(255,255,255,0.06)",background:"rgba(0,0,0,0.3)"}}>
-                  {Object.entries(LANGS).map(([k,v])=>(
-                    <button key={k} onClick={()=>{setLang(k);setMenuOpen(false);}} style={{display:"flex",alignItems:"center",gap:10,width:"100%",padding:"9px 14px",border:"none",background:lang===k?"rgba(217,119,6,0.2)":"transparent",color:lang===k?"#f59e0b":"rgba(255,255,255,0.7)",cursor:"pointer",fontFamily:"'Nunito',sans-serif",fontWeight:lang===k?800:600,fontSize:13}}>
-                      <span style={{fontSize:18}}>{v.flag}</span><span>{v.name}</span>{lang===k&&<span style={{marginLeft:"auto",fontSize:14}}>✓</span>}
-                    </button>
-                  ))}
-                </div>
-              </div>
-            </nav>
-            <div style={{padding:"14px 16px",borderTop:"1px solid rgba(255,255,255,0.07)"}}>
-              <button onClick={()=>{navTo(adminLogged?"admin":"adminLogin");}} style={{display:"flex",alignItems:"center",gap:10,width:"100%",padding:"10px 14px",borderRadius:12,border:"1px solid rgba(217,119,6,0.3)",background:"rgba(217,119,6,0.08)",color:"#d97706",cursor:"pointer",fontFamily:"'Nunito',sans-serif",fontWeight:700,fontSize:13}}>
-                <span>⚙️</span><span>Admin</span>
-              </button>
-              <div style={{marginTop:10,fontSize:10,color:"rgba(255,255,255,0.2)",textAlign:"center",lineHeight:1.5}}>AKIT Commerce © 2026<br/>☁️ Cloudinary · dvv8gytfp</div>
             </div>
           </div>
+        </nav>
 
-          <div className="page-content">
-            {page==="home"&&(
-              <main style={{maxWidth:1100,margin:"0 auto",padding:"0 12px 60px"}}>
-                <div style={{margin:"16px 0",borderRadius:24,overflow:"hidden",position:"relative",background:"linear-gradient(135deg,#1a0a00,#2d1600,#0a0a1a)",border:"1px solid rgba(217,119,6,0.25)",padding:"32px 24px"}}>
-                  <div style={{position:"absolute",top:0,right:0,width:"50%",height:"100%",background:"radial-gradient(ellipse at right,rgba(217,119,6,0.15),transparent 70%)",pointerEvents:"none"}}/>
-                  <div style={{position:"absolute",inset:0,backgroundImage:"linear-gradient(rgba(255,255,255,0.03) 1px,transparent 1px),linear-gradient(90deg,rgba(255,255,255,0.03) 1px,transparent 1px)",backgroundSize:"28px 28px",pointerEvents:"none"}}/>
-                  <div style={{position:"relative",zIndex:1}}>
-                    <div style={{display:"inline-flex",alignItems:"center",gap:8,background:"rgba(217,119,6,0.15)",border:"1px solid rgba(217,119,6,0.4)",borderRadius:20,padding:"5px 14px",marginBottom:12}}>
-                      <span style={{animation:"pulse 2s infinite",display:"block"}}>🌍</span>
-                      <span style={{fontSize:11,fontWeight:700,color:"#f59e0b",letterSpacing:"0.05em"}}>ACCESSIBLE PARTOUT DANS LE MONDE</span>
-                    </div>
-                    <h1 style={{fontFamily:"'Cinzel',serif",fontSize:"clamp(20px,4vw,36px)",fontWeight:900,lineHeight:1.2,marginBottom:10,background:"linear-gradient(135deg,#fff 30%,#f59e0b 80%)",WebkitBackgroundClip:"text",WebkitTextFillColor:"transparent"}}>CENTRE DE COMMERCE AKIT</h1>
-                    <p style={{fontSize:13,color:"rgba(255,255,255,0.55)",marginBottom:18,maxWidth:380}}>{t.satisfaction}</p>
-                    <div className="hero-btns" style={{display:"flex",gap:10,flexWrap:"wrap"}}>
-                      <button onClick={()=>navTo("payment")} className="btn-gold" style={{padding:"10px 20px",borderRadius:12,border:"none",fontWeight:900,fontSize:13,color:"#000",cursor:"pointer",fontFamily:"'Nunito',sans-serif"}}>💳 {t.payment}</button>
-                    </div>
-                  </div>
-                </div>
-
-                <div className="grid-stats" style={{display:"grid",gridTemplateColumns:"repeat(4,1fr)",gap:8,marginBottom:20}}>
-                  {[
-                    {val:"190+",label:{fr:"Pays",en:"Countries",ar:"دول",zh:"国家",es:"Países",pt:"Países",de:"Länder",ru:"Стран",tr:"Ülke",ha:"Ƙasashe"},icon:"🌍"},
-                    {val:"100%",label:{fr:"Sécurisé",en:"Secure",ar:"آمن",zh:"安全",es:"Seguro",pt:"Seguro",de:"Sicher",ru:"Безопасно",tr:"Güvenli",ha:"Aminci"},icon:"🔒"},
-                    {val:"24/7",label:{fr:"Support",en:"Support",ar:"دعم",zh:"支持",es:"Soporte",pt:"Suporte",de:"Support",ru:"Поддержка",tr:"Destek",ha:"Tallafi"},icon:"💬"},
-                    {val:"★4.9",label:{fr:"Satisfaction",en:"Satisfaction",ar:"رضا",zh:"满意度",es:"Satisfacción",pt:"Satisfação",de:"Zufriedenheit",ru:"Удовлетворённость",tr:"Memnuniyet",ha:"Gamsuwa"},icon:"⭐"},
-                  ].map((s,i)=>(
-                    <div key={i} className="glass" style={{borderRadius:14,padding:"12px 8px",textAlign:"center"}}>
-                      <div style={{fontSize:20,marginBottom:3}}>{s.icon}</div>
-                      <div style={{fontFamily:"'Cinzel',serif",fontWeight:900,fontSize:16,color:"#f59e0b"}}>{s.val}</div>
-                      <div style={{fontSize:9,color:"rgba(255,255,255,0.4)",marginTop:2}}>{s.label[lang]||s.label.fr}</div>
-                    </div>
-                  ))}
-                </div>
-
-                {categories.length>1&&(
-                  <div style={{display:"flex",gap:7,overflowX:"auto",paddingBottom:6,marginBottom:16}}>
-                    {categories.map(c=>(
-                      <button key={c} onClick={()=>setFilterCat(c)} style={{flexShrink:0,padding:"6px 14px",borderRadius:20,border:filterCat===c?"1px solid #d97706":"1px solid rgba(255,255,255,0.1)",background:filterCat===c?"rgba(217,119,6,0.2)":"rgba(255,255,255,0.04)",color:filterCat===c?"#f59e0b":"rgba(255,255,255,0.6)",cursor:"pointer",fontFamily:"'Nunito',sans-serif",fontWeight:700,fontSize:12,transition:"all .2s",whiteSpace:"nowrap"}}>
-                        {c==="all"?(t.all||"Tous"):c}
-                      </button>
-                    ))}
-                  </div>
-                )}
-
-                {loading?(
-                  <div style={{textAlign:"center",padding:"60px 20px"}}>
-                    <div className="spinner" style={{marginBottom:16}}/>
-                    <p style={{color:"rgba(255,255,255,0.4)",fontSize:14}}>{t.loading}</p>
-                  </div>
-                ):filtered.length===0?(
-                  <div style={{textAlign:"center",padding:"50px 20px"}}>
-                    <div style={{fontSize:70,marginBottom:14,opacity:0.3}}>🛍️</div>
-                    <div style={{fontFamily:"'Cinzel',serif",fontSize:18,fontWeight:900,color:"rgba(255,255,255,0.3)",marginBottom:8}}>{search?"Aucun résultat":"BOUTIQUE EN PRÉPARATION"}</div>
-                    <div style={{fontSize:13,color:"rgba(255,255,255,0.2)",maxWidth:340,margin:"0 auto",lineHeight:1.7,whiteSpace:"pre-line"}}>{search?`Aucun produit pour "${search}"`:t.noProducts}</div>
-                  </div>
-                ):(
-                  <div className="products-grid" style={{display:"grid",gridTemplateColumns:"repeat(auto-fill,minmax(160px,1fr))",gap:12}}>
-                    {filtered.map(p=>{
-                      const isWished = wishlist.find(x=>x.id===p.id);
-                      const badgeMap = {nouveau:{bg:"#6366f1",c:"#fff",label:"🆕 Nouveau"},promo:{bg:"#ef4444",c:"#fff",label:"🔥 Promo"},bestseller:{bg:"#f59e0b",c:"#000",label:"⭐ Best"},luxe:{bg:"linear-gradient(135deg,#d97706,#fbbf24)",c:"#000",label:"💎 Luxe"},tendance:{bg:"#10b981",c:"#fff",label:"📈 Tendance"},exclusif:{bg:"#8b5cf6",c:"#fff",label:"✨ Exclusif"}};
-                      const bc = p.badge&&badgeMap[p.badge];
-                      return (
-                        <div key={p.id} className="card-hover glass" style={{borderRadius:18,overflow:"hidden",position:"relative",display:"flex",flexDirection:"column"}}>
-                          {bc&&<div style={{position:"absolute",top:8,left:8,zIndex:2,padding:"2px 8px",borderRadius:18,background:bc.bg,color:bc.c,fontSize:9,fontWeight:900}}>{bc.label}</div>}
-                          <button onClick={()=>toggleWish(p)} style={{position:"absolute",top:8,right:8,zIndex:2,background:"rgba(0,0,0,0.5)",border:"none",borderRadius:"50%",width:28,height:28,fontSize:14,cursor:"pointer",display:"flex",alignItems:"center",justifyContent:"center",backdropFilter:"blur(8px)"}}>{isWished?"❤️":"🤍"}</button>
-                          <div style={{height:130,display:"flex",alignItems:"center",justifyContent:"center",background:"linear-gradient(135deg,rgba(217,119,6,0.08),rgba(6,6,20,0.5))",overflow:"hidden",flexShrink:0}}>
-                            {p.image?<img src={p.image} alt={p.name} style={{width:"100%",height:"100%",objectFit:"cover"}}/>:<span style={{fontSize:58,userSelect:"none"}}>{p.emoji||"📦"}</span>}
-                          </div>
-                          {!p.inStock&&<div style={{position:"absolute",inset:0,background:"rgba(0,0,0,0.65)",display:"flex",alignItems:"center",justifyContent:"center",borderRadius:18}}><span style={{background:"rgba(239,68,68,0.9)",color:"#fff",fontWeight:900,fontSize:10,padding:"4px 12px",borderRadius:18}}>{t.outStock}</span></div>}
-                          <div style={{padding:"10px 12px 12px",flex:1,display:"flex",flexDirection:"column"}}>
-                            <div style={{fontWeight:800,fontSize:12,lineHeight:1.3,marginBottom:4,color:"rgba(255,255,255,0.92)",display:"-webkit-box",WebkitLineClamp:2,WebkitBoxOrient:"vertical",overflow:"hidden",flex:1}}>{p.name}</div>
-                            {p.category&&<div style={{fontSize:9,color:"rgba(255,255,255,0.35)",marginBottom:5}}>{p.category}</div>}
-                            {Number(p.rating)>0&&<div style={{display:"flex",alignItems:"center",gap:4,marginBottom:6}}><Stars r={Number(p.rating)}/><span style={{fontSize:9,color:"rgba(255,255,255,0.4)"}}>({p.reviews||0})</span></div>}
-                            <div style={{fontFamily:"'Cinzel',serif",fontWeight:900,fontSize:14,color:"#f59e0b",marginBottom:8}}>{fmtFCFA(p.price)}</div>
-                            <div style={{display:"flex",flexDirection:"column",gap:5}}>
-                              <button onClick={()=>p.inStock&&setQuickOrder(p)} disabled={!p.inStock} style={{width:"100%",padding:"7px 0",borderRadius:9,border:"none",background:p.inStock?"linear-gradient(135deg,#25D366,#128C7E)":"rgba(255,255,255,0.05)",color:p.inStock?"#fff":"rgba(255,255,255,0.25)",fontWeight:900,fontSize:11,cursor:p.inStock?"pointer":"default",fontFamily:"'Nunito',sans-serif",display:"flex",alignItems:"center",justifyContent:"center",gap:5}}>
-                                {p.inStock?(<><WaIcon size={13}/>{t.orderDirect}</>):t.outStock}
-                              </button>
-                              {p.inStock&&<button onClick={()=>addToCart(p)} className="btn-gold" style={{width:"100%",padding:"6px 0",borderRadius:9,border:"none",color:"#000",fontWeight:900,fontSize:11,cursor:"pointer",fontFamily:"'Nunito',sans-serif"}}>🛒 {t.addCart}</button>}
-                            </div>
-                          </div>
-                        </div>
-                      );
-                    })}
-                  </div>
-                )}
-              </main>
-            )}
-
-            {page==="cart"&&(
-              <main style={{maxWidth:700,margin:"0 auto",padding:"24px 12px 80px"}}>
-                <div style={{display:"flex",alignItems:"center",gap:12,marginBottom:22}}>
-                  <button onClick={()=>setPage("home")} style={{background:"rgba(255,255,255,0.07)",border:"none",borderRadius:10,padding:"8px 12px",color:"#fff",cursor:"pointer",fontSize:18}}>←</button>
-                  <h2 style={{fontFamily:"'Cinzel',serif",fontSize:20,fontWeight:900}}>{t.cart} ({cartCount})</h2>
-                </div>
-                {cart.length===0?(
-                  <div style={{textAlign:"center",padding:"50px 20px"}}>
-                    <div style={{fontSize:70,marginBottom:14}}>🛒</div>
-                    <p style={{color:"rgba(255,255,255,0.35)",fontSize:15,marginBottom:20}}>{t.emptyCart}</p>
-                    <button onClick={()=>setPage("home")} className="btn-gold" style={{padding:"11px 28px",borderRadius:14,border:"none",fontWeight:900,fontSize:14,color:"#000",cursor:"pointer",fontFamily:"'Nunito',sans-serif"}}>{t.continueShopping}</button>
-                  </div>
-                ):(
-                  <>
-                    <div style={{display:"flex",flexDirection:"column",gap:10,marginBottom:18}}>
-                      {cart.map(item=>(
-                        <div key={item.id} className="glass" style={{borderRadius:16,padding:"12px 14px",display:"flex",gap:12,alignItems:"center"}}>
-                          <div style={{width:52,height:52,borderRadius:12,background:"rgba(255,255,255,0.05)",display:"flex",alignItems:"center",justifyContent:"center",fontSize:28,flexShrink:0,overflow:"hidden"}}>
-                            {item.image?<img src={item.image} alt="" style={{width:"100%",height:"100%",objectFit:"cover",borderRadius:12}}/>:item.emoji||"📦"}
-                          </div>
-                          <div style={{flex:1,minWidth:0}}>
-                            <div style={{fontWeight:800,fontSize:13,marginBottom:2,whiteSpace:"nowrap",overflow:"hidden",textOverflow:"ellipsis"}}>{item.name}</div>
-                            <div style={{fontFamily:"'Cinzel',serif",fontWeight:900,fontSize:13,color:"#f59e0b"}}>{fmtFCFA(item.price)}</div>
-                            <div style={{display:"flex",alignItems:"center",gap:8,marginTop:7}}>
-                              <button onClick={()=>updQty(item.id,-1)} style={{width:26,height:26,borderRadius:"50%",background:"rgba(255,255,255,0.1)",border:"none",color:"#fff",cursor:"pointer",fontWeight:900,fontSize:15,display:"flex",alignItems:"center",justifyContent:"center"}}>−</button>
-                              <span style={{fontWeight:900,fontSize:14,minWidth:18,textAlign:"center"}}>{item.qty}</span>
-                              <button onClick={()=>updQty(item.id,1)} style={{width:26,height:26,borderRadius:"50%",background:"rgba(255,255,255,0.1)",border:"none",color:"#fff",cursor:"pointer",fontWeight:900,fontSize:15,display:"flex",alignItems:"center",justifyContent:"center"}}>+</button>
-                              <span style={{fontSize:11,color:"rgba(255,255,255,0.4)"}}>= {fmtFCFA(item.price*item.qty)}</span>
-                            </div>
-                          </div>
-                          <button onClick={()=>rmCart(item.id)} style={{background:"rgba(239,68,68,0.12)",border:"1px solid rgba(239,68,68,0.3)",borderRadius:10,padding:"6px 10px",color:"#ef4444",cursor:"pointer",fontSize:12,fontWeight:700,fontFamily:"'Nunito',sans-serif"}}>🗑️</button>
-                        </div>
-                      ))}
-                    </div>
-                    <div className="glass" style={{borderRadius:16,padding:"16px 18px",marginBottom:12}}>
-                      <div style={{display:"flex",justifyContent:"space-between",marginBottom:7,fontSize:12,color:"rgba(255,255,255,0.5)"}}>
-                        <span>{t.shipping}</span><span style={{color:"#10b981",fontWeight:700}}>GRATUIT</span>
-                      </div>
-                      <div style={{display:"flex",justifyContent:"space-between",fontWeight:900,fontSize:17}}>
-                        <span>{t.total}</span>
-                        <span style={{fontFamily:"'Cinzel',serif",color:"#f59e0b"}}>{fmtFCFA(cartTotal)}</span>
-                      </div>
-                    </div>
-                    <button onClick={()=>setOrderModal(true)} style={{width:"100%",padding:"14px 0",borderRadius:14,border:"none",background:"linear-gradient(135deg,#25D366,#128C7E)",color:"#fff",fontWeight:900,fontSize:15,cursor:"pointer",fontFamily:"'Nunito',sans-serif",display:"flex",alignItems:"center",justifyContent:"center",gap:10}}>
-                      <WaIcon size={20}/> {t.orderNow} — {fmtFCFA(cartTotal)}
-                    </button>
-                  </>
-                )}
-              </main>
-            )}
-
-            {page==="payment"&&(
-              <main style={{maxWidth:560,margin:"0 auto",padding:"24px 12px 80px"}}>
-                <div style={{display:"flex",alignItems:"center",gap:12,marginBottom:24}}>
-                  <button onClick={()=>setPage(cart.length?"cart":"home")} style={{background:"rgba(255,255,255,0.07)",border:"none",borderRadius:10,padding:"8px 12px",color:"#fff",cursor:"pointer",fontSize:18}}>←</button>
-                  <h2 style={{fontFamily:"'Cinzel',serif",fontSize:20,fontWeight:900}}>{t.payTitle}</h2>
-                </div>
-                <p style={{color:"rgba(255,255,255,0.45)",fontSize:13,marginBottom:22}}>{t.payDesc}</p>
-                <div style={{display:"flex",flexDirection:"column",gap:9,marginBottom:22}}>
-                  {PAYMENT_METHODS.map(m=>(
-                    <div key={m.id} style={{display:"flex",alignItems:"center",gap:14,padding:"14px 16px",borderRadius:14,border:`1px solid ${m.color}44`,background:`${m.color}11`,color:"#fff"}}>
-                      <span style={{fontSize:26}}>{m.icon}</span>
-                      <span style={{fontWeight:800,fontSize:14}}>{m.name}</span>
-                      <span style={{marginLeft:"auto",fontSize:11,color:"rgba(255,255,255,0.4)"}}>Disponible</span>
-                    </div>
-                  ))}
-                </div>
-                {cart.length>0?(
-                  <button onClick={()=>setOrderModal(true)} style={{width:"100%",padding:"14px 0",borderRadius:14,border:"none",background:"linear-gradient(135deg,#25D366,#128C7E)",color:"#fff",fontWeight:900,fontSize:15,cursor:"pointer",fontFamily:"'Nunito',sans-serif",display:"flex",alignItems:"center",justifyContent:"center",gap:10}}>
-                    <WaIcon size={20}/> {t.orderNow} — {fmtFCFA(cartTotal)}
-                  </button>
-                ):(
-                  <button onClick={()=>setPage("home")} className="btn-gold" style={{width:"100%",padding:"14px 0",borderRadius:14,border:"none",fontWeight:900,fontSize:15,color:"#000",cursor:"pointer",fontFamily:"'Nunito',sans-serif"}}>🛍️ {t.continueShopping}</button>
-                )}
-                <div style={{display:"flex",justifyContent:"center",gap:14,marginTop:14,fontSize:11,color:"rgba(255,255,255,0.3)",flexWrap:"wrap"}}>
-                  {["🔒 SSL","🛡️ 3D Secure","🔄 Remboursement 30j"].map((s,i)=><span key={i}>{s}</span>)}
-                </div>
-              </main>
-            )}
-
-            {page==="orderDone"&&(
-              <main style={{maxWidth:500,margin:"0 auto",padding:"60px 20px",textAlign:"center"}}>
-                <div style={{fontSize:80,marginBottom:20,animation:"toastPop .6s cubic-bezier(.34,1.56,.64,1) both"}}>🎉</div>
-                <h2 style={{fontFamily:"'Cinzel',serif",fontSize:24,fontWeight:900,marginBottom:10,background:"linear-gradient(135deg,#25D366,#128C7E)",WebkitBackgroundClip:"text",WebkitTextFillColor:"transparent"}}>{t.orderConfirmed}</h2>
-                <p style={{color:"rgba(255,255,255,0.5)",lineHeight:1.7,marginBottom:10}}>{t.orderThank}</p>
-                <p style={{color:"rgba(255,255,255,0.35)",fontSize:13,marginBottom:30}}>📱 +237 698 083 058</p>
-                <button onClick={()=>setPage("home")} className="btn-gold" style={{padding:"13px 36px",borderRadius:16,border:"none",fontWeight:900,fontSize:15,color:"#000",cursor:"pointer",fontFamily:"'Nunito',sans-serif"}}>🏠 {t.continueShopping}</button>
-              </main>
-            )}
-
-            {page==="favorites"&&(
-              <main style={{maxWidth:800,margin:"0 auto",padding:"24px 12px 80px"}}>
-                <div style={{display:"flex",alignItems:"center",gap:12,marginBottom:22}}>
-                  <button onClick={()=>setPage("home")} style={{background:"rgba(255,255,255,0.07)",border:"none",borderRadius:10,padding:"8px 12px",color:"#fff",cursor:"pointer",fontSize:18}}>←</button>
-                  <h2 style={{fontFamily:"'Cinzel',serif",fontSize:20,fontWeight:900}}>❤️ {t.favorites} ({wishlist.length})</h2>
-                </div>
-                {wishlist.length===0?(
-                  <div style={{textAlign:"center",padding:"50px 20px"}}>
-                    <div style={{fontSize:70,marginBottom:14}}>🤍</div>
-                    <p style={{color:"rgba(255,255,255,0.35)",fontSize:15,marginBottom:20}}>{t.wishEmpty}</p>
-                    <button onClick={()=>setPage("home")} className="btn-gold" style={{padding:"11px 28px",borderRadius:14,border:"none",fontWeight:900,fontSize:14,color:"#000",cursor:"pointer",fontFamily:"'Nunito',sans-serif"}}>{t.continueShopping}</button>
-                  </div>
-                ):(
-                  <div style={{display:"grid",gridTemplateColumns:"repeat(auto-fill,minmax(160px,1fr))",gap:12}}>
-                    {wishlist.map(p=>(
-                      <div key={p.id} className="card-hover glass" style={{borderRadius:18,overflow:"hidden"}}>
-                        <div style={{height:110,display:"flex",alignItems:"center",justifyContent:"center",background:"rgba(217,119,6,0.06)",overflow:"hidden"}}>
-                          {p.image?<img src={p.image} alt="" style={{width:"100%",height:"100%",objectFit:"cover"}}/>:<span style={{fontSize:48}}>{p.emoji||"📦"}</span>}
-                        </div>
-                        <div style={{padding:"10px 12px"}}>
-                          <div style={{fontWeight:800,fontSize:12,marginBottom:5,lineHeight:1.3}}>{p.name}</div>
-                          <div style={{fontFamily:"'Cinzel',serif",fontWeight:900,fontSize:13,color:"#f59e0b",marginBottom:8}}>{fmtFCFA(p.price)}</div>
-                          <div style={{display:"flex",gap:6}}>
-                            <button onClick={()=>setQuickOrder(p)} style={{flex:1,padding:"6px 0",borderRadius:9,border:"none",background:"linear-gradient(135deg,#25D366,#128C7E)",color:"#fff",fontWeight:900,fontSize:10,cursor:"pointer",fontFamily:"'Nunito',sans-serif",display:"flex",alignItems:"center",justifyContent:"center",gap:4}}>
-                              <WaIcon size={11}/> Commander
-                            </button>
-                            <button onClick={()=>toggleWish(p)} style={{padding:"6px 10px",borderRadius:9,border:"1px solid rgba(239,68,68,0.4)",background:"rgba(239,68,68,0.1)",color:"#ef4444",cursor:"pointer",fontSize:12}}>✕</button>
-                          </div>
-                        </div>
-                      </div>
-                    ))}
-                  </div>
-                )}
-              </main>
-            )}
-
-            {page==="home"&&(
-              <footer style={{background:"linear-gradient(180deg,transparent,rgba(0,0,0,0.8))",borderTop:"1px solid rgba(255,255,255,0.05)",padding:"28px 14px",textAlign:"center"}}>
-                <div style={{fontFamily:"'Cinzel',serif",fontSize:22,fontWeight:900,background:"linear-gradient(135deg,#d97706,#f59e0b)",WebkitBackgroundClip:"text",WebkitTextFillColor:"transparent",marginBottom:6}}>AKIT COMMERCE</div>
-                <p style={{fontSize:11,color:"rgba(255,255,255,0.25)",lineHeight:1.8}}>
-                  🌍 Accessible partout · 🔒 Paiement sécurisé · 🔄 Retours gratuits<br/>
-                  ☁️ Images hébergées sur Cloudinary — CDN mondial<br/>
-                  📱 WhatsApp: +237 698 083 058<br/>
-                  © 2026 Centre de Commerce AKIT
-                </p>
-              </footer>
-            )}
-          </div>
-
-          {toast&&<Toast msg={toast.msg} ok={toast.ok}/>}
+        <div style={{padding:"12px 14px",borderTop:"1px solid rgba(255,255,255,.07)"}}>
+          <div style={{fontSize:10,color:"rgba(240,237,232,.2)",textAlign:"center",lineHeight:1.7}}>AKIT Commerce © 2026<br/>☁ Cloudinary · dvv8gytfp</div>
         </div>
-      );
-    }
+      </div>
 
-    const root = ReactDOM.createRoot(document.getElementById('root'));
-    root.render(React.createElement(AkitCommerce));
+      {/* ═══ CONTENU ═══ */}
+      <div style={{paddingTop:88}}>
 
-    const handleImageUpload = async (e) => {
-  const file = e.target.files[0];
-  if (!file) return;
-  if (file.size > 5 * 1024 * 1024) { showToast("Image trop grande (max 5MB)", false); return; }
+        {/* ──── HOME ──── */}
+        {page==="home"&&(
+          <main style={{maxWidth:1100,margin:"0 auto",padding:"0 12px 60px"}}>
+            {/* HERO */}
+            <div style={{margin:"16px 0",borderRadius:20,overflow:"hidden",position:"relative",background:"linear-gradient(135deg,#13130A,#1A1200,#0C0C0F)",border:"1px solid rgba(212,168,83,.2)",padding:"36px 28px"}}>
+              <div style={{position:"absolute",top:0,right:0,width:"45%",height:"100%",background:"radial-gradient(ellipse at 80% 50%,rgba(212,168,83,.12),transparent 70%)",pointerEvents:"none"}}/>
+              <div style={{position:"relative",zIndex:1,maxWidth:520}}>
+                <div style={{display:"inline-flex",alignItems:"center",gap:8,background:"rgba(212,168,83,.1)",border:"1px solid rgba(212,168,83,.3)",borderRadius:20,padding:"5px 14px",marginBottom:14}}>
+                  <span style={{animation:"pulse 2s infinite",display:"block",fontSize:12}}>🌍</span>
+                  <span style={{fontSize:11,fontWeight:700,color:"#D4A853",letterSpacing:".05em"}}>190+ PAYS · LIVRAISON INTERNATIONALE</span>
+                </div>
+                <h1 className="font-display" style={{fontSize:"clamp(22px,4vw,38px)",fontWeight:800,lineHeight:1.15,marginBottom:12}}>
+                  <span style={{color:"#F0EDE8"}}>Bienvenue sur </span>
+                  <span style={{color:"#D4A853"}}>AKIT Commerce</span>
+                </h1>
+                <p style={{fontSize:13,color:"rgba(240,237,232,.5)",marginBottom:22,lineHeight:1.7}}>
+                  Votre boutique mondiale — produits authentiques, livraison rapide, satisfaction garantie.
+                </p>
+                <button onClick={()=>navTo("payment")} className="btn-gold" style={{padding:"11px 24px",borderRadius:12,fontSize:13}}>
+                  💳 {t.payment}
+                </button>
+              </div>
+            </div>
 
-  showToast("⏳ Upload en cours…", true);
+            {/* STATS */}
+            <div className="stats-row" style={{display:"grid",gridTemplateColumns:"repeat(4,1fr)",gap:8,marginBottom:20}}>
+              {[
+                {val:"190+",lbl:{fr:"Pays",en:"Countries",ar:"دول",zh:"国家",es:"Países",pt:"Países",de:"Länder",ru:"Стран",tr:"Ülke",ha:"Ƙasashe"},icon:"🌍"},
+                {val:"100%",lbl:{fr:"Sécurisé",en:"Secure",ar:"آمن",zh:"安全",es:"Seguro",pt:"Seguro",de:"Sicher",ru:"Безопасно",tr:"Güvenli",ha:"Aminci"},icon:"🔒"},
+                {val:"24/7",lbl:{fr:"Support",en:"Support",ar:"دعم",zh:"支持",es:"Soporte",pt:"Suporte",de:"Support",ru:"Поддержка",tr:"Destek",ha:"Tallafi"},icon:"💬"},
+                {val:"★4.9",lbl:{fr:"Satisfaction",en:"Satisfaction",ar:"رضا",zh:"满意度",es:"Satisfacción",pt:"Satisfação",de:"Zufriedenheit",ru:"Оценка",tr:"Memnuniyet",ha:"Gamsuwa"},icon:"⭐"},
+              ].map((s,i)=>(
+                <div key={i} style={{background:"rgba(255,255,255,.03)",border:"1px solid rgba(255,255,255,.06)",borderRadius:14,padding:"12px 10px",textAlign:"center"}}>
+                  <div style={{fontSize:18,marginBottom:3}}>{s.icon}</div>
+                  <div className="font-display" style={{fontWeight:800,fontSize:16,color:"#D4A853"}}>{s.val}</div>
+                  <div style={{fontSize:9,color:"rgba(240,237,232,.4)",marginTop:2}}>{s.lbl[lang]||s.lbl.fr}</div>
+                </div>
+              ))}
+            </div>
 
-  if (db && firebase.storage) {
-    // ✅ FIREBASE STORAGE — visible partout dans le monde
-    try {
-      const storage = firebase.storage();
-      const fileName = `products/${Date.now()}_${file.name}`;
-      const ref = storage.ref(fileName);
-      await ref.put(file);
-      const url = await ref.getDownloadURL();
-      setForm(f => ({ ...f, image: url, emoji: "" }));
-      showToast("✅ Image uploadée sur Firebase !", true);
-    } catch (err) {
-      showToast("❌ Erreur upload: " + err.message, false);
-    }
-  } else {
-    // Fallback base64 local
-    const reader = new FileReader();
-    reader.onload = (ev) => setForm(f => ({ ...f, image: ev.target.result, emoji: "" }));
-    reader.readAsDataURL(file);
-  }
-};
-  
-  </script>
+            {/* FILTRES CATÉGORIES */}
+            {cats.length>1&&(
+              <div style={{display:"flex",gap:7,overflowX:"auto",paddingBottom:6,marginBottom:18}}>
+                {cats.map(c=>(
+                  <button key={c} className={`cat-pill${filterCat===c?" active":""}`} onClick={()=>setFilterCat(c)}>
+                    {c==="all"?t.all:c}
+                  </button>
+                ))}
+              </div>
+            )}
+
+            {/* PRODUITS */}
+            {loading?(
+              <div style={{textAlign:"center",padding:"60px 20px"}}>
+                <div className="spin" style={{marginBottom:16}}/>
+                <p style={{color:"rgba(240,237,232,.35)",fontSize:14}}>{t.loading}</p>
+              </div>
+            ):filtered.length===0?(
+              <div style={{textAlign:"center",padding:"50px 20px"}}>
+                <div style={{fontSize:60,marginBottom:12,opacity:.25}}>🛍</div>
+                <div className="font-display" style={{fontSize:18,color:"rgba(240,237,232,.25)",marginBottom:8,fontWeight:700}}>
+                  {search?"Aucun résultat":"BOUTIQUE EN PRÉPARATION"}
+                </div>
+                <div style={{fontSize:13,color:"rgba(240,237,232,.2)",lineHeight:1.8,whiteSpace:"pre-line",maxWidth:320,margin:"0 auto"}}>
+                  {search?`"${search}" — aucun produit trouvé`:t.noProducts}
+                </div>
+              </div>
+            ):(
+              <div className="products-grid" style={{display:"grid",gridTemplateColumns:"repeat(auto-fill,minmax(165px,1fr))",gap:12}}>
+                {filtered.map(p=>{
+                  const isW=wish.find(x=>x.id===p.id);
+                  const bc=p.badge&&BADGES[p.badge];
+                  return (
+                    <div key={p.id} className="pcard" style={{position:"relative"}}>
+                      {bc&&<div style={{position:"absolute",top:8,left:8,zIndex:2,padding:"2px 8px",borderRadius:20,background:bc.bg,color:bc.c,fontSize:9,fontWeight:700,letterSpacing:".03em"}}>{bc.l}</div>}
+                      <button onClick={()=>toggleWish(p)} style={{position:"absolute",top:8,right:8,zIndex:2,background:"rgba(0,0,0,.55)",border:"none",borderRadius:"50%",width:28,height:28,fontSize:13,cursor:"pointer",display:"flex",alignItems:"center",justifyContent:"center",backdropFilter:"blur(8px)"}}>
+                        {isW?"❤️":"🤍"}
+                      </button>
+                      <div style={{height:135,overflow:"hidden",background:"rgba(255,255,255,.03)",display:"flex",alignItems:"center",justifyContent:"center",position:"relative",flexShrink:0}}>
+                        {p.image?<img src={p.image} alt={p.name} style={{width:"100%",height:"100%",objectFit:"cover"}}/>:<span style={{fontSize:54,userSelect:"none"}}>{p.emoji||"📦"}</span>}
+                        {!p.inStock&&<div style={{position:"absolute",inset:0,background:"rgba(0,0,0,.68)",display:"flex",alignItems:"center",justifyContent:"center"}}><span style={{background:"rgba(239,68,68,.9)",color:"#fff",fontWeight:700,fontSize:10,padding:"4px 10px",borderRadius:18}}>{t.outStock}</span></div>}
+                      </div>
+                      <div style={{padding:"10px 12px 12px",flex:1,display:"flex",flexDirection:"column",gap:4}}>
+                        <div style={{fontWeight:600,fontSize:12,lineHeight:1.35,color:"rgba(240,237,232,.9)",display:"-webkit-box",WebkitLineClamp:2,WebkitBoxOrient:"vertical",overflow:"hidden",flex:1}}>{p.name}</div>
+                        {p.category&&<div style={{fontSize:9,color:"rgba(240,237,232,.3)"}}>{p.category}</div>}
+                        {Number(p.rating)>0&&<div style={{display:"flex",alignItems:"center",gap:4}}><Stars r={p.rating}/><span style={{fontSize:9,color:"rgba(240,237,232,.35)"}}>({p.reviews||0})</span></div>}
+                        <div className="font-display" style={{fontWeight:800,fontSize:14,color:"#D4A853",marginBottom:4}}>{fmt(p.price)}</div>
+                        <div style={{display:"flex",flexDirection:"column",gap:5}}>
+                          <button
+                            onClick={()=>p.inStock&&setQuickProd(p)}
+                            disabled={!p.inStock}
+                            style={{width:"100%",padding:"7px 0",borderRadius:9,border:"none",background:p.inStock?"linear-gradient(135deg,#25D366,#128C7E)":"rgba(255,255,255,.05)",color:p.inStock?"#fff":"rgba(240,237,232,.25)",fontWeight:700,fontSize:11,cursor:p.inStock?"pointer":"default",fontFamily:"Inter,sans-serif",display:"flex",alignItems:"center",justifyContent:"center",gap:5}}
+                          >
+                            {p.inStock?<><WaIco s={12}/>{t.orderDirect}</>:t.outStock}
+                          </button>
+                          {p.inStock&&(
+                            <button onClick={()=>addCart(p)} className="btn-gold" style={{width:"100%",padding:"6px 0",borderRadius:9,fontSize:11}}>
+                              🛒 {t.addCart}
+                            </button>
+                          )}
+                        </div>
+                      </div>
+                    </div>
+                  );
+                })}
+              </div>
+            )}
+          </main>
+        )}
+
+        {/* ──── CART ──── */}
+        {page==="cart"&&(
+          <main style={{maxWidth:700,margin:"0 auto",padding:"24px 12px 80px"}}>
+            <div style={{display:"flex",alignItems:"center",gap:12,marginBottom:24}}>
+              <button onClick={()=>setPage("home")} className="btn-ghost" style={{width:36,height:36,borderRadius:10,fontSize:18,padding:0,display:"flex",alignItems:"center",justifyContent:"center"}}>←</button>
+              <h2 className="font-display" style={{fontSize:20,fontWeight:700}}>{t.cart} ({cartCount})</h2>
+            </div>
+            {cart.length===0?(
+              <div style={{textAlign:"center",padding:"50px 20px"}}>
+                <div style={{fontSize:60,marginBottom:14}}>🛒</div>
+                <p style={{color:"rgba(240,237,232,.35)",fontSize:15,marginBottom:20}}>{t.emptyCart}</p>
+                <button onClick={()=>setPage("home")} className="btn-gold" style={{padding:"11px 28px",borderRadius:14,fontSize:14}}>{t.continueShopping}</button>
+              </div>
+            ):(
+              <>
+                <div style={{display:"flex",flexDirection:"column",gap:10,marginBottom:18}}>
+                  {cart.map(item=>(
+                    <div key={item.id} className="card-flat" style={{padding:"12px 14px",display:"flex",gap:12,alignItems:"center"}}>
+                      <div style={{width:52,height:52,borderRadius:11,overflow:"hidden",flexShrink:0,background:"rgba(255,255,255,.05)",display:"flex",alignItems:"center",justifyContent:"center",fontSize:26}}>
+                        {item.image?<img src={item.image} alt="" style={{width:"100%",height:"100%",objectFit:"cover",borderRadius:11}}/>:item.emoji||"📦"}
+                      </div>
+                      <div style={{flex:1,minWidth:0}}>
+                        <div style={{fontWeight:600,fontSize:13,marginBottom:2,overflow:"hidden",textOverflow:"ellipsis",whiteSpace:"nowrap"}}>{item.name}</div>
+                        <div className="font-display" style={{fontWeight:800,fontSize:13,color:"#D4A853"}}>{fmt(item.price)}</div>
+                        <div style={{display:"flex",alignItems:"center",gap:8,marginTop:6}}>
+                          <button onClick={()=>updQty(item.id,-1)} className="btn-ghost" style={{width:26,height:26,borderRadius:"50%",fontSize:14,padding:0,display:"flex",alignItems:"center",justifyContent:"center"}}>−</button>
+                          <span style={{fontWeight:700,fontSize:14,minWidth:18,textAlign:"center"}}>{item.qty}</span>
+                          <button onClick={()=>updQty(item.id,1)} className="btn-ghost" style={{width:26,height:26,borderRadius:"50%",fontSize:14,padding:0,display:"flex",alignItems:"center",justifyContent:"center"}}>+</button>
+                          <span style={{fontSize:11,color:"rgba(240,237,232,.4)"}}>= {fmt(item.price*item.qty)}</span>
+                        </div>
+                      </div>
+                      <button onClick={()=>rmCart(item.id)} style={{background:"rgba(239,68,68,.1)",border:"1px solid rgba(239,68,68,.3)",borderRadius:9,padding:"6px 9px",color:"#ef4444",cursor:"pointer",fontSize:12,fontWeight:600}}>🗑</button>
+                    </div>
+                  ))}
+                </div>
+                <div className="card-flat" style={{padding:"14px 18px",marginBottom:12}}>
+                  <div style={{display:"flex",justifyContent:"space-between",marginBottom:6,fontSize:12,color:"rgba(240,237,232,.45)"}}>
+                    <span>{t.shipping}</span><span style={{color:"#10b981",fontWeight:600}}>GRATUIT</span>
+                  </div>
+                  <div style={{display:"flex",justifyContent:"space-between",fontWeight:700,fontSize:16}}>
+                    <span>{t.total}</span>
+                    <span className="font-display" style={{color:"#D4A853"}}>{fmt(cartTotal)}</span>
+                  </div>
+                </div>
+                <button onClick={()=>setOrderModal(true)} style={{width:"100%",padding:"14px 0",borderRadius:14,border:"none",background:"linear-gradient(135deg,#25D366,#128C7E)",color:"#fff",fontWeight:700,fontSize:15,cursor:"pointer",fontFamily:"Inter,sans-serif",display:"flex",alignItems:"center",justifyContent:"center",gap:9}}>
+                  <WaIco s={20}/> {t.orderNow} — {fmt(cartTotal)}
+                </button>
+              </>
+            )}
+          </main>
+        )}
+
+        {/* ──── PAYMENT ──── */}
+        {page==="payment"&&(
+          <main style={{maxWidth:540,margin:"0 auto",padding:"24px 12px 80px"}}>
+            <div style={{display:"flex",alignItems:"center",gap:12,marginBottom:24}}>
+              <button onClick={()=>setPage(cart.length?"cart":"home")} className="btn-ghost" style={{width:36,height:36,borderRadius:10,fontSize:18,padding:0,display:"flex",alignItems:"center",justifyContent:"center"}}>←</button>
+              <h2 className="font-display" style={{fontSize:20,fontWeight:700}}>{t.payTitle}</h2>
+            </div>
+            <p style={{color:"rgba(240,237,232,.45)",fontSize:13,marginBottom:22}}>{t.payDesc}</p>
+            <div style={{display:"flex",flexDirection:"column",gap:8,marginBottom:24}}>
+              {PM.map(m=>(
+                <div key={m.id} style={{display:"flex",alignItems:"center",gap:14,padding:"14px 16px",borderRadius:14,border:`1px solid ${m.c}33`,background:`${m.c}0D`}}>
+                  <span style={{fontSize:24}}>{m.icon}</span>
+                  <span style={{fontWeight:600,fontSize:14}}>{m.n}</span>
+                  <span style={{marginLeft:"auto",fontSize:11,color:"rgba(240,237,232,.4)"}}>Disponible</span>
+                </div>
+              ))}
+            </div>
+            {cart.length>0?(
+              <button onClick={()=>setOrderModal(true)} style={{width:"100%",padding:"14px 0",borderRadius:14,border:"none",background:"linear-gradient(135deg,#25D366,#128C7E)",color:"#fff",fontWeight:700,fontSize:15,cursor:"pointer",fontFamily:"Inter,sans-serif",display:"flex",alignItems:"center",justifyContent:"center",gap:9}}>
+                <WaIco s={20}/> {t.orderNow} — {fmt(cartTotal)}
+              </button>
+            ):(
+              <button onClick={()=>setPage("home")} className="btn-gold" style={{width:"100%",padding:"14px 0",borderRadius:14,fontSize:15}}>🛍 {t.continueShopping}</button>
+            )}
+            <div style={{display:"flex",justifyContent:"center",gap:16,marginTop:16,fontSize:11,color:"rgba(240,237,232,.25)",flexWrap:"wrap"}}>
+              {["🔒 SSL","🛡 3D Secure","🔄 Remboursement 30j"].map((s,i)=><span key={i}>{s}</span>)}
+            </div>
+          </main>
+        )}
+
+        {/* ──── FAVORITES ──── */}
+        {page==="favorites"&&(
+          <main style={{maxWidth:800,margin:"0 auto",padding:"24px 12px 80px"}}>
+            <div style={{display:"flex",alignItems:"center",gap:12,marginBottom:24}}>
+              <button onClick={()=>setPage("home")} className="btn-ghost" style={{width:36,height:36,borderRadius:10,fontSize:18,padding:0,display:"flex",alignItems:"center",justifyContent:"center"}}>←</button>
+              <h2 className="font-display" style={{fontSize:20,fontWeight:700}}>❤️ {t.favorites} ({wish.length})</h2>
+            </div>
+            {wish.length===0?(
+              <div style={{textAlign:"center",padding:"50px 20px"}}>
+                <div style={{fontSize:60,marginBottom:14}}>🤍</div>
+                <p style={{color:"rgba(240,237,232,.35)",fontSize:15,marginBottom:20}}>{t.wishEmpty}</p>
+                <button onClick={()=>setPage("home")} className="btn-gold" style={{padding:"11px 28px",borderRadius:14,fontSize:14}}>{t.continueShopping}</button>
+              </div>
+            ):(
+              <div style={{display:"grid",gridTemplateColumns:"repeat(auto-fill,minmax(165px,1fr))",gap:12}}>
+                {wish.map(p=>(
+                  <div key={p.id} className="pcard">
+                    <div style={{height:110,overflow:"hidden",background:"rgba(255,255,255,.03)",display:"flex",alignItems:"center",justifyContent:"center"}}>
+                      {p.image?<img src={p.image} alt="" style={{width:"100%",height:"100%",objectFit:"cover"}}/>:<span style={{fontSize:46}}>{p.emoji||"📦"}</span>}
+                    </div>
+                    <div style={{padding:"10px 12px"}}>
+                      <div style={{fontWeight:600,fontSize:12,marginBottom:5,lineHeight:1.35}}>{p.name}</div>
+                      <div className="font-display" style={{fontWeight:800,fontSize:14,color:"#D4A853",marginBottom:8}}>{fmt(p.price)}</div>
+                      <div style={{display:"flex",gap:6}}>
+                        <button onClick={()=>setQuickProd(p)} style={{flex:1,padding:"6px 0",borderRadius:9,border:"none",background:"linear-gradient(135deg,#25D366,#128C7E)",color:"#fff",fontWeight:700,fontSize:10,cursor:"pointer",fontFamily:"Inter,sans-serif",display:"flex",alignItems:"center",justifyContent:"center",gap:4}}>
+                          <WaIco s={11}/> Commander
+                        </button>
+                        <button onClick={()=>toggleWish(p)} style={{padding:"6px 9px",borderRadius:9,border:"1px solid rgba(239,68,68,.35)",background:"rgba(239,68,68,.08)",color:"#ef4444",cursor:"pointer",fontSize:11}}>✕</button>
+                      </div>
+                    </div>
+                  </div>
+                ))}
+              </div>
+            )}
+          </main>
+        )}
+
+        {/* ──── ORDER DONE ──── */}
+        {page==="orderDone"&&(
+          <main style={{maxWidth:480,margin:"0 auto",padding:"70px 20px",textAlign:"center"}}>
+            <div style={{fontSize:72,marginBottom:20,animation:"toastIn .6s cubic-bezier(.34,1.56,.64,1) both"}}>🎉</div>
+            <h2 className="font-display" style={{fontSize:26,fontWeight:800,marginBottom:10,color:"#D4A853"}}>{t.orderDone}</h2>
+            <p style={{color:"rgba(240,237,232,.5)",lineHeight:1.8,marginBottom:8}}>{t.orderThank}</p>
+            <p style={{color:"rgba(240,237,232,.3)",fontSize:13,marginBottom:32}}>📱 +237 698 083 058</p>
+            <button onClick={()=>setPage("home")} className="btn-gold" style={{padding:"13px 36px",borderRadius:16,fontSize:15}}>🏠 {t.continueShopping}</button>
+          </main>
+        )}
+
+        {/* FOOTER */}
+        {page==="home"&&(
+          <footer style={{borderTop:"1px solid rgba(255,255,255,.06)",padding:"28px 14px",textAlign:"center",marginTop:20}}>
+            <div className="font-display" style={{fontSize:20,fontWeight:800,color:"#D4A853",marginBottom:8}}>AKIT COMMERCE</div>
+            <p style={{fontSize:11,color:"rgba(240,237,232,.2)",lineHeight:1.9}}>
+              🌍 190+ pays · 🔒 Paiement sécurisé · 🔄 Retours gratuits<br/>
+              ☁ Images hébergées Cloudinary · CDN mondial<br/>
+              📱 WhatsApp: +237 698 083 058<br/>
+              © 2026 Centre de Commerce AKIT
+            </p>
+          </footer>
+        )}
+      </div>
+
+      {toast&&<Toast msg={toast.msg} ok={toast.ok}/>}
+    </div>
+  );
+}
+
+const root=ReactDOM.createRoot(document.getElementById("root"));
+root.render(React.createElement(App));
+</script>
 </body>
 </html>
