@@ -2,16 +2,15 @@
 <html lang="fr">
 <head>
 <meta charset="UTF-8">
-<meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1, user-scalable=no">
-<title>BT — Boutique Traoré</title>
+<meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+<title>BT — Boutique Traoré · Maga</title>
 <link rel="preconnect" href="https://fonts.googleapis.com">
-<link href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:ital,wght@0,400;0,500;0,600;0,700;1,400;1,600&family=DM+Sans:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+<link href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:ital,wght@0,600;0,700;1,600&family=DM+Sans:wght@400;500;600;700&display=swap" rel="stylesheet">
 <style>
 :root{
   --ink:#080605;
   --ink2:#120e0a;
   --surface:#1a1410;
-  --surface2:#221a13;
   --gold:#c9a84c;
   --gold-bright:#e8c96e;
   --gold-pale:#f5e9c8;
@@ -22,509 +21,282 @@
   --line:rgba(201,168,76,0.15);
   --line2:rgba(201,168,76,0.08);
   --red:#c0392b;
-  --green:#27ae60;
   --r:12px;
-  --glow:0 0 40px rgba(201,168,76,0.12);
 }
-*{margin:0;padding:0;box-sizing:border-box;}
+*{margin:0;padding:0;box-sizing:border-box;-webkit-tap-highlight-color:transparent;}
 html{scroll-behavior:smooth;}
-body{background:var(--ink);color:var(--cream);font-family:'DM Sans',sans-serif;overflow-x:hidden;min-height:100vh;}
+body{background:var(--ink);color:var(--cream);font-family:'DM Sans',sans-serif;overflow-x:hidden;}
 ::selection{background:var(--gold);color:#000;}
-::-webkit-scrollbar{width:6px;}
+::-webkit-scrollbar{width:5px;}
 ::-webkit-scrollbar-track{background:var(--ink);}
 ::-webkit-scrollbar-thumb{background:var(--gold-dim);border-radius:3px;}
 a{color:inherit;text-decoration:none;}
 button{font-family:inherit;cursor:pointer;border:none;background:none;color:inherit;}
 input,select,textarea{font-family:inherit;}
-.serif{font-family:'Cormorant Garamond',serif;}
 
-/* ===== PARTICLES BG ===== */
-#particles{position:fixed;inset:0;pointer-events:none;z-index:0;overflow:hidden;}
-.particle{position:absolute;border-radius:50%;background:var(--gold);opacity:0;animation:float-up linear infinite;}
-@keyframes float-up{
-  0%{transform:translateY(100vh) scale(0);opacity:0;}
-  10%{opacity:.25;}
-  90%{opacity:.08;}
-  100%{transform:translateY(-10vh) scale(1);opacity:0;}
-}
-
-/* ===== SPLASH ===== */
+/* ====== SPLASH ====== */
 #splash{
   position:fixed;inset:0;z-index:9999;
-  background:radial-gradient(ellipse at 50% 45%,#160f08 0%,#040302 75%);
-  display:flex;align-items:center;justify-content:center;flex-direction:column;gap:22px;
-  transition:opacity .8s ease,visibility .8s ease;
+  background:radial-gradient(ellipse at 50% 45%,#160f08,#040302 70%);
+  display:flex;align-items:center;justify-content:center;flex-direction:column;gap:18px;
+  transition:opacity .7s,visibility .7s;
 }
 #splash.hide{opacity:0;visibility:hidden;pointer-events:none;}
-.splash-logo-wrap{position:relative;width:130px;height:130px;display:flex;align-items:center;justify-content:center;}
-.splash-ring-outer{
-  position:absolute;inset:0;border-radius:50%;
-  border:1px solid var(--gold-dim);opacity:.4;
-  animation:pulse-ring 2s ease-in-out infinite;
-}
-@keyframes pulse-ring{0%,100%{transform:scale(1);opacity:.4;}50%{transform:scale(1.06);opacity:.7;}}
-.splash-ring-inner{position:absolute;inset:14px;border-radius:50%;border:1px dashed var(--gold);opacity:.25;animation:spin-slow 8s linear infinite;}
-@keyframes spin-slow{to{transform:rotate(360deg);}}
-.splash-mono{width:60px;height:60px;}
-.splash-mono path{fill:none;stroke:var(--gold);stroke-width:6;stroke-linecap:round;stroke-linejoin:round;stroke-dasharray:320;stroke-dashoffset:320;animation:draw-path 1.8s cubic-bezier(.65,0,.35,1) forwards;}
-@keyframes draw-path{to{stroke-dashoffset:0;}}
-.splash-mono path:first-child{filter:drop-shadow(0 0 8px rgba(201,168,76,.6));}
-.splash-name{font-family:'Cormorant Garamond',serif;font-size:28px;font-weight:600;color:var(--gold-pale);letter-spacing:.12em;opacity:0;animation:fadein .6s ease 1.7s forwards;}
-.splash-sub{font-size:11px;letter-spacing:.35em;color:var(--cream-dim);text-transform:uppercase;opacity:0;animation:fadein .6s ease 1.95s forwards;}
-@keyframes fadein{to{opacity:1;}}
+.splash-ring{position:relative;width:110px;height:110px;display:flex;align-items:center;justify-content:center;}
+.splash-ring::before{content:'';position:absolute;inset:0;border-radius:50%;border:1px solid var(--gold-dim);opacity:.4;animation:pr 2s ease-in-out infinite;}
+@keyframes pr{0%,100%{transform:scale(1);}50%{transform:scale(1.07);}}
+.splash-mono{width:54px;height:54px;}
+.splash-mono path{fill:none;stroke:var(--gold);stroke-width:6;stroke-linecap:round;stroke-linejoin:round;stroke-dasharray:320;stroke-dashoffset:320;animation:draw 1.8s cubic-bezier(.65,0,.35,1) forwards;filter:drop-shadow(0 0 8px rgba(201,168,76,.5));}
+@keyframes draw{to{stroke-dashoffset:0;}}
+.splash-name{font-family:'Cormorant Garamond',serif;font-size:26px;font-weight:700;color:var(--gold-pale);letter-spacing:.1em;opacity:0;animation:fi .6s ease 1.7s forwards;}
+.splash-city{font-size:11px;letter-spacing:.3em;color:var(--cream-dim);text-transform:uppercase;opacity:0;animation:fi .6s ease 1.95s forwards;}
+@keyframes fi{to{opacity:1;}}
 
-/* ===== HEADER ===== */
-header{
-  position:sticky;top:0;z-index:500;
-  background:rgba(8,6,5,0.88);backdrop-filter:blur(20px);-webkit-backdrop-filter:blur(20px);
-  border-bottom:1px solid var(--line);
-}
-.header-inner{max-width:1280px;margin:0 auto;display:flex;align-items:center;justify-content:space-between;padding:14px 28px;}
-.logo-wrap{display:flex;align-items:center;gap:14px;cursor:pointer;user-select:none;-webkit-tap-highlight-color:transparent;}
-.logo-svg{width:38px;height:38px;flex-shrink:0;}
-.logo-svg path{fill:none;stroke:var(--gold);stroke-width:5.5;stroke-linecap:round;stroke-linejoin:round;filter:drop-shadow(0 0 5px rgba(201,168,76,.4));}
-.logo-text .big{font-family:'Cormorant Garamond',serif;font-weight:700;font-size:22px;letter-spacing:.08em;color:var(--gold-pale);line-height:1;}
-.logo-text .small{font-size:9.5px;letter-spacing:.25em;color:var(--cream-dim);text-transform:uppercase;margin-top:2px;}
-nav{display:flex;align-items:center;gap:32px;}
-.nav-link{font-size:13.5px;color:var(--cream-dim);font-weight:500;letter-spacing:.03em;transition:color .2s;position:relative;}
-.nav-link::after{content:'';position:absolute;bottom:-3px;left:0;width:0;height:1px;background:var(--gold);transition:width .3s;}
-.nav-link:hover{color:var(--gold-pale);}
-.nav-link:hover::after{width:100%;}
+/* ====== HEADER ====== */
+header{position:sticky;top:0;z-index:500;background:rgba(8,6,5,.92);backdrop-filter:blur(18px);border-bottom:1px solid var(--line);}
+.header-inner{max-width:1280px;margin:0 auto;display:flex;align-items:center;justify-content:space-between;padding:13px 20px;}
+.logo-wrap{display:flex;align-items:center;gap:11px;cursor:pointer;user-select:none;}
+.logo-svg{width:36px;height:36px;flex-shrink:0;}
+.logo-svg path{fill:none;stroke:var(--gold);stroke-width:5.5;stroke-linecap:round;stroke-linejoin:round;filter:drop-shadow(0 0 4px rgba(201,168,76,.4));}
+.logo-text .big{font-family:'Cormorant Garamond',serif;font-weight:700;font-size:20px;letter-spacing:.08em;color:var(--gold-pale);line-height:1;}
+.logo-text .small{font-size:9px;letter-spacing:.22em;color:var(--cream-dim);text-transform:uppercase;margin-top:2px;}
 .cart-btn{
-  display:flex;align-items:center;gap:9px;
-  padding:10px 20px;border-radius:30px;
-  background:linear-gradient(135deg,rgba(201,168,76,.12),rgba(201,168,76,.06));
-  border:1px solid var(--gold-dim);color:var(--gold-pale);font-size:13px;font-weight:600;
-  transition:all .25s;position:relative;
+  display:flex;align-items:center;gap:8px;padding:10px 18px;border-radius:30px;
+  background:rgba(201,168,76,.1);border:1px solid var(--gold-dim);
+  color:var(--gold-pale);font-size:13px;font-weight:600;transition:all .2s;position:relative;
 }
-.cart-btn:hover{background:var(--gold);color:#000;border-color:var(--gold);box-shadow:0 0 24px rgba(201,168,76,.3);}
-.cart-count{
-  position:absolute;top:-8px;right:-8px;background:var(--gold-bright);color:#000;
-  font-size:10px;font-weight:800;width:19px;height:19px;border-radius:50%;
-  display:flex;align-items:center;justify-content:center;display:none;
-}
-@media(max-width:700px){nav .nav-link{display:none;}.header-inner{padding:12px 16px;}}
+.cart-btn:hover,.cart-btn:active{background:var(--gold);color:#000;border-color:var(--gold);}
+.cart-count{position:absolute;top:-7px;right:-7px;background:var(--gold-bright);color:#000;font-size:10px;font-weight:800;width:18px;height:18px;border-radius:50%;display:none;align-items:center;justify-content:center;}
 
-/* ===== TICKER ===== */
-.ticker-wrap{background:linear-gradient(90deg,var(--ink),#110d09,var(--ink));border-bottom:1px solid var(--line2);overflow:hidden;}
-.ticker-track{display:flex;white-space:nowrap;animation:ticker 24s linear infinite;}
-.ticker-item{display:inline-flex;align-items:center;gap:12px;padding:9px 40px;font-size:12.5px;letter-spacing:.06em;color:var(--cream-dim);font-weight:500;}
-.ticker-item b{color:var(--gold);font-family:'Cormorant Garamond',serif;font-style:italic;font-size:14px;}
-.ticker-sep{color:var(--gold-dim);font-size:8px;}
-@keyframes ticker{from{transform:translateX(0);}to{transform:translateX(-50%);}}
-
-/* ===== HERO ===== */
-.hero{
-  position:relative;max-width:1280px;margin:0 auto;
-  padding:80px 28px 64px;
-  display:grid;grid-template-columns:1.15fr .85fr;gap:60px;align-items:center;
-  z-index:1;
-}
-.hero-tag{
-  display:inline-flex;align-items:center;gap:8px;
-  font-size:11px;letter-spacing:.28em;color:var(--gold);text-transform:uppercase;margin-bottom:20px;
-  border:1px solid var(--line);border-radius:20px;padding:5px 14px;
-  background:rgba(201,168,76,.06);
-}
+/* ====== HERO (compact, no long text) ====== */
+.hero{max-width:1280px;margin:0 auto;padding:40px 20px 28px;display:flex;align-items:center;justify-content:space-between;gap:20px;}
+.hero-left{}
+.hero-tag{display:inline-flex;align-items:center;gap:7px;font-size:11px;letter-spacing:.22em;color:var(--gold);text-transform:uppercase;border:1px solid var(--line);border-radius:20px;padding:5px 13px;background:rgba(201,168,76,.06);margin-bottom:14px;}
 .hero-tag::before{content:'';width:5px;height:5px;border-radius:50%;background:var(--gold);animation:blink 1.6s ease-in-out infinite;}
 @keyframes blink{0%,100%{opacity:.4;}50%{opacity:1;}}
-.hero h1{
-  font-family:'Cormorant Garamond',serif;font-weight:600;
-  font-size:clamp(40px,5.5vw,66px);line-height:1.06;color:var(--cream);margin-bottom:22px;
-}
+.hero h1{font-family:'Cormorant Garamond',serif;font-weight:700;font-size:clamp(28px,5vw,50px);line-height:1.1;color:var(--cream);margin-bottom:12px;}
 .hero h1 em{color:var(--gold);font-style:italic;}
-.hero h1 strong{color:var(--gold-pale);font-weight:700;}
-.hero-desc{font-size:15px;color:var(--cream-dim);line-height:1.75;max-width:500px;margin-bottom:34px;}
-.hero-cta{display:flex;gap:14px;flex-wrap:wrap;}
-.btn-primary{
-  background:linear-gradient(135deg,var(--gold-bright),var(--gold),var(--copper));
-  color:#000;font-weight:700;padding:15px 32px;border-radius:30px;font-size:14px;
-  letter-spacing:.02em;transition:transform .25s,box-shadow .25s;display:inline-flex;align-items:center;gap:9px;
-  box-shadow:0 4px 20px rgba(201,168,76,.25);
-}
-.btn-primary:hover{transform:translateY(-3px);box-shadow:0 12px 32px rgba(201,168,76,.35);}
-.btn-outline{
-  border:1px solid var(--gold-dim);color:var(--gold-pale);padding:15px 28px;border-radius:30px;
-  font-size:14px;font-weight:600;transition:all .25s;letter-spacing:.02em;
-}
-.btn-outline:hover{border-color:var(--gold);background:rgba(201,168,76,.08);color:var(--gold-bright);}
-.hero-stats{display:flex;gap:32px;margin-top:40px;padding-top:32px;border-top:1px solid var(--line2);}
-.stat{display:flex;flex-direction:column;gap:3px;}
-.stat .num{font-family:'Cormorant Garamond',serif;font-size:28px;font-weight:700;color:var(--gold-pale);}
-.stat .lbl{font-size:11px;letter-spacing:.1em;color:var(--cream-dim);text-transform:uppercase;}
-.hero-visual{position:relative;display:flex;align-items:center;justify-content:center;}
-.hero-orb{
-  width:min(380px,90vw);height:min(380px,90vw);border-radius:50%;
-  background:radial-gradient(ellipse at 35% 35%,rgba(201,168,76,.14) 0%,rgba(201,168,76,.03) 55%,transparent 100%);
-  border:1px solid rgba(201,168,76,.2);
-  display:flex;align-items:center;justify-content:center;position:relative;
-  animation:orb-pulse 4s ease-in-out infinite;
-}
-@keyframes orb-pulse{0%,100%{box-shadow:0 0 0 0 rgba(201,168,76,.08);}50%{box-shadow:0 0 60px 20px rgba(201,168,76,.08);}}
-.hero-orb-ring{
-  position:absolute;inset:-20px;border-radius:50%;border:1px dashed rgba(201,168,76,.18);
-  animation:spin-slow 20s linear infinite;
-}
-.hero-orb-ring2{position:absolute;inset:-44px;border-radius:50%;border:1px solid rgba(201,168,76,.07);}
-.hero-mono-big{width:140px;height:140px;}
-.hero-mono-big path{fill:none;stroke:var(--gold);stroke-width:3.5;stroke-linecap:round;stroke-linejoin:round;filter:drop-shadow(0 0 12px rgba(201,168,76,.5));}
-@media(max-width:860px){
-  .hero{grid-template-columns:1fr;text-align:center;padding-top:52px;}
-  .hero-desc{margin:0 auto 34px;}
-  .hero-cta{justify-content:center;}
-  .hero-stats{justify-content:center;}
-  .hero-visual{display:none;}
-}
+.hero-sub{font-size:13px;color:var(--cream-dim);margin-bottom:20px;}
+.hero-cta{display:flex;gap:10px;flex-wrap:wrap;}
+.btn-primary{background:linear-gradient(135deg,var(--gold-bright),var(--gold));color:#000;font-weight:700;padding:13px 26px;border-radius:30px;font-size:13px;transition:transform .2s,box-shadow .2s;display:inline-flex;align-items:center;gap:7px;}
+.btn-primary:hover{transform:translateY(-2px);box-shadow:0 8px 24px rgba(201,168,76,.3);}
+.hero-orb{width:min(160px,40vw);height:min(160px,40vw);border-radius:50%;background:radial-gradient(ellipse at 35% 35%,rgba(201,168,76,.13),transparent 65%);border:1px solid rgba(201,168,76,.2);display:flex;align-items:center;justify-content:center;flex-shrink:0;animation:op 4s ease-in-out infinite;}
+@keyframes op{0%,100%{box-shadow:0 0 0 0 rgba(201,168,76,.06);}50%{box-shadow:0 0 40px 10px rgba(201,168,76,.06);}}
+.hero-mono{width:70px;height:70px;}
+.hero-mono path{fill:none;stroke:var(--gold);stroke-width:4;stroke-linecap:round;stroke-linejoin:round;filter:drop-shadow(0 0 8px rgba(201,168,76,.4));}
+@media(max-width:500px){.hero-orb{display:none;}.hero{padding:28px 16px 20px;}}
 
-/* ===== SECTION LAYOUT ===== */
-.section{max-width:1280px;margin:0 auto;padding:72px 28px;position:relative;z-index:1;}
-.section-head{margin-bottom:40px;}
-.eyebrow{font-size:11.5px;letter-spacing:.28em;color:var(--gold);text-transform:uppercase;display:block;margin-bottom:12px;}
-.section-title{font-family:'Cormorant Garamond',serif;font-weight:600;font-size:clamp(28px,3.5vw,42px);color:var(--cream);}
-.section-head-row{display:flex;align-items:flex-end;justify-content:space-between;flex-wrap:wrap;gap:16px;}
+/* ====== SECTION ====== */
+.section{max-width:1280px;margin:0 auto;padding:30px 16px 50px;}
+.section-head{margin-bottom:18px;}
+.eyebrow{font-size:11px;letter-spacing:.26em;color:var(--gold);text-transform:uppercase;display:block;margin-bottom:8px;}
+.section-title{font-family:'Cormorant Garamond',serif;font-weight:700;font-size:clamp(22px,3.5vw,34px);color:var(--cream);}
 
-/* ===== FILTERS ===== */
-.filters{display:flex;gap:10px;flex-wrap:wrap;margin-bottom:32px;}
-.filter-chip{
-  padding:8px 18px;border:1px solid var(--line);border-radius:24px;font-size:13px;
-  color:var(--cream-dim);font-weight:500;transition:all .2s;letter-spacing:.02em;background:transparent;
-}
+/* ====== FILTERS ====== */
+.filters{display:flex;gap:8px;flex-wrap:wrap;margin-bottom:20px;overflow-x:auto;padding-bottom:4px;}
+.filters::-webkit-scrollbar{height:3px;}
+.filter-chip{padding:7px 15px;border:1px solid var(--line);border-radius:24px;font-size:12.5px;color:var(--cream-dim);font-weight:500;white-space:nowrap;transition:all .18s;flex-shrink:0;}
 .filter-chip:hover,.filter-chip.active{border-color:var(--gold);color:var(--gold-pale);background:rgba(201,168,76,.08);}
-.filter-chip.active{box-shadow:0 0 14px rgba(201,168,76,.12);}
 
-/* ===== PRODUCT GRID ===== */
-.grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(250px,1fr));gap:22px;}
+/* ====== GRID — 4 colonnes min mobile ====== */
+.grid{display:grid;grid-template-columns:repeat(4,1fr);gap:10px;}
+@media(max-width:900px){.grid{grid-template-columns:repeat(4,1fr);gap:8px;}}
+@media(max-width:600px){.grid{grid-template-columns:repeat(2,1fr);gap:8px;}}
 
-/* ===== PRODUCT CARD ===== */
-.card{
-  background:var(--surface);border:1px solid var(--line2);border-radius:var(--r);overflow:hidden;
-  display:flex;flex-direction:column;
-  transition:transform .35s cubic-bezier(.34,1.56,.64,1),box-shadow .35s,border-color .35s;
-  position:relative;
-}
-.card:hover{transform:translateY(-8px);box-shadow:0 20px 50px rgba(0,0,0,.5),0 0 0 1px rgba(201,168,76,.2);border-color:var(--gold-dim);}
+/* ====== CARD ====== */
+.card{background:var(--surface);border:1px solid var(--line2);border-radius:var(--r);overflow:hidden;display:flex;flex-direction:column;transition:transform .3s,box-shadow .3s,border-color .3s;}
+.card:hover{transform:translateY(-5px);box-shadow:0 14px 36px rgba(0,0,0,.45);border-color:var(--gold-dim);}
 
-/* card image area */
-.card-img-wrap{position:relative;aspect-ratio:1/1;overflow:hidden;background:#120d08;}
-.card-slide{position:absolute;inset:0;width:100%;height:100%;object-fit:cover;opacity:0;transition:opacity .45s ease;}
+/* card image */
+.card-img-wrap{position:relative;aspect-ratio:1/1;overflow:hidden;background:#120d08;cursor:pointer;}
+.card-slide{position:absolute;inset:0;width:100%;height:100%;object-fit:cover;opacity:0;transition:opacity .4s;}
 .card-slide.active{opacity:1;position:relative;}
-.card-badge{
-  position:absolute;top:10px;left:10px;z-index:3;
-  background:linear-gradient(135deg,var(--gold-bright),var(--gold));
-  color:#000;font-size:10px;font-weight:700;padding:4px 11px;border-radius:20px;
-  letter-spacing:.05em;text-transform:uppercase;box-shadow:0 2px 8px rgba(0,0,0,.4);
-}
-.card-nav{
-  position:absolute;inset:0;display:flex;align-items:center;justify-content:space-between;
-  padding:0 8px;opacity:0;transition:opacity .25s;z-index:4;
-}
-.card:hover .card-nav{opacity:1;}
-.card-nav-btn{
-  width:30px;height:30px;border-radius:50%;background:rgba(0,0,0,.6);backdrop-filter:blur(4px);
-  border:1px solid rgba(255,255,255,.15);color:#fff;font-size:15px;
-  display:flex;align-items:center;justify-content:center;transition:background .2s;
-}
+.card-badge{position:absolute;top:7px;left:7px;z-index:3;background:linear-gradient(135deg,var(--gold-bright),var(--gold));color:#000;font-size:9px;font-weight:800;padding:3px 9px;border-radius:20px;letter-spacing:.04em;text-transform:uppercase;}
+.card-nav{position:absolute;inset:0;display:flex;align-items:center;justify-content:space-between;padding:0 5px;z-index:4;pointer-events:none;}
+.card-nav-btn{width:26px;height:26px;border-radius:50%;background:rgba(0,0,0,.6);border:1px solid rgba(255,255,255,.2);color:#fff;font-size:14px;display:flex;align-items:center;justify-content:center;pointer-events:all;transition:background .2s;opacity:0;transition:opacity .2s;}
+.card:hover .card-nav-btn,.card-nav-btn:focus{opacity:1;}
 .card-nav-btn:hover{background:var(--gold);color:#000;}
-.card-dots{
-  position:absolute;bottom:9px;left:50%;transform:translateX(-50%);
-  display:flex;gap:5px;z-index:3;
-}
-.card-dot{width:6px;height:6px;border-radius:50%;background:rgba(255,255,255,.35);transition:all .2s;cursor:pointer;}
+.card-dots{position:absolute;bottom:6px;left:50%;transform:translateX(-50%);display:flex;gap:4px;z-index:3;}
+.card-dot{width:5px;height:5px;border-radius:50%;background:rgba(255,255,255,.3);cursor:pointer;transition:all .18s;}
 .card-dot.active{background:var(--gold);transform:scale(1.3);}
-.wishlist-btn{
-  position:absolute;top:10px;right:10px;z-index:3;
-  width:32px;height:32px;border-radius:50%;background:rgba(0,0,0,.55);backdrop-filter:blur(4px);
-  border:1px solid rgba(255,255,255,.12);color:rgba(255,255,255,.6);font-size:15px;
-  display:flex;align-items:center;justify-content:center;transition:all .2s;
-}
-.wishlist-btn:hover,.wishlist-btn.liked{color:#e74c3c;border-color:rgba(231,76,60,.4);background:rgba(231,76,60,.15);}
+.wish-btn{position:absolute;top:7px;right:7px;z-index:3;width:28px;height:28px;border-radius:50%;background:rgba(0,0,0,.5);border:1px solid rgba(255,255,255,.1);color:rgba(255,255,255,.5);font-size:13px;display:flex;align-items:center;justify-content:center;transition:all .2s;}
+.wish-btn.liked,.wish-btn:hover{color:#e74c3c;border-color:rgba(231,76,60,.4);}
 
 /* card body */
-.card-body{padding:16px 16px 18px;display:flex;flex-direction:column;gap:7px;flex:1;}
-.card-cat{font-size:10.5px;letter-spacing:.14em;color:var(--gold-dim);text-transform:uppercase;font-weight:600;}
-.card-name{font-family:'Cormorant Garamond',serif;font-weight:600;font-size:18px;color:var(--cream);line-height:1.25;}
-.card-price-row{display:flex;align-items:baseline;gap:10px;margin-top:2px;}
-.card-price{font-size:15px;font-weight:700;color:var(--gold);}
-.card-price-old{font-size:12px;color:var(--cream-dim);text-decoration:line-through;}
-.card-link{font-size:11.5px;color:var(--gold-dim);display:inline-flex;align-items:center;gap:4px;transition:color .2s;}
-.card-link:hover{color:var(--gold);}
-.card-actions{display:flex;gap:8px;margin-top:8px;}
-.btn-add{
-  flex:1;border:1px solid var(--gold-dim);background:transparent;
-  color:var(--gold-pale);padding:10px 12px;border-radius:10px;font-size:13px;font-weight:600;
-  transition:all .22s;letter-spacing:.02em;
-}
-.btn-add:hover{background:var(--gold);color:#000;border-color:var(--gold);box-shadow:0 4px 16px rgba(201,168,76,.25);}
-.btn-buy-now{
-  padding:10px 14px;border-radius:10px;background:linear-gradient(135deg,rgba(201,168,76,.15),rgba(201,168,76,.08));
-  border:1px solid var(--line);color:var(--gold);font-size:12px;font-weight:600;transition:all .22s;white-space:nowrap;
-}
-.btn-buy-now:hover{background:linear-gradient(135deg,var(--gold),var(--copper));color:#000;border-color:var(--gold);}
+.card-body{padding:10px 10px 12px;display:flex;flex-direction:column;gap:5px;flex:1;}
+.card-cat{font-size:9.5px;letter-spacing:.12em;color:var(--gold-dim);text-transform:uppercase;font-weight:600;}
+.card-name{font-family:'Cormorant Garamond',serif;font-weight:600;font-size:15px;color:var(--cream);line-height:1.2;}
+.card-prices{display:flex;align-items:baseline;gap:7px;}
+.card-price{font-size:13px;font-weight:700;color:var(--gold);}
+.card-old{font-size:11px;color:var(--cream-dim);text-decoration:line-through;}
+.card-actions{display:flex;gap:6px;margin-top:6px;}
+.btn-add{flex:1;border:1px solid var(--gold-dim);background:transparent;color:var(--gold-pale);padding:8px 6px;border-radius:8px;font-size:11.5px;font-weight:600;transition:all .2s;}
+.btn-add:hover,.btn-add:active{background:var(--gold);color:#000;border-color:var(--gold);}
+.btn-buy{padding:8px 10px;border-radius:8px;background:rgba(201,168,76,.12);border:1px solid var(--line);color:var(--gold);font-size:11.5px;font-weight:600;transition:all .2s;white-space:nowrap;}
+.btn-buy:hover,.btn-buy:active{background:var(--gold);color:#000;}
 
-/* empty */
-.empty-state{
-  text-align:center;padding:70px 20px;color:var(--cream-dim);font-size:14px;
-  border:1px dashed rgba(201,168,76,.2);border-radius:var(--r);grid-column:1/-1;
-}
-.empty-state .big{font-family:'Cormorant Garamond',serif;font-style:italic;font-size:22px;color:var(--gold-pale);display:block;margin-bottom:10px;}
+/* swipe touch sur mobile */
+.card-img-wrap{touch-action:pan-y;}
 
-/* ===== CART DRAWER ===== */
+.empty-state{text-align:center;padding:50px 16px;color:var(--cream-dim);border:1px dashed rgba(201,168,76,.18);border-radius:var(--r);grid-column:1/-1;}
+.empty-state b{font-family:'Cormorant Garamond',serif;font-style:italic;font-size:18px;color:var(--gold-pale);display:block;margin-bottom:6px;}
+
+/* ====== CART DRAWER ====== */
 .overlay{position:fixed;inset:0;background:rgba(0,0,0,.65);backdrop-filter:blur(3px);z-index:900;opacity:0;visibility:hidden;transition:opacity .3s,visibility .3s;}
 .overlay.show{opacity:1;visibility:visible;}
-.drawer{
-  position:fixed;top:0;right:0;height:100%;width:min(430px,100vw);
-  background:var(--ink2);border-left:1px solid var(--line);z-index:901;
-  display:flex;flex-direction:column;transform:translateX(100%);
-  transition:transform .38s cubic-bezier(.65,0,.35,1);
-}
+.drawer{position:fixed;top:0;right:0;height:100%;width:min(400px,100vw);background:var(--ink2);border-left:1px solid var(--line);z-index:901;display:flex;flex-direction:column;transform:translateX(100%);transition:transform .35s cubic-bezier(.65,0,.35,1);}
 .drawer.show{transform:translateX(0);}
-.drawer-head{
-  padding:20px 22px;border-bottom:1px solid var(--line);
-  display:flex;align-items:center;justify-content:space-between;
-  background:linear-gradient(180deg,rgba(26,20,16,.9),transparent);
-}
-.drawer-head h3{font-family:'Cormorant Garamond',serif;font-size:22px;color:var(--gold-pale);display:flex;align-items:center;gap:10px;}
-.icon-btn{width:34px;height:34px;border-radius:50%;display:flex;align-items:center;justify-content:center;color:var(--cream-dim);transition:all .2s;}
+.drawer-head{padding:18px 20px;border-bottom:1px solid var(--line);display:flex;align-items:center;justify-content:space-between;}
+.drawer-head h3{font-family:'Cormorant Garamond',serif;font-size:20px;color:var(--gold-pale);}
+.icon-btn{width:32px;height:32px;border-radius:50%;display:flex;align-items:center;justify-content:center;color:var(--cream-dim);transition:all .2s;}
 .icon-btn:hover{background:rgba(201,168,76,.1);color:var(--gold-pale);}
-.drawer-body{flex:1;overflow-y:auto;padding:18px 22px;display:flex;flex-direction:column;gap:14px;}
-.cart-empty-state{text-align:center;padding:70px 10px;color:var(--cream-dim);}
-.cart-empty-state span{font-family:'Cormorant Garamond',serif;font-style:italic;font-size:22px;color:var(--gold-pale);display:block;margin-bottom:8px;}
-.cart-empty-state p{font-size:13px;line-height:1.6;}
-.cart-item{display:flex;gap:13px;align-items:flex-start;padding-bottom:15px;border-bottom:1px solid var(--line2);}
-.cart-item-img{width:64px;height:64px;border-radius:10px;object-fit:cover;background:var(--surface);flex-shrink:0;border:1px solid var(--line2);}
-.cart-item-info{flex:1;min-width:0;}
-.cart-item-info .name{font-size:14px;color:var(--cream);font-weight:500;margin-bottom:4px;line-height:1.3;}
-.cart-item-info .price{font-size:13px;color:var(--gold);font-weight:700;margin-bottom:7px;}
-.qty-ctrl{display:flex;align-items:center;gap:9px;}
-.qty-btn{width:26px;height:26px;border:1px solid var(--gold-dim);border-radius:7px;color:var(--gold-pale);font-size:14px;display:flex;align-items:center;justify-content:center;transition:all .18s;}
-.qty-btn:hover{background:var(--gold);color:#000;border-color:var(--gold);}
-.qty-val{font-size:13px;min-width:22px;text-align:center;font-weight:600;}
-.remove-btn{color:var(--cream-dim);font-size:17px;padding:4px;margin-left:2px;transition:color .2s;line-height:1;}
-.remove-btn:hover{color:var(--red);}
-.drawer-foot{padding:18px 22px;border-top:1px solid var(--line);background:linear-gradient(0deg,rgba(18,14,10,.98),transparent);}
-.subtotal-row{display:flex;justify-content:space-between;align-items:center;margin-bottom:6px;}
-.subtotal-row .lbl{font-size:12px;color:var(--cream-dim);text-transform:uppercase;letter-spacing:.09em;}
-.subtotal-row .val{font-family:'Cormorant Garamond',serif;font-size:26px;color:var(--gold);font-weight:700;}
-.drawer-note{font-size:11.5px;color:var(--cream-dim);margin-bottom:16px;}
-.btn-checkout{
-  width:100%;background:linear-gradient(135deg,var(--gold-bright),var(--gold));
-  color:#000;font-weight:700;padding:15px;border-radius:12px;font-size:14px;
-  letter-spacing:.03em;transition:all .22s;box-shadow:0 4px 20px rgba(201,168,76,.2);
-}
-.btn-checkout:hover{transform:translateY(-2px);box-shadow:0 8px 28px rgba(201,168,76,.35);}
+.drawer-body{flex:1;overflow-y:auto;padding:16px 20px;display:flex;flex-direction:column;gap:12px;}
+.cart-empty{text-align:center;padding:60px 10px;color:var(--cream-dim);}
+.cart-empty span{font-family:'Cormorant Garamond',serif;font-style:italic;font-size:20px;color:var(--gold-pale);display:block;margin-bottom:6px;}
+.cart-item{display:flex;gap:11px;align-items:flex-start;padding-bottom:12px;border-bottom:1px solid var(--line2);}
+.ci-img{width:58px;height:58px;border-radius:9px;object-fit:cover;background:var(--surface);flex-shrink:0;}
+.ci-info{flex:1;min-width:0;}
+.ci-name{font-size:13.5px;color:var(--cream);font-weight:500;margin-bottom:3px;line-height:1.3;}
+.ci-price{font-size:12.5px;color:var(--gold);font-weight:700;margin-bottom:6px;}
+.qty-ctrl{display:flex;align-items:center;gap:8px;}
+.qty-btn{width:24px;height:24px;border:1px solid var(--gold-dim);border-radius:6px;color:var(--gold-pale);font-size:14px;display:flex;align-items:center;justify-content:center;transition:all .15s;}
+.qty-btn:hover{background:var(--gold);color:#000;}
+.qty-val{font-size:13px;min-width:20px;text-align:center;font-weight:600;}
+.rm-btn{color:var(--cream-dim);font-size:16px;padding:4px;transition:color .2s;}
+.rm-btn:hover{color:var(--red);}
+.drawer-foot{padding:16px 20px;border-top:1px solid var(--line);}
+.total-row{display:flex;justify-content:space-between;align-items:center;margin-bottom:5px;}
+.total-lbl{font-size:12px;color:var(--cream-dim);text-transform:uppercase;letter-spacing:.08em;}
+.total-val{font-family:'Cormorant Garamond',serif;font-size:24px;color:var(--gold);font-weight:700;}
+.drawer-note{font-size:11px;color:var(--cream-dim);margin-bottom:14px;}
+.btn-checkout{width:100%;background:linear-gradient(135deg,var(--gold-bright),var(--gold));color:#000;font-weight:700;padding:14px;border-radius:12px;font-size:14px;transition:all .2s;box-shadow:0 4px 16px rgba(201,168,76,.2);}
+.btn-checkout:hover{transform:translateY(-2px);box-shadow:0 8px 24px rgba(201,168,76,.3);}
 
-/* ===== MODAL ===== */
-.modal-back{
-  position:fixed;inset:0;background:rgba(0,0,0,.78);backdrop-filter:blur(6px);
-  z-index:950;display:flex;align-items:center;justify-content:center;
-  opacity:0;visibility:hidden;transition:opacity .3s,visibility .3s;padding:20px;
-}
+/* ====== MODAL ====== */
+.modal-back{position:fixed;inset:0;background:rgba(0,0,0,.78);backdrop-filter:blur(5px);z-index:950;display:flex;align-items:center;justify-content:center;opacity:0;visibility:hidden;transition:opacity .3s,visibility .3s;padding:16px;}
 .modal-back.show{opacity:1;visibility:visible;}
-.modal-card{
-  background:var(--surface);border:1px solid var(--gold-dim);border-radius:18px;
-  width:100%;max-width:460px;padding:36px;max-height:90vh;overflow-y:auto;
-  transform:translateY(24px) scale(.96);transition:transform .38s cubic-bezier(.65,0,.35,1);
-  box-shadow:0 30px 80px rgba(0,0,0,.6),0 0 0 1px rgba(201,168,76,.1);
-}
+.modal-card{background:var(--surface);border:1px solid var(--gold-dim);border-radius:16px;width:100%;max-width:440px;padding:28px;max-height:92vh;overflow-y:auto;transform:translateY(20px) scale(.97);transition:transform .35s cubic-bezier(.65,0,.35,1);position:relative;box-shadow:0 24px 60px rgba(0,0,0,.6);}
 .modal-back.show .modal-card{transform:translateY(0) scale(1);}
-.modal-card h3{font-family:'Cormorant Garamond',serif;font-size:26px;color:var(--gold-pale);margin-bottom:6px;}
-.modal-lead{font-size:13px;color:var(--cream-dim);margin-bottom:26px;line-height:1.6;}
-.field{margin-bottom:16px;}
-.field label{display:block;font-size:11px;letter-spacing:.1em;text-transform:uppercase;color:var(--gold-dim);margin-bottom:7px;font-weight:600;}
-.field input,.field select{
-  width:100%;background:rgba(255,255,255,.04);border:1px solid var(--line);border-radius:10px;
-  padding:13px 15px;color:var(--cream);font-size:14px;transition:border-color .2s,box-shadow .2s;outline:none;
-}
-.field input:focus,.field select:focus{border-color:var(--gold);box-shadow:0 0 0 3px rgba(201,168,76,.1);}
-.field input::placeholder{color:#5a5046;}
+.modal-card h3{font-family:'Cormorant Garamond',serif;font-size:24px;color:var(--gold-pale);margin-bottom:5px;}
+.modal-lead{font-size:12.5px;color:var(--cream-dim);margin-bottom:22px;line-height:1.6;}
+.field{margin-bottom:14px;}
+.field label{display:block;font-size:11px;letter-spacing:.09em;text-transform:uppercase;color:var(--gold-dim);margin-bottom:6px;font-weight:600;}
+.field input,.field select{width:100%;background:rgba(255,255,255,.04);border:1px solid var(--line);border-radius:9px;padding:12px 14px;color:var(--cream);font-size:14px;outline:none;transition:border-color .2s;}
+.field input:focus,.field select:focus{border-color:var(--gold);}
+.field input::placeholder{color:#504840;}
 .field select option{background:var(--surface);color:var(--cream);}
-.order-summary{
-  background:rgba(0,0,0,.3);border:1px solid var(--line);border-radius:12px;
-  padding:16px;margin-bottom:20px;
-}
-.order-summary-title{font-size:11px;letter-spacing:.12em;text-transform:uppercase;color:var(--gold-dim);font-weight:600;margin-bottom:12px;}
-.order-row{display:flex;justify-content:space-between;font-size:13px;color:var(--cream-dim);margin-bottom:7px;}
-.order-row:last-child{
-  margin-bottom:0;padding-top:10px;border-top:1px solid var(--line);
-  color:var(--gold-pale);font-weight:700;font-size:16px;
-}
-.order-row:last-child .order-total-label{color:var(--gold);}
-.btn-whatsapp{
-  width:100%;background:linear-gradient(135deg,#25d366,#128c7e);
-  color:#fff;font-weight:700;padding:16px;border-radius:12px;font-size:15px;
-  display:flex;align-items:center;justify-content:center;gap:10px;transition:all .22s;
-  box-shadow:0 4px 20px rgba(37,211,102,.2);letter-spacing:.02em;
-}
-.btn-whatsapp:hover{transform:translateY(-2px);box-shadow:0 8px 28px rgba(37,211,102,.35);}
-.btn-whatsapp:disabled{opacity:.6;cursor:not-allowed;transform:none;}
-.success-box{text-align:center;padding:14px 0;}
-.success-icon{width:68px;height:68px;border-radius:50%;border:2px solid var(--green);display:flex;align-items:center;justify-content:center;margin:0 auto 18px;font-size:28px;animation:pop .4s cubic-bezier(.34,1.56,.64,1);}
-@keyframes pop{from{transform:scale(0);}to{transform:scale(1);}}
-.success-box h4{font-family:'Cormorant Garamond',serif;font-size:24px;color:var(--gold-pale);margin-bottom:10px;}
-.success-box p{font-size:13px;color:var(--cream-dim);line-height:1.7;}
-.modal-close-x{position:absolute;top:16px;right:16px;width:34px;height:34px;border-radius:50%;background:rgba(255,255,255,.06);border:1px solid var(--line);color:var(--cream-dim);display:flex;align-items:center;justify-content:center;transition:all .2s;}
-.modal-close-x:hover{background:rgba(201,168,76,.1);color:var(--gold-pale);}
+.order-summary{background:rgba(0,0,0,.3);border:1px solid var(--line);border-radius:10px;padding:14px;margin-bottom:18px;}
+.os-title{font-size:10.5px;letter-spacing:.1em;text-transform:uppercase;color:var(--gold-dim);font-weight:600;margin-bottom:10px;}
+.os-row{display:flex;justify-content:space-between;font-size:13px;color:var(--cream-dim);margin-bottom:6px;}
+.os-total{display:flex;justify-content:space-between;padding-top:9px;border-top:1px solid var(--line);color:var(--gold);font-weight:700;font-size:15px;}
+.btn-wa{width:100%;background:linear-gradient(135deg,#25d366,#128c7e);color:#fff;font-weight:700;padding:15px;border-radius:12px;font-size:14px;display:flex;align-items:center;justify-content:center;gap:9px;transition:all .2s;box-shadow:0 4px 16px rgba(37,211,102,.2);}
+.btn-wa:hover{transform:translateY(-2px);box-shadow:0 8px 24px rgba(37,211,102,.3);}
+.btn-wa:disabled{opacity:.6;cursor:not-allowed;transform:none;}
+.modal-x{position:absolute;top:14px;right:14px;width:32px;height:32px;border-radius:50%;background:rgba(255,255,255,.05);border:1px solid var(--line);color:var(--cream-dim);display:flex;align-items:center;justify-content:center;transition:all .2s;}
+.modal-x:hover{background:rgba(201,168,76,.1);color:var(--gold-pale);}
 
-/* ===== ADMIN ===== */
+/* ====== ADMIN ====== */
 #adminPage{position:fixed;inset:0;background:var(--ink);z-index:9000;overflow-y:auto;display:none;}
 #adminPage.show{display:block;}
-.admin-topbar{
-  position:sticky;top:0;background:rgba(8,6,5,.95);backdrop-filter:blur(12px);
-  border-bottom:1px solid var(--line);padding:16px 28px;
-  display:flex;justify-content:space-between;align-items:center;z-index:10;
-}
-.admin-topbar h2{font-family:'Cormorant Garamond',serif;color:var(--gold-pale);font-size:20px;display:flex;align-items:center;gap:10px;}
-.admin-body{max-width:1140px;margin:0 auto;padding:34px 28px 80px;}
-.admin-tabs{display:flex;gap:4px;margin-bottom:28px;background:var(--surface);border-radius:12px;padding:5px;width:fit-content;border:1px solid var(--line2);}
-.admin-tab{padding:9px 22px;border-radius:9px;font-size:13px;font-weight:600;color:var(--cream-dim);transition:all .2s;}
+.admin-bar{position:sticky;top:0;background:rgba(8,6,5,.95);backdrop-filter:blur(10px);border-bottom:1px solid var(--line);padding:14px 20px;display:flex;justify-content:space-between;align-items:center;z-index:10;}
+.admin-bar h2{font-family:'Cormorant Garamond',serif;color:var(--gold-pale);font-size:18px;}
+.admin-body{max-width:1100px;margin:0 auto;padding:28px 20px 80px;}
+.admin-tabs{display:flex;gap:4px;margin-bottom:24px;background:var(--surface);border-radius:10px;padding:4px;width:fit-content;border:1px solid var(--line2);}
+.admin-tab{padding:8px 20px;border-radius:8px;font-size:13px;font-weight:600;color:var(--cream-dim);transition:all .2s;}
 .admin-tab.active{background:var(--gold);color:#000;}
-.admin-grid{display:grid;grid-template-columns:.9fr 1.1fr;gap:28px;align-items:flex-start;}
-@media(max-width:860px){.admin-grid{grid-template-columns:1fr;}}
-.admin-panel{background:var(--surface);border:1px solid var(--line);border-radius:16px;padding:26px;position:sticky;top:90px;}
-.admin-panel h3{font-family:'Cormorant Garamond',serif;color:var(--gold-pale);font-size:19px;margin-bottom:20px;}
-.admin-field{margin-bottom:14px;}
-.admin-field label{display:block;font-size:11px;letter-spacing:.1em;text-transform:uppercase;color:var(--gold-dim);margin-bottom:6px;font-weight:600;}
-.admin-field input,.admin-field select,.admin-field textarea{
-  width:100%;background:rgba(255,255,255,.04);border:1px solid var(--line);border-radius:10px;
-  padding:12px 14px;color:var(--cream);font-size:13.5px;transition:border-color .2s;outline:none;
-}
-.admin-field input:focus,.admin-field select:focus,.admin-field textarea:focus{border-color:var(--gold);}
-.admin-field input::placeholder,.admin-field textarea::placeholder{color:#5a5046;}
-.admin-field select option{background:var(--surface);color:var(--cream);}
-.admin-field textarea{resize:vertical;min-height:90px;}
-.toggle-row{display:flex;align-items:center;justify-content:space-between;padding:13px 0;border-top:1px solid var(--line2);margin-top:4px;}
+.admin-grid{display:grid;grid-template-columns:.9fr 1.1fr;gap:24px;align-items:flex-start;}
+@media(max-width:820px){.admin-grid{grid-template-columns:1fr;}}
+.admin-panel{background:var(--surface);border:1px solid var(--line);border-radius:14px;padding:22px;position:sticky;top:80px;}
+.admin-panel h3{font-family:'Cormorant Garamond',serif;color:var(--gold-pale);font-size:18px;margin-bottom:18px;}
+.af{margin-bottom:13px;}
+.af label{display:block;font-size:11px;letter-spacing:.09em;text-transform:uppercase;color:var(--gold-dim);margin-bottom:5px;font-weight:600;}
+.af input,.af select,.af textarea{width:100%;background:rgba(255,255,255,.04);border:1px solid var(--line);border-radius:9px;padding:11px 13px;color:var(--cream);font-size:13.5px;outline:none;transition:border-color .2s;}
+.af input:focus,.af select:focus,.af textarea:focus{border-color:var(--gold);}
+.af input::placeholder,.af textarea::placeholder{color:#504840;}
+.af select option{background:var(--surface);color:var(--cream);}
+.af textarea{resize:vertical;min-height:80px;}
+.toggle-row{display:flex;align-items:center;justify-content:space-between;padding:12px 0;border-top:1px solid var(--line2);margin-top:4px;}
 .toggle-row span{font-size:13px;color:var(--cream-dim);}
-.switch{position:relative;width:44px;height:25px;background:#2a2218;border-radius:30px;transition:background .22s;flex-shrink:0;cursor:pointer;border:1px solid var(--line);}
+.switch{width:42px;height:24px;background:#2a2218;border-radius:30px;transition:background .2s;flex-shrink:0;cursor:pointer;border:1px solid var(--line);position:relative;}
 .switch.on{background:var(--gold);}
-.switch::after{content:'';position:absolute;top:3px;left:3px;width:17px;height:17px;background:#fff;border-radius:50%;transition:transform .22s;box-shadow:0 1px 4px rgba(0,0,0,.4);}
-.switch.on::after{transform:translateX(19px);}
-.admin-btn-row{display:flex;gap:10px;margin-top:20px;}
-.btn-admin-save{flex:1;background:linear-gradient(135deg,var(--gold-bright),var(--gold));color:#000;font-weight:700;padding:13px;border-radius:10px;font-size:14px;transition:all .2s;}
-.btn-admin-save:hover{box-shadow:var(--glow);}
-.btn-admin-cancel{padding:13px 18px;border:1px solid var(--line);border-radius:10px;color:var(--cream-dim);font-size:13px;transition:all .2s;}
-.btn-admin-cancel:hover{border-color:var(--gold-dim);color:var(--gold-pale);}
-.admin-logout{padding:9px 20px;border:1px solid var(--gold-dim);border-radius:24px;font-size:13px;color:var(--gold-pale);transition:all .2s;font-weight:600;}
+.switch::after{content:'';position:absolute;top:3px;left:3px;width:16px;height:16px;background:#fff;border-radius:50%;transition:transform .2s;box-shadow:0 1px 4px rgba(0,0,0,.4);}
+.switch.on::after{transform:translateX(18px);}
+.abtn-row{display:flex;gap:9px;margin-top:18px;}
+.btn-save{flex:1;background:linear-gradient(135deg,var(--gold-bright),var(--gold));color:#000;font-weight:700;padding:12px;border-radius:9px;font-size:14px;transition:all .2s;}
+.btn-save:hover{box-shadow:0 4px 16px rgba(201,168,76,.25);}
+.btn-cancel-form{padding:12px 16px;border:1px solid var(--line);border-radius:9px;color:var(--cream-dim);font-size:13px;transition:all .2s;}
+.btn-cancel-form:hover{border-color:var(--gold-dim);color:var(--gold-pale);}
+.admin-logout{padding:8px 18px;border:1px solid var(--gold-dim);border-radius:24px;font-size:13px;color:var(--gold-pale);transition:all .2s;font-weight:600;}
 .admin-logout:hover{background:var(--gold);color:#000;}
-.admin-list{display:flex;flex-direction:column;gap:10px;}
-.admin-item{
-  background:var(--surface);border:1px solid var(--line2);border-radius:12px;
-  padding:13px;display:flex;gap:12px;align-items:center;
-  transition:border-color .2s;
-}
+.admin-list{display:flex;flex-direction:column;gap:9px;}
+.admin-item{background:var(--surface);border:1px solid var(--line2);border-radius:11px;padding:12px;display:flex;gap:11px;align-items:center;transition:border-color .2s;}
 .admin-item:hover{border-color:var(--line);}
-.admin-item img{width:56px;height:56px;border-radius:9px;object-fit:cover;background:var(--ink2);flex-shrink:0;}
-.admin-item-info{flex:1;min-width:0;}
-.admin-item-info .n{font-size:14px;color:var(--cream);font-weight:600;margin-bottom:2px;}
-.admin-item-info .p{font-size:13px;color:var(--gold);font-weight:700;margin-bottom:2px;}
-.admin-item-info .c{font-size:11px;color:var(--cream-dim);text-transform:uppercase;letter-spacing:.06em;}
-.admin-actions{display:flex;gap:7px;}
-.icon-action{width:33px;height:33px;border-radius:9px;border:1px solid var(--gold-dim);display:flex;align-items:center;justify-content:center;color:var(--gold-pale);transition:all .2s;font-size:14px;}
-.icon-action:hover{background:var(--gold);color:#000;border-color:var(--gold);}
-.icon-action.danger{border-color:rgba(192,57,43,.4);color:#e07360;}
-.icon-action.danger:hover{background:var(--red);color:#fff;border-color:var(--red);}
+.admin-item img{width:52px;height:52px;border-radius:8px;object-fit:cover;background:var(--ink2);flex-shrink:0;}
+.ai-info{flex:1;min-width:0;}
+.ai-info .n{font-size:13.5px;color:var(--cream);font-weight:600;margin-bottom:2px;}
+.ai-info .p{font-size:12.5px;color:var(--gold);font-weight:700;}
+.ai-info .c{font-size:10.5px;color:var(--cream-dim);text-transform:uppercase;letter-spacing:.05em;}
+.ai-actions{display:flex;gap:6px;}
+.ia{width:31px;height:31px;border-radius:8px;border:1px solid var(--gold-dim);display:flex;align-items:center;justify-content:center;color:var(--gold-pale);transition:all .2s;font-size:13px;}
+.ia:hover{background:var(--gold);color:#000;border-color:var(--gold);}
+.ia.del{border-color:rgba(192,57,43,.4);color:#e07360;}
+.ia.del:hover{background:var(--red);color:#fff;border-color:var(--red);}
 
-/* orders tab */
-.order-card-admin{background:var(--surface);border:1px solid var(--line2);border-radius:12px;padding:16px;margin-bottom:12px;}
-.order-card-admin .oc-head{display:flex;justify-content:space-between;align-items:flex-start;margin-bottom:8px;flex-wrap:wrap;gap:8px;}
-.order-card-admin .oc-name{font-size:15px;font-weight:600;color:var(--cream);}
-.order-card-admin .oc-phone{font-size:13px;color:var(--gold);}
-.order-card-admin .oc-loc{font-size:12px;color:var(--cream-dim);}
-.order-card-admin .oc-total{font-family:'Cormorant Garamond',serif;font-size:20px;color:var(--gold-bright);font-weight:700;}
-.order-card-admin .oc-items{font-size:12px;color:var(--cream-dim);margin-top:6px;line-height:1.6;}
-.order-status{display:inline-flex;align-items:center;gap:5px;padding:4px 10px;border-radius:20px;font-size:11px;font-weight:700;letter-spacing:.04em;}
-.order-status.nouvelle{background:rgba(52,152,219,.15);color:#5dade2;border:1px solid rgba(52,152,219,.3);}
-.order-status.traitee{background:rgba(39,174,96,.15);color:#52be80;border:1px solid rgba(39,174,96,.3);}
+/* photo picker */
+.photo-picker{border:2px dashed var(--gold-dim);border-radius:12px;padding:22px 14px;text-align:center;cursor:pointer;background:rgba(201,168,76,.04);transition:all .22s;display:flex;flex-direction:column;align-items:center;gap:5px;}
+.photo-picker:hover{border-color:var(--gold);background:rgba(201,168,76,.08);}
+.photo-picker.has{border-color:var(--gold);background:rgba(201,168,76,.06);}
+.pp-icon{font-size:32px;line-height:1;}
+.pp-text{font-size:14px;font-weight:700;color:var(--gold-pale);}
+.pp-sub{font-size:11.5px;color:var(--cream-dim);}
+.photo-previews{display:flex;flex-wrap:wrap;gap:8px;margin-top:10px;}
+.prev-wrap{position:relative;width:66px;height:66px;border-radius:9px;overflow:hidden;border:1px solid var(--line);}
+.prev-wrap img{width:100%;height:100%;object-fit:cover;}
+.prev-del{position:absolute;top:2px;right:2px;width:18px;height:18px;border-radius:50%;background:rgba(192,57,43,.85);color:#fff;font-size:10px;display:flex;align-items:center;justify-content:center;cursor:pointer;font-weight:700;border:none;}
+
+/* orders */
+.oc{background:var(--surface);border:1px solid var(--line2);border-radius:11px;padding:14px;margin-bottom:10px;}
+.oc-head{display:flex;justify-content:space-between;align-items:flex-start;margin-bottom:7px;flex-wrap:wrap;gap:7px;}
+.oc-name{font-size:14px;font-weight:600;color:var(--cream);}
+.oc-phone{font-size:12.5px;color:var(--gold);}
+.oc-loc{font-size:11.5px;color:var(--cream-dim);}
+.oc-total{font-family:'Cormorant Garamond',serif;font-size:19px;color:var(--gold-bright);font-weight:700;}
+.oc-items{font-size:11.5px;color:var(--cream-dim);margin-top:5px;line-height:1.6;}
+.ostatus{display:inline-flex;padding:3px 9px;border-radius:20px;font-size:10.5px;font-weight:700;letter-spacing:.04em;background:rgba(52,152,219,.15);color:#5dade2;border:1px solid rgba(52,152,219,.28);}
 
 /* toast */
-.toast{
-  position:fixed;bottom:28px;left:50%;transform:translateX(-50%) translateY(20px);
-  background:linear-gradient(135deg,var(--gold-bright),var(--gold));color:#000;
-  padding:13px 26px;border-radius:30px;font-size:13px;font-weight:700;
-  opacity:0;transition:all .3s cubic-bezier(.34,1.56,.64,1);z-index:9999;
-  box-shadow:0 10px 30px rgba(0,0,0,.5);pointer-events:none;white-space:nowrap;
-}
+.toast{position:fixed;bottom:24px;left:50%;transform:translateX(-50%) translateY(16px);background:linear-gradient(135deg,var(--gold-bright),var(--gold));color:#000;padding:12px 22px;border-radius:30px;font-size:13px;font-weight:700;opacity:0;transition:all .3s cubic-bezier(.34,1.56,.64,1);z-index:9999;box-shadow:0 8px 24px rgba(0,0,0,.5);pointer-events:none;white-space:nowrap;}
 .toast.show{opacity:1;transform:translateX(-50%) translateY(0);}
 
-/* ===== PROMO BAND ===== */
-.promo-band{
-  background:linear-gradient(135deg,var(--gold-dim),var(--copper),var(--gold-dim));
-  padding:14px 28px;text-align:center;font-size:13px;font-weight:600;
-  color:var(--ink);letter-spacing:.04em;position:relative;overflow:hidden;
-}
-.promo-band::before{content:'';position:absolute;inset:0;background:linear-gradient(90deg,transparent,rgba(255,255,255,.1),transparent);animation:sheen 3s ease-in-out infinite;}
+/* promo bar */
+.promo-bar{background:linear-gradient(135deg,var(--gold-dim),var(--copper),var(--gold-dim));padding:10px 16px;text-align:center;font-size:12.5px;font-weight:600;color:var(--ink);letter-spacing:.03em;overflow:hidden;position:relative;}
+.promo-bar::before{content:'';position:absolute;inset:0;background:linear-gradient(90deg,transparent,rgba(255,255,255,.12),transparent);animation:sheen 3s ease-in-out infinite;}
 @keyframes sheen{0%{transform:translateX(-100%);}100%{transform:translateX(200%);}}
 
-/* ===== FOOTER ===== */
-footer{border-top:1px solid var(--line);padding:52px 28px 32px;margin-top:40px;position:relative;z-index:1;}
-.footer-inner{max-width:1280px;margin:0 auto;display:grid;grid-template-columns:1.4fr 1fr 1fr;gap:40px;margin-bottom:40px;}
-.footer-brand .brand-name{font-family:'Cormorant Garamond',serif;color:var(--gold-pale);font-size:22px;margin-bottom:10px;display:flex;align-items:center;gap:10px;}
-.footer-brand p{font-size:13px;color:var(--cream-dim);line-height:1.7;max-width:280px;}
-.footer-col h4{font-size:11px;letter-spacing:.2em;text-transform:uppercase;color:var(--gold);margin-bottom:16px;font-weight:700;}
-.footer-col ul{list-style:none;}
-.footer-col ul li{margin-bottom:9px;}
-.footer-col ul li a{font-size:13px;color:var(--cream-dim);transition:color .2s;}
-.footer-col ul li a:hover{color:var(--gold-pale);}
-.footer-bottom{display:flex;justify-content:space-between;align-items:center;padding-top:24px;border-top:1px solid var(--line2);flex-wrap:wrap;gap:12px;}
-.footer-copy{font-size:12px;color:var(--cream-dim);letter-spacing:.04em;}
-.footer-wa{
-  display:inline-flex;align-items:center;gap:8px;padding:9px 18px;
-  background:rgba(37,211,102,.1);border:1px solid rgba(37,211,102,.25);border-radius:24px;
-  font-size:12.5px;font-weight:600;color:#52d96a;transition:all .2s;
-}
-.footer-wa:hover{background:rgba(37,211,102,.18);box-shadow:0 0 14px rgba(37,211,102,.15);}
-@media(max-width:780px){
-  .footer-inner{grid-template-columns:1fr;}
-  .footer-bottom{flex-direction:column;text-align:center;}
-}
-@media(max-width:600px){
-  .section{padding:50px 16px;}
-  .hero{padding:46px 16px 40px;}
-}
-
-/* ===== PHOTO PICKER ===== */
-.photo-picker{
-  border:2px dashed var(--gold-dim);border-radius:14px;
-  padding:28px 16px;text-align:center;cursor:pointer;
-  background:rgba(201,168,76,.04);transition:all .25s;
-  display:flex;flex-direction:column;align-items:center;gap:6px;
-}
-.photo-picker:hover{border-color:var(--gold);background:rgba(201,168,76,.09);}
-.photo-picker-icon{font-size:36px;line-height:1;}
-.photo-picker-text{font-size:15px;font-weight:700;color:var(--gold-pale);}
-.photo-picker-sub{font-size:12px;color:var(--cream-dim);}
-.photo-previews{display:flex;flex-wrap:wrap;gap:10px;margin-top:12px;}
-.preview-wrap{position:relative;width:72px;height:72px;border-radius:10px;overflow:hidden;border:1px solid var(--line);}
-.preview-wrap img{width:100%;height:100%;object-fit:cover;}
-.preview-del{
-  position:absolute;top:2px;right:2px;width:20px;height:20px;border-radius:50%;
-  background:rgba(192,57,43,.85);color:#fff;font-size:11px;display:flex;
-  align-items:center;justify-content:center;cursor:pointer;font-weight:700;
-  border:none;line-height:1;
-}
-.preview-del:hover{background:var(--red);}
-.photo-picker-has{border-color:var(--gold);background:rgba(201,168,76,.07);}
+/* footer */
+footer{border-top:1px solid var(--line);padding:36px 20px 28px;margin-top:30px;}
+.footer-inner{max-width:1280px;margin:0 auto;display:flex;justify-content:space-between;align-items:flex-end;flex-wrap:wrap;gap:20px;}
+.foot-brand{font-family:'Cormorant Garamond',serif;color:var(--gold-pale);font-size:18px;display:flex;align-items:center;gap:10px;}
+.foot-copy{font-size:11.5px;color:var(--cream-dim);}
+.foot-wa{display:inline-flex;align-items:center;gap:7px;padding:8px 16px;background:rgba(37,211,102,.1);border:1px solid rgba(37,211,102,.22);border-radius:24px;font-size:12px;font-weight:600;color:#52d96a;transition:all .2s;}
+.foot-wa:hover{background:rgba(37,211,102,.17);}
 </style>
 </head>
 <body>
 
-<!-- PARTICLES -->
-<div id="particles"></div>
-
 <!-- SPLASH -->
 <div id="splash">
-  <div class="splash-logo-wrap">
-    <div class="splash-ring-outer"></div>
-    <div class="splash-ring-inner"></div>
+  <div class="splash-ring">
     <svg class="splash-mono" viewBox="0 0 120 120">
       <path d="M28,36 L28,84 M28,36 L52,36 Q67,36 67,50 Q67,62 52,62 L28,62 M52,62 Q70,62 70,74 Q70,84 52,84 L28,84 M80,36 L102,36 M91,36 L91,84"/>
     </svg>
   </div>
   <div class="splash-name">Boutique Traoré</div>
-  <div class="splash-sub">Collection exclusive · Yaoundé</div>
+  <div class="splash-city">Maga · Cameroun</div>
 </div>
 
-<!-- PROMO BAND -->
-<div class="promo-band">🎁 Livraison gratuite à Yaoundé pour toute commande dès 15 000 FCFA · Paiement à la livraison disponible</div>
+<!-- PROMO BAR -->
+<div class="promo-bar">🎁 Livraison disponible · Maga, Pouss, Guirvidig, Malka et environs · Paiement à la livraison</div>
 
 <!-- HEADER -->
 <header>
@@ -538,95 +310,50 @@ footer{border-top:1px solid var(--line);padding:52px 28px 32px;margin-top:40px;p
         <span class="small">Boutique Traoré</span>
       </div>
     </div>
-    <nav>
-      <a class="nav-link" href="#produits">Produits</a>
-      <a class="nav-link" href="#footer-sec">À propos</a>
-      <button class="cart-btn" id="openCart">
-        🛍 Panier
-        <span class="cart-count" id="cartCount">0</span>
-      </button>
-    </nav>
+    <button class="cart-btn" id="openCart">
+      🛍 Panier
+      <span class="cart-count" id="cartCount">0</span>
+    </button>
   </div>
 </header>
 
-<!-- TICKER -->
-<div class="ticker-wrap">
-  <div class="ticker-track" id="tickerTrack"></div>
-</div>
-
 <!-- HERO -->
 <section class="hero">
-  <div>
-    <div class="hero-tag">Nouvelle collection 2026</div>
-    <h1>L'élégance qui porte le nom de <em>la famille</em> <strong>Traoré.</strong></h1>
-    <p class="hero-desc">Chaque pièce est choisie avec exigence. Une sélection pensée pour celles et ceux qui veulent du beau, du solide, et du vrai — livré directement chez vous à Yaoundé.</p>
+  <div class="hero-left">
+    <div class="hero-tag">Collection 2026 · Maga</div>
+    <h1>Boutique <em>Traoré</em></h1>
+    <p class="hero-sub">Qualité, style & livraison rapide à Maga</p>
     <div class="hero-cta">
-      <a href="#produits" class="btn-primary">Voir la collection →</a>
-      <a href="#footer-sec" class="btn-outline">Notre histoire</a>
-    </div>
-    <div class="hero-stats">
-      <div class="stat"><span class="num" id="statProd">0</span><span class="lbl">Produits</span></div>
-      <div class="stat"><span class="num">100%</span><span class="lbl">Qualité</span></div>
-      <div class="stat"><span class="num">24h</span><span class="lbl">Livraison</span></div>
+      <a href="#produits" class="btn-primary">Voir les produits →</a>
     </div>
   </div>
-  <div class="hero-visual">
-    <div class="hero-orb">
-      <div class="hero-orb-ring"></div>
-      <div class="hero-orb-ring2"></div>
-      <svg class="hero-mono-big" viewBox="0 0 120 120">
-        <path d="M28,36 L28,84 M28,36 L52,36 Q67,36 67,50 Q67,62 52,62 L28,62 M52,62 Q70,62 70,74 Q70,84 52,84 L28,84 M80,36 L102,36 M91,36 L91,84"/>
-      </svg>
-    </div>
+  <div class="hero-orb">
+    <svg class="hero-mono" viewBox="0 0 120 120">
+      <path d="M28,36 L28,84 M28,36 L52,36 Q67,36 67,50 Q67,62 52,62 L28,62 M52,62 Q70,62 70,74 Q70,84 52,84 L28,84 M80,36 L102,36 M91,36 L91,84"/>
+    </svg>
   </div>
 </section>
 
 <!-- PRODUCTS -->
 <section class="section" id="produits">
-  <div class="section-head-row section-head">
-    <div>
-      <span class="eyebrow">La sélection</span>
-      <h2 class="section-title">Nos produits</h2>
-    </div>
-    <p style="font-size:13px;color:var(--cream-dim);max-width:300px;text-align:right;">Collection actualisée chaque semaine. Commandez en un clic.</p>
+  <div class="section-head">
+    <span class="eyebrow">La sélection</span>
+    <h2 class="section-title">Nos produits</h2>
   </div>
   <div class="filters" id="filters"></div>
   <div class="grid" id="productGrid"></div>
 </section>
 
 <!-- FOOTER -->
-<footer id="footer-sec">
+<footer>
   <div class="footer-inner">
-    <div class="footer-brand">
-      <div class="brand-name">
-        <svg width="32" height="32" viewBox="0 0 120 120"><path d="M28,36 L28,84 M28,36 L52,36 Q67,36 67,50 Q67,62 52,62 L28,62 M52,62 Q70,62 70,74 Q70,84 52,84 L28,84 M80,36 L102,36 M91,36 L91,84" fill="none" stroke="#c9a84c" stroke-width="5.5" stroke-linecap="round" stroke-linejoin="round"/></svg>
-        Boutique Traoré
-      </div>
-      <p>Une boutique de famille, fondée sur la confiance. Chaque produit est sélectionné à la main pour vous offrir le meilleur de la mode et du quotidien à Yaoundé et partout au Cameroun.</p>
+    <div class="foot-brand">
+      <svg width="28" height="28" viewBox="0 0 120 120"><path d="M28,36 L28,84 M28,36 L52,36 Q67,36 67,50 Q67,62 52,62 L28,62 M52,62 Q70,62 70,74 Q70,84 52,84 L28,84 M80,36 L102,36 M91,36 L91,84" fill="none" stroke="#c9a84c" stroke-width="5.5" stroke-linecap="round" stroke-linejoin="round"/></svg>
+      Boutique Traoré
     </div>
-    <div class="footer-col">
-      <h4>Navigation</h4>
-      <ul>
-        <li><a href="#produits">Tous les produits</a></li>
-        <li><a href="#produits">Vêtements</a></li>
-        <li><a href="#produits">Accessoires</a></li>
-        <li><a href="#produits">Nouveautés</a></li>
-      </ul>
-    </div>
-    <div class="footer-col">
-      <h4>Infos pratiques</h4>
-      <ul>
-        <li><a href="#">Livraison à Yaoundé</a></li>
-        <li><a href="#">Paiement à la livraison</a></li>
-        <li><a href="#">Retours & échanges</a></li>
-        <li><a href="https://wa.me/237698083058" target="_blank">Contactez-nous</a></li>
-      </ul>
-    </div>
-  </div>
-  <div class="footer-bottom">
-    <span class="footer-copy">© 2026 Boutique Traoré — Famille Traoré. Tous droits réservés.</span>
-    <a class="footer-wa" href="https://wa.me/237698083058" target="_blank">
-      <svg width="15" height="15" viewBox="0 0 24 24" fill="currentColor"><path d="M17.472 14.382c-.297-.149-1.758-.867-2.03-.967-.273-.099-.471-.148-.67.15-.197.297-.767.966-.94 1.164-.173.199-.347.223-.644.075-.297-.15-1.255-.463-2.39-1.475-.883-.788-1.48-1.761-1.653-2.059-.173-.297-.018-.458.13-.606.134-.133.298-.347.446-.52.149-.174.198-.298.298-.497.099-.198.05-.371-.025-.52-.075-.149-.669-1.612-.916-2.207-.242-.579-.487-.5-.669-.51-.173-.008-.371-.01-.57-.01-.198 0-.52.074-.792.372-.272.297-1.04 1.016-1.04 2.479 0 1.462 1.065 2.875 1.213 3.074.149.198 2.096 3.2 5.077 4.487.709.306 1.262.489 1.694.625.712.227 1.36.195 1.871.118.571-.085 1.758-.719 2.006-1.413.248-.694.248-1.289.173-1.413-.074-.124-.272-.198-.57-.347z"/><path d="M12 0C5.373 0 0 5.373 0 12c0 2.123.554 4.116 1.523 5.845L.057 23.49l5.797-1.52A11.94 11.94 0 0012 24c6.627 0 12-5.373 12-12S18.627 0 12 0zm0 22c-1.885 0-3.651-.502-5.178-1.381l-.371-.22-3.443.903.92-3.355-.242-.387A9.96 9.96 0 012 12C2 6.477 6.477 2 12 2s10 4.477 10 10-4.477 10-10 10z"/></svg>
+    <span class="foot-copy">© 2026 Boutique Traoré · Maga, Cameroun</span>
+    <a class="foot-wa" href="https://wa.me/237698083058" target="_blank">
+      <svg width="14" height="14" viewBox="0 0 24 24" fill="currentColor"><path d="M17.472 14.382c-.297-.149-1.758-.867-2.03-.967-.273-.099-.471-.148-.67.15-.197.297-.767.966-.94 1.164-.173.199-.347.223-.644.075-.297-.15-1.255-.463-2.39-1.475-.883-.788-1.48-1.761-1.653-2.059-.173-.297-.018-.458.13-.606.134-.133.298-.347.446-.52.149-.174.198-.298.298-.497.099-.198.05-.371-.025-.52-.075-.149-.669-1.612-.916-2.207-.242-.579-.487-.5-.669-.51-.173-.008-.371-.01-.57-.01-.198 0-.52.074-.792.372-.272.297-1.04 1.016-1.04 2.479 0 1.462 1.065 2.875 1.213 3.074.149.198 2.096 3.2 5.077 4.487.709.306 1.262.489 1.694.625.712.227 1.36.195 1.871.118.571-.085 1.758-.719 2.006-1.413.248-.694.248-1.289.173-1.413-.074-.124-.272-.198-.57-.347z"/><path d="M12 0C5.373 0 0 5.373 0 12c0 2.123.554 4.116 1.523 5.845L.057 23.49l5.797-1.52A11.94 11.94 0 0012 24c6.627 0 12-5.373 12-12S18.627 0 12 0zm0 22c-1.885 0-3.651-.502-5.178-1.381l-.371-.22-3.443.903.92-3.355-.242-.387A9.96 9.96 0 012 12C2 6.477 6.477 2 12 2s10 4.477 10 10-4.477 10-10 10z"/></svg>
       WhatsApp
     </a>
   </div>
@@ -641,25 +368,25 @@ footer{border-top:1px solid var(--line);padding:52px 28px 32px;margin-top:40px;p
   </div>
   <div class="drawer-body" id="cartBody"></div>
   <div class="drawer-foot" id="cartFoot" style="display:none;">
-    <div class="subtotal-row">
-      <span class="lbl">Total</span>
-      <span class="val" id="cartTotal">0 FCFA</span>
+    <div class="total-row">
+      <span class="total-lbl">Total</span>
+      <span class="total-val" id="cartTotal">0 FCFA</span>
     </div>
-    <p class="drawer-note">📦 Livraison confirmée à la commande</p>
+    <p class="drawer-note">📦 Paiement à la livraison</p>
     <button class="btn-checkout" id="goCheckout">Commander via WhatsApp →</button>
   </div>
 </div>
 
-<!-- CHECKOUT MODAL -->
+<!-- MODAL COMMANDE -->
 <div class="modal-back" id="checkoutModal">
-  <div class="modal-card" id="checkoutCard" style="position:relative;">
-    <button class="modal-close-x" id="closeModalX">✕</button>
+  <div class="modal-card" id="checkoutCard">
+    <button class="modal-x" id="closeModalX">✕</button>
   </div>
 </div>
 
-<!-- ADMIN PAGE -->
+<!-- ADMIN -->
 <div id="adminPage">
-  <div class="admin-topbar">
+  <div class="admin-bar">
     <h2>🔐 Administration — Boutique Traoré</h2>
     <button class="admin-logout" id="closeAdmin">Fermer</button>
   </div>
@@ -673,13 +400,13 @@ footer{border-top:1px solid var(--line);padding:52px 28px 32px;margin-top:40px;p
       <div class="admin-grid">
         <div class="admin-panel">
           <h3 id="formTitle">Ajouter un produit</h3>
-          <div class="admin-field"><label>Nom du produit *</label><input id="f_name" placeholder="Ex : Boubou brodé premium"></div>
-          <div class="admin-field"><label>Prix (FCFA) *</label><input id="f_price" type="number" placeholder="Ex : 25000"></div>
-          <div class="admin-field"><label>Prix barré (optionnel)</label><input id="f_oldprice" type="number" placeholder="Ex : 32000"></div>
-          <div class="admin-field">
+          <div class="af"><label>Nom du produit *</label><input id="f_name" placeholder="Ex : Boubou brodé"></div>
+          <div class="af"><label>Prix (FCFA) *</label><input id="f_price" type="number" placeholder="Ex : 5000"></div>
+          <div class="af"><label>Prix barré (optionnel)</label><input id="f_oldprice" type="number" placeholder="Ex : 7000"></div>
+          <div class="af">
             <label>Catégorie *</label>
             <select id="f_cat">
-              <option value="">-- Choisir une catégorie --</option>
+              <option value="">-- Choisir --</option>
               <option value="Vêtements">Vêtements</option>
               <option value="Chaussures">Chaussures</option>
               <option value="Accessoires">Accessoires</option>
@@ -692,17 +419,17 @@ footer{border-top:1px solid var(--line);padding:52px 28px 32px;margin-top:40px;p
               <option value="Sport">Sport</option>
             </select>
           </div>
-          <div class="admin-field">
-            <label>Photos du produit</label>
+          <div class="af">
+            <label>Photos du produit (2 à 3 recommandées)</label>
             <input type="file" id="f_imgs" accept="image/*" multiple style="display:none;">
             <div class="photo-picker" id="photoPicker" onclick="document.getElementById('f_imgs').click()">
-              <div class="photo-picker-icon">📷</div>
-              <div class="photo-picker-text">Appuyer pour choisir des photos</div>
-              <div class="photo-picker-sub">Vous pouvez sélectionner plusieurs photos</div>
+              <div class="pp-icon">📷</div>
+              <div class="pp-text">Appuyer pour choisir les photos</div>
+              <div class="pp-sub">Choisissez 2 ou 3 photos</div>
             </div>
             <div class="photo-previews" id="photoPreviews"></div>
           </div>
-          <div class="admin-field">
+          <div class="af">
             <label>Badge (optionnel)</label>
             <select id="f_badge">
               <option value="">-- Pas de badge --</option>
@@ -718,34 +445,34 @@ footer{border-top:1px solid var(--line);padding:52px 28px 32px;margin-top:40px;p
             <span>Mettre en avant</span>
             <div class="switch" id="f_featured"></div>
           </div>
-          <div class="admin-btn-row">
-            <button class="btn-admin-save" id="f_submit">Ajouter le produit</button>
-            <button class="btn-admin-cancel" id="f_cancel" style="display:none;">Annuler</button>
+          <div class="abtn-row">
+            <button class="btn-save" id="f_submit">Ajouter le produit</button>
+            <button class="btn-cancel-form" id="f_cancel" style="display:none;">Annuler</button>
           </div>
         </div>
         <div>
-          <h3 style="font-family:'Cormorant Garamond',serif;color:var(--gold-pale);font-size:18px;margin-bottom:18px;">Produits en ligne (<span id="adminCount">0</span>)</h3>
+          <h3 style="font-family:'Cormorant Garamond',serif;color:var(--gold-pale);font-size:17px;margin-bottom:16px;">Produits (<span id="adminCount">0</span>)</h3>
           <div class="admin-list" id="adminList"></div>
         </div>
       </div>
     </div>
     <!-- ORDERS TAB -->
     <div id="tab-orders" style="display:none;">
-      <h3 style="font-family:'Cormorant Garamond',serif;color:var(--gold-pale);font-size:20px;margin-bottom:20px;">Commandes reçues (<span id="orderCount">0</span>)</h3>
+      <h3 style="font-family:'Cormorant Garamond',serif;color:var(--gold-pale);font-size:19px;margin-bottom:18px;">Commandes reçues (<span id="orderCount">0</span>)</h3>
       <div id="ordersList"></div>
     </div>
   </div>
-</div><!-- TOAST -->
+</div>
+
 <div class="toast" id="toast"></div>
 
 <script type="module">
 import { initializeApp } from "https://www.gstatic.com/firebasejs/10.12.2/firebase-app.js";
 import {
-  getFirestore, collection, addDoc, onSnapshot, deleteDoc, doc,
-  updateDoc, query, orderBy, serverTimestamp
+  getFirestore, collection, addDoc, onSnapshot, deleteDoc,
+  doc, updateDoc, query, orderBy, serverTimestamp
 } from "https://www.gstatic.com/firebasejs/10.12.2/firebase-firestore.js";
 
-/* ===== FIREBASE CONFIG ===== */
 const firebaseConfig = {
   apiKey: "AIzaSyAWfTpRr0D-FK8IxFAsMg9oNCoiXNrx4aU",
   authDomain: "akit-commerce.firebaseapp.com",
@@ -758,284 +485,238 @@ const app = initializeApp(firebaseConfig);
 const db = getFirestore(app);
 const COL_PROD = "bt_products";
 const COL_ORDERS = "bt_orders";
-const WA_NUMBER = "237698083058";
-const ADMIN_PWD = "traore2026"; // ← changez ce mot de passe
+const WA = "237698083058";
+const ADMIN_PWD = "traore2026";
 
-/* ===== STATE ===== */
 let products = [];
 let orders = [];
-let cart = JSON.parse(localStorage.getItem("bt_cart_v2") || "[]");
-let wishlist = JSON.parse(localStorage.getItem("bt_wishlist") || "[]");
+let cart = JSON.parse(localStorage.getItem("bt_cart_v3") || "[]");
+let wishlist = JSON.parse(localStorage.getItem("bt_wish") || "[]");
 let activeFilter = "Tous";
 let editingId = null;
 let featuredOn = false;
+let pickedPhotos = [];
 
-/* ===== PARTICLES ===== */
-(function spawnParticles(){
-  const c = document.getElementById("particles");
-  for(let i=0;i<18;i++){
-    const p = document.createElement("div");
-    p.className = "particle";
-    const size = Math.random()*3+1;
-    p.style.cssText = `width:${size}px;height:${size}px;left:${Math.random()*100}%;animation-duration:${Math.random()*18+12}s;animation-delay:${Math.random()*14}s;`;
-    c.appendChild(p);
-  }
-})();
-
-/* ===== SPLASH ===== */
-window.addEventListener("load",()=>{
-  setTimeout(()=>document.getElementById("splash").classList.add("hide"),2300);
+/* SPLASH */
+window.addEventListener("load", () => {
+  setTimeout(() => document.getElementById("splash").classList.add("hide"), 2200);
 });
 
-/* ===== TICKER ===== */
-const tickerItems = [
-  "Bienvenue à la Boutique Traoré",
-  "Livraison rapide à Yaoundé & au Cameroun",
-  "Paiement à la livraison disponible",
-  "Nouveaux articles chaque semaine",
-  "Commandez sur WhatsApp en 1 clic",
-  "La qualité avant tout — Famille Traoré"
-];
-(function renderTicker(){
-  const html = tickerItems.map(t=>
-    `<span class="ticker-item"><b>BT</b> ${t} <span class="ticker-sep">◆</span></span>`
-  ).join("");
-  document.getElementById("tickerTrack").innerHTML = html+html;
-})();
-
-/* ===== ADMIN ACCESS (5 clics logo) ===== */
-let clickCount=0, clickTimer=null;
-document.getElementById("logoClick").addEventListener("click",()=>{
-  clickCount++;
-  clearTimeout(clickTimer);
-  clickTimer = setTimeout(()=>clickCount=0,1500);
-  if(clickCount>=5){ clickCount=0; openAdmin(); }
+/* ADMIN ACCESS — 5 clics logo */
+let cc = 0, ct = null;
+document.getElementById("logoClick").addEventListener("click", () => {
+  cc++; clearTimeout(ct);
+  ct = setTimeout(() => cc = 0, 1400);
+  if(cc >= 5){ cc = 0; openAdmin(); }
 });
 
 function openAdmin(){
-  const pwd = prompt("🔐 Mot de passe administrateur :");
+  const pwd = prompt("🔐 Mot de passe :");
   if(pwd !== ADMIN_PWD){ toast("Mot de passe incorrect"); return; }
   document.getElementById("adminPage").classList.add("show");
   document.body.style.overflow = "hidden";
 }
-document.getElementById("closeAdmin").addEventListener("click",()=>{
+document.getElementById("closeAdmin").addEventListener("click", () => {
   document.getElementById("adminPage").classList.remove("show");
-  document.body.style.overflow="";
+  document.body.style.overflow = "";
   resetForm();
 });
 
-/* ===== ADMIN TABS ===== */
-document.querySelectorAll(".admin-tab").forEach(btn=>{
-  btn.addEventListener("click",()=>{
-    document.querySelectorAll(".admin-tab").forEach(b=>b.classList.remove("active"));
+/* ADMIN TABS */
+document.querySelectorAll(".admin-tab").forEach(btn => {
+  btn.addEventListener("click", () => {
+    document.querySelectorAll(".admin-tab").forEach(b => b.classList.remove("active"));
     btn.classList.add("active");
-    const tab = btn.dataset.tab;
-    document.getElementById("tab-products").style.display = tab==="products"?"block":"none";
-    document.getElementById("tab-orders").style.display = tab==="orders"?"block":"none";
+    const t = btn.dataset.tab;
+    document.getElementById("tab-products").style.display = t === "products" ? "block" : "none";
+    document.getElementById("tab-orders").style.display = t === "orders" ? "block" : "none";
   });
 });
 
-/* ===== FIRESTORE: PRODUCTS ===== */
-const qProd = query(collection(db,COL_PROD), orderBy("createdAt","desc"));
-onSnapshot(qProd,(snap)=>{
-  products = snap.docs.map(d=>({id:d.id,...d.data()}));
-  document.getElementById("statProd").textContent = products.length;
+/* FIRESTORE PRODUCTS */
+const qP = query(collection(db, COL_PROD), orderBy("createdAt", "desc"));
+onSnapshot(qP, snap => {
+  products = snap.docs.map(d => ({ id: d.id, ...d.data() }));
   renderFilters();
   renderProducts();
   renderAdminList();
-},(err)=>{
+}, err => {
   console.error(err);
-  document.getElementById("productGrid").innerHTML=`<div class="empty-state"><span class="big">Connexion en cours…</span>Vérifiez vos règles Firestore.</div>`;
+  document.getElementById("productGrid").innerHTML = `<div class="empty-state"><b>Connexion en cours…</b>Vérifiez vos règles Firestore.</div>`;
 });
 
-/* ===== FIRESTORE: ORDERS ===== */
-const qOrders = query(collection(db,COL_ORDERS), orderBy("createdAt","desc"));
-onSnapshot(qOrders,(snap)=>{
-  orders = snap.docs.map(d=>({id:d.id,...d.data()}));
+/* FIRESTORE ORDERS */
+const qO = query(collection(db, COL_ORDERS), orderBy("createdAt", "desc"));
+onSnapshot(qO, snap => {
+  orders = snap.docs.map(d => ({ id: d.id, ...d.data() }));
   renderOrders();
 });
 
-/* ===== FILTERS ===== */
+/* FORMAT */
+function fmt(n){ return Number(n || 0).toLocaleString("fr-FR") + " FCFA"; }
+
+/* FILTERS */
 function renderFilters(){
-  const cats = ["Tous",...new Set(products.map(p=>p.category).filter(Boolean))];
-  document.getElementById("filters").innerHTML = cats.map(c=>
-    `<button class="filter-chip ${c===activeFilter?"active":""}" data-cat="${c}">${c}</button>`
+  const cats = ["Tous", ...new Set(products.map(p => p.category).filter(Boolean))];
+  document.getElementById("filters").innerHTML = cats.map(c =>
+    `<button class="filter-chip ${c === activeFilter ? "active" : ""}" data-cat="${c}">${c}</button>`
   ).join("");
-  document.querySelectorAll(".filter-chip").forEach(btn=>{
-    btn.addEventListener("click",()=>{
+  document.querySelectorAll(".filter-chip").forEach(btn => {
+    btn.addEventListener("click", () => {
       activeFilter = btn.dataset.cat;
       renderFilters();
       renderProducts();
     });
   });
-}
-
-/* ===== FORMAT PRICE ===== */
-function fmt(n){ return Number(n||0).toLocaleString("fr-FR")+" FCFA"; }
-
-/* ===== PRODUCTS GRID ===== */
+}/* PRODUCTS */
 function renderProducts(){
   const grid = document.getElementById("productGrid");
-  const list = activeFilter==="Tous" ? products : products.filter(p=>p.category===activeFilter);
+  const list = activeFilter === "Tous" ? products : products.filter(p => p.category === activeFilter);
   if(!list.length){
-    grid.innerHTML=`<div class="empty-state"><span class="big">Aucun produit pour le moment</span>La boutique se remplit bientôt. Revenez vite !</div>`;
+    grid.innerHTML = `<div class="empty-state"><b>Aucun produit pour le moment</b>Revenez bientôt !</div>`;
     return;
   }
-  grid.innerHTML = list.map(p=>{
-    const imgs = (Array.isArray(p.images)&&p.images.length) ? p.images : (p.image?[p.image]:["https://placehold.co/400x400/1a1410/c9a84c?text=BT"]);
+  grid.innerHTML = list.map(p => {
+    const imgs = (Array.isArray(p.images) && p.images.length) ? p.images : (p.image ? [p.image] : ["https://placehold.co/400x400/1a1410/c9a84c?text=BT"]);
     const liked = wishlist.includes(p.id);
-    const dots = imgs.length>1 ? imgs.map((_,i)=>`<div class="card-dot${i===0?" active":""}" data-idx="${i}" data-pid="${p.id}"></div>`).join("") : "";
-    const slides = imgs.map((src,i)=>`<img class="card-slide${i===0?" active":""}" src="${src}" alt="${p.name}" loading="lazy">`).join("");
+    const dots = imgs.length > 1 ? imgs.map((_, i) =>
+      `<div class="card-dot${i === 0 ? " active" : ""}" data-idx="${i}" data-pid="${p.id}"></div>`
+    ).join("") : "";
+    const slides = imgs.map((src, i) =>
+      `<img class="card-slide${i === 0 ? " active" : ""}" src="${src}" alt="${p.name}" loading="lazy">`
+    ).join("");
     return `
     <div class="card" data-id="${p.id}">
-      <div class="card-img-wrap" data-pid="${p.id}" data-total="${imgs.length}" data-current="0">
-        ${p.badge?`<span class="card-badge">${p.badge}</span>`:""}
-        <button class="wishlist-btn${liked?" liked":""}" data-id="${p.id}" title="Favoris">♡</button>
+      <div class="card-img-wrap" data-pid="${p.id}" data-total="${imgs.length}" data-cur="0">
+        ${p.badge ? `<span class="card-badge">${p.badge}</span>` : ""}
+        <button class="wish-btn${liked ? " liked" : ""}" data-id="${p.id}">♡</button>
         ${slides}
-        ${imgs.length>1?`
+        ${imgs.length > 1 ? `
           <div class="card-nav">
             <button class="card-nav-btn" data-dir="-1" data-pid="${p.id}">‹</button>
             <button class="card-nav-btn" data-dir="1" data-pid="${p.id}">›</button>
           </div>
           <div class="card-dots">${dots}</div>
-        `:""}
+        ` : ""}
       </div>
       <div class="card-body">
-        <span class="card-cat">${p.category||"Article"}</span>
+        <span class="card-cat">${p.category || "Article"}</span>
         <span class="card-name">${p.name}</span>
-        <div class="card-price-row">
+        <div class="card-prices">
           <span class="card-price">${fmt(p.price)}</span>
-          ${p.oldprice?`<span class="card-price-old">${fmt(p.oldprice)}</span>`:""}
+          ${p.oldprice ? `<span class="card-old">${fmt(p.oldprice)}</span>` : ""}
         </div>
-        ${p.url?`<a class="card-link" href="${p.url}" target="_blank">🔗 Voir le lien</a>`:""}
         <div class="card-actions">
           <button class="btn-add" data-id="${p.id}">🛍 Ajouter</button>
-          <button class="btn-buy-now" data-id="${p.id}">Acheter</button>
+          <button class="btn-buy" data-id="${p.id}">Acheter</button>
         </div>
       </div>
     </div>`;
   }).join("");
 
-  /* slide nav */
-  grid.querySelectorAll(".card-nav-btn").forEach(btn=>{
-    btn.addEventListener("click",e=>{
-      e.stopPropagation();
-      slideCard(btn.dataset.pid, parseInt(btn.dataset.dir));
-    });
+  /* events */
+  grid.querySelectorAll(".card-nav-btn").forEach(btn => {
+    btn.addEventListener("click", e => { e.stopPropagation(); slideCard(btn.dataset.pid, parseInt(btn.dataset.dir)); });
   });
-  grid.querySelectorAll(".card-dot").forEach(dot=>{
-    dot.addEventListener("click",e=>{
-      e.stopPropagation();
-      goToSlide(dot.dataset.pid, parseInt(dot.dataset.idx));
-    });
+  grid.querySelectorAll(".card-dot").forEach(dot => {
+    dot.addEventListener("click", e => { e.stopPropagation(); goSlide(dot.dataset.pid, parseInt(dot.dataset.idx)); });
   });
-  /* wishlist */
-  grid.querySelectorAll(".wishlist-btn").forEach(btn=>{
-    btn.addEventListener("click",e=>{
-      e.stopPropagation();
-      toggleWishlist(btn.dataset.id, btn);
-    });
+  grid.querySelectorAll(".wish-btn").forEach(btn => {
+    btn.addEventListener("click", e => { e.stopPropagation(); toggleWish(btn.dataset.id, btn); });
   });
-  /* add to cart */
-  grid.querySelectorAll(".btn-add").forEach(btn=>{
-    btn.addEventListener("click",()=>addToCart(btn.dataset.id));
+  grid.querySelectorAll(".btn-add").forEach(btn => btn.addEventListener("click", () => addToCart(btn.dataset.id)));
+  grid.querySelectorAll(".btn-buy").forEach(btn => {
+    btn.addEventListener("click", () => { addToCart(btn.dataset.id); openCheckout(); });
   });
-  /* buy now */
-  grid.querySelectorAll(".btn-buy-now").forEach(btn=>{
-    btn.addEventListener("click",()=>{
-      addToCart(btn.dataset.id);
-      openCheckout();
-    });
+
+  /* touch swipe */
+  grid.querySelectorAll(".card-img-wrap").forEach(wrap => {
+    let sx = 0;
+    wrap.addEventListener("touchstart", e => { sx = e.touches[0].clientX; }, { passive: true });
+    wrap.addEventListener("touchend", e => {
+      const dx = e.changedTouches[0].clientX - sx;
+      if(Math.abs(dx) > 40) slideCard(wrap.dataset.pid, dx < 0 ? 1 : -1);
+    }, { passive: true });
   });
 }
 
-/* ===== SLIDE HELPERS ===== */
 function slideCard(pid, dir){
-  const wrap = document.querySelector(`.card-img-wrap[data-pid="${pid}"]`);
-  if(!wrap) return;
-  const total = parseInt(wrap.dataset.total);
-  let cur = parseInt(wrap.dataset.current);
-  const next = (cur+dir+total)%total;
-  goToSlide(pid, next);
+  const w = document.querySelector(`.card-img-wrap[data-pid="${pid}"]`); if(!w) return;
+  const total = parseInt(w.dataset.total);
+  const cur = parseInt(w.dataset.cur);
+  goSlide(pid, (cur + dir + total) % total);
 }
-function goToSlide(pid, idx){
-  const wrap = document.querySelector(`.card-img-wrap[data-pid="${pid}"]`);
-  if(!wrap) return;
-  wrap.querySelectorAll(".card-slide").forEach((s,i)=>s.classList.toggle("active",i===idx));
-  wrap.querySelectorAll(".card-dot").forEach((d,i)=>d.classList.toggle("active",i===idx));
-  wrap.dataset.current = idx;
+function goSlide(pid, idx){
+  const w = document.querySelector(`.card-img-wrap[data-pid="${pid}"]`); if(!w) return;
+  w.querySelectorAll(".card-slide").forEach((s, i) => s.classList.toggle("active", i === idx));
+  w.querySelectorAll(".card-dot").forEach((d, i) => d.classList.toggle("active", i === idx));
+  w.dataset.cur = idx;
 }
 
-/* ===== WISHLIST ===== */
-function toggleWishlist(id, btn){
+/* WISHLIST */
+function toggleWish(id, btn){
   if(wishlist.includes(id)){
-    wishlist = wishlist.filter(x=>x!==id);
-    btn.classList.remove("liked");
-    btn.textContent="♡";
-    toast("Retiré des favoris");
+    wishlist = wishlist.filter(x => x !== id);
+    btn.classList.remove("liked"); btn.textContent = "♡"; toast("Retiré des favoris");
   } else {
     wishlist.push(id);
-    btn.classList.add("liked");
-    btn.textContent="♥";
-    toast("Ajouté aux favoris ♥");
+    btn.classList.add("liked"); btn.textContent = "♥"; toast("Ajouté aux favoris ♥");
   }
-  localStorage.setItem("bt_wishlist",JSON.stringify(wishlist));
+  localStorage.setItem("bt_wish", JSON.stringify(wishlist));
 }
 
-/* ===== CART ===== */
-function saveCart(){ localStorage.setItem("bt_cart_v2",JSON.stringify(cart)); }
-function cartTotal(){ return cart.reduce((s,c)=>s+(c.price*c.qty),0); }
-function cartCount(){ return cart.reduce((s,c)=>s+c.qty,0); }
+/* CART */
+function saveCart(){ localStorage.setItem("bt_cart_v3", JSON.stringify(cart)); }
+function cartTotal(){ return cart.reduce((s, c) => s + c.price * c.qty, 0); }
+function cartCount(){ return cart.reduce((s, c) => s + c.qty, 0); }
 
 function addToCart(id){
-  const p = products.find(x=>x.id===id);
-  if(!p) return;
-  const ex = cart.find(c=>c.id===id);
+  const p = products.find(x => x.id === id); if(!p) return;
+  const ex = cart.find(c => c.id === id);
   if(ex) ex.qty++;
-  else cart.push({id:p.id,name:p.name,price:p.price,image:(Array.isArray(p.images)&&p.images[0])||p.image||"",qty:1});
-  saveCart(); renderCart(); toast(`${p.name} ajouté au panier`); openCartDrawer();
+  else cart.push({ id: p.id, name: p.name, price: p.price, image: (Array.isArray(p.images) && p.images[0]) || p.image || "", qty: 1 });
+  saveCart(); renderCart(); toast(`${p.name} ajouté`); openCartDrawer();
 }
-function changeQty(id,d){
-  const item=cart.find(c=>c.id===id);
-  if(!item) return;
-  item.qty+=d;
-  if(item.qty<=0) cart=cart.filter(c=>c.id!==id);
+function changeQty(id, d){
+  const item = cart.find(c => c.id === id); if(!item) return;
+  item.qty += d;
+  if(item.qty <= 0) cart = cart.filter(c => c.id !== id);
   saveCart(); renderCart();
 }
-function removeItem(id){ cart=cart.filter(c=>c.id!==id); saveCart(); renderCart(); }
+function removeItem(id){ cart = cart.filter(c => c.id !== id); saveCart(); renderCart(); }
 
 function renderCart(){
-  const body=document.getElementById("cartBody");
-  const foot=document.getElementById("cartFoot");
-  const cc=document.getElementById("cartCount");
-  const n=cartCount();
-  cc.textContent=n; cc.style.display=n>0?"flex":"none";
+  const body = document.getElementById("cartBody");
+  const foot = document.getElementById("cartFoot");
+  const cc = document.getElementById("cartCount");
+  const n = cartCount();
+  cc.textContent = n; cc.style.display = n > 0 ? "flex" : "none";
   if(!cart.length){
-    body.innerHTML=`<div class="cart-empty-state"><span>Votre panier est vide</span><p>Ajoutez des articles pour commencer votre commande.</p></div>`;
-    foot.style.display="none"; return;
+    body.innerHTML = `<div class="cart-empty"><span>Panier vide</span>Ajoutez des articles pour commander.</div>`;
+    foot.style.display = "none"; return;
   }
-  foot.style.display="block";
-  body.innerHTML=cart.map(c=>`
+  foot.style.display = "block";
+  body.innerHTML = cart.map(c => `
     <div class="cart-item">
-      <img class="cart-item-img" src="${c.image||"https://placehold.co/100x100/1a1410/c9a84c?text=BT"}" alt="${c.name}">
-      <div class="cart-item-info">
-        <div class="name">${c.name}</div>
-        <div class="price">${fmt(c.price)}</div>
+      <img class="ci-img" src="${c.image || "https://placehold.co/100x100/1a1410/c9a84c?text=BT"}" alt="${c.name}">
+      <div class="ci-info">
+        <div class="ci-name">${c.name}</div>
+        <div class="ci-price">${fmt(c.price)}</div>
         <div class="qty-ctrl">
           <button class="qty-btn" data-act="dec" data-id="${c.id}">−</button>
           <span class="qty-val">${c.qty}</span>
           <button class="qty-btn" data-act="inc" data-id="${c.id}">+</button>
         </div>
       </div>
-      <button class="remove-btn" data-act="del" data-id="${c.id}">✕</button>
+      <button class="rm-btn" data-act="del" data-id="${c.id}">✕</button>
     </div>`).join("");
-  document.getElementById("cartTotal").textContent=fmt(cartTotal());
-  body.querySelectorAll("[data-act]").forEach(btn=>{
-    btn.addEventListener("click",()=>{
-      const id=btn.dataset.id;
-      if(btn.dataset.act==="inc") changeQty(id,1);
-      if(btn.dataset.act==="dec") changeQty(id,-1);
-      if(btn.dataset.act==="del") removeItem(id);
+  document.getElementById("cartTotal").textContent = fmt(cartTotal());
+  body.querySelectorAll("[data-act]").forEach(btn => {
+    btn.addEventListener("click", () => {
+      const id = btn.dataset.id;
+      if(btn.dataset.act === "inc") changeQty(id, 1);
+      if(btn.dataset.act === "dec") changeQty(id, -1);
+      if(btn.dataset.act === "del") removeItem(id);
     });
   });
 }
@@ -1048,41 +729,42 @@ function closeCartDrawer(){
   document.getElementById("cartDrawer").classList.remove("show");
   document.getElementById("overlay").classList.remove("show");
 }
-document.getElementById("openCart").addEventListener("click",openCartDrawer);
-document.getElementById("closeCart").addEventListener("click",closeCartDrawer);
-document.getElementById("overlay").addEventListener("click",()=>{ closeCartDrawer(); closeCheckout(); });
+document.getElementById("openCart").addEventListener("click", openCartDrawer);
+document.getElementById("closeCart").addEventListener("click", closeCartDrawer);
+document.getElementById("overlay").addEventListener("click", () => { closeCartDrawer(); closeCheckout(); });
 
-/* ===== CHECKOUT ===== */
+/* CHECKOUT */
 function renderCheckoutForm(){
   document.getElementById("checkoutCard").innerHTML = `
-    <button class="modal-close-x" id="closeModalX2">✕</button>
-    <h3>Finaliser la commande</h3>
-    <p class="modal-lead">Remplissez vos informations. Vous serez redirigé vers WhatsApp pour confirmer votre commande avec notre équipe.</p>
-    <div class="field"><label>Nom complet *</label><input id="o_name" placeholder="Votre nom complet"></div>
+    <button class="modal-x" id="cmx">✕</button>
+    <h3>Votre commande</h3>
+    <p class="modal-lead">Remplissez vos informations. Vous serez redirigé vers WhatsApp pour confirmer.</p>
+    <div class="field"><label>Nom complet *</label><input id="o_name" placeholder="Votre nom"></div>
     <div class="field">
       <label>Ville *</label>
       <select id="o_city">
         <option value="">-- Choisir votre ville --</option>
-        <option>Yaoundé</option><option>Douala</option><option>Bafoussam</option>
-        <option>Garoua</option><option>Maroua</option><option>Ngaoundéré</option>
-        <option>Bertoua</option><option>Ebolowa</option><option>Kribi</option>
-        <option>Limbé</option><option>Autre</option>
+        <option value="Maga">📍 Maga</option>
+        <option value="Pouss">Pouss</option>
+        <option value="Guirvidig">Guirvidig</option>
+        <option value="Malka">Malka</option>
+        <option value="Simatou">Simatou</option>
+        <option value="Mourla Yangah">Mourla Yangah</option>
       </select>
     </div>
-    <div class="field"><label>Quartier *</label><input id="o_district" placeholder="Ex : Bastos, Mvan, Essos..."></div>
-    <div class="field"><label>Téléphone *</label><input id="o_phone" type="tel" placeholder="Ex : 698 083 058"></div>
+    <div class="field"><label>Quartier / Lieu *</label><input id="o_district" placeholder="Ex : Marché central"></div>
+    <div class="field"><label>Téléphone *</label><input id="o_phone" type="tel" placeholder="Ex : 6XX XXX XXX"></div>
     <div class="order-summary">
-      <div class="order-summary-title">Récapitulatif de commande</div>
-      ${cart.map(c=>`<div class="order-row"><span>${c.name} × ${c.qty}</span><span>${fmt(c.price*c.qty)}</span></div>`).join("")}
-      <div class="order-row"><span class="order-total-label">💰 TOTAL À PAYER</span><span>${fmt(cartTotal())}</span></div>
+      <div class="os-title">Récapitulatif</div>
+      ${cart.map(c => `<div class="os-row"><span>${c.name} × ${c.qty}</span><span>${fmt(c.price * c.qty)}</span></div>`).join("")}
+      <div class="os-total"><span>💰 TOTAL</span><span>${fmt(cartTotal())}</span></div>
     </div>
-    <button class="btn-whatsapp" id="submitOrder">
-      <svg width="18" height="18" viewBox="0 0 24 24" fill="currentColor"><path d="M17.472 14.382c-.297-.149-1.758-.867-2.03-.967-.273-.099-.471-.148-.67.15-.197.297-.767.966-.94 1.164-.173.199-.347.223-.644.075-.297-.15-1.255-.463-2.39-1.475-.883-.788-1.48-1.761-1.653-2.059-.173-.297-.018-.458.13-.606.134-.133.298-.347.446-.52.149-.174.198-.298.298-.497.099-.198.05-.371-.025-.52-.075-.149-.669-1.612-.916-2.207-.242-.579-.487-.5-.669-.51-.173-.008-.371-.01-.57-.01-.198 0-.52.074-.792.372-.272.297-1.04 1.016-1.04 2.479 0 1.462 1.065 2.875 1.213 3.074.149.198 2.096 3.2 5.077 4.487.709.306 1.262.489 1.694.625.712.227 1.36.195 1.871.118.571-.085 1.758-.719 2.006-1.413.248-.694.248-1.289.173-1.413-.074-.124-.272-.198-.57-.347z"/><path d="M12 0C5.373 0 0 5.373 0 12c0 2.123.554 4.116 1.523 5.845L.057 23.49l5.797-1.52A11.94 11.94 0 0012 24c6.627 0 12-5.373 12-12S18.627 0 12 0zm0 22c-1.885 0-3.651-.502-5.178-1.381l-.371-.22-3.443.903.92-3.355-.242-.387A9.96 9.96 0 012 12C2 6.477 6.477 2 12 2s10 4.477 10 10-4.477 10-10 10z"/></svg>
+    <button class="btn-wa" id="submitOrder">
+      <svg width="17" height="17" viewBox="0 0 24 24" fill="currentColor"><path d="M17.472 14.382c-.297-.149-1.758-.867-2.03-.967-.273-.099-.471-.148-.67.15-.197.297-.767.966-.94 1.164-.173.199-.347.223-.644.075-.297-.15-1.255-.463-2.39-1.475-.883-.788-1.48-1.761-1.653-2.059-.173-.297-.018-.458.13-.606.134-.133.298-.347.446-.52.149-.174.198-.298.298-.497.099-.198.05-.371-.025-.52-.075-.149-.669-1.612-.916-2.207-.242-.579-.487-.5-.669-.51-.173-.008-.371-.01-.57-.01-.198 0-.52.074-.792.372-.272.297-1.04 1.016-1.04 2.479 0 1.462 1.065 2.875 1.213 3.074.149.198 2.096 3.2 5.077 4.487.709.306 1.262.489 1.694.625.712.227 1.36.195 1.871.118.571-.085 1.758-.719 2.006-1.413.248-.694.248-1.289.173-1.413-.074-.124-.272-.198-.57-.347z"/><path d="M12 0C5.373 0 0 5.373 0 12c0 2.123.554 4.116 1.523 5.845L.057 23.49l5.797-1.52A11.94 11.94 0 0012 24c6.627 0 12-5.373 12-12S18.627 0 12 0zm0 22c-1.885 0-3.651-.502-5.178-1.381l-.371-.22-3.443.903.92-3.355-.242-.387A9.96 9.96 0 012 12C2 6.477 6.477 2 12 2s10 4.477 10 10-4.477 10-10 10z"/></svg>
       Envoyer sur WhatsApp
-    </button>
-  `;
-  document.getElementById("submitOrder").addEventListener("click",submitOrder);
-  document.getElementById("closeModalX2")?.addEventListener("click",closeCheckout);
+    </button>`;
+  document.getElementById("cmx").addEventListener("click", closeCheckout);
+  document.getElementById("submitOrder").addEventListener("click", submitOrder);
 }
 
 async function submitOrder(){
@@ -1090,29 +772,23 @@ async function submitOrder(){
   const city = document.getElementById("o_city").value.trim();
   const district = document.getElementById("o_district").value.trim();
   const phone = document.getElementById("o_phone").value.trim();
-  if(!name||!city||!district||!phone){ toast("Remplissez tous les champs"); return; }
+  if(!name || !city || !district || !phone){ toast("⚠️ Remplissez tous les champs"); return; }
   const btn = document.getElementById("submitOrder");
-  btn.disabled=true; btn.textContent="Envoi en cours…";
+  btn.disabled = true; btn.textContent = "Envoi…";
   try{
-    await addDoc(collection(db,COL_ORDERS),{
-      name,city,district,phone,
-      items:cart.map(c=>({id:c.id,name:c.name,price:c.price,qty:c.qty})),
-      total:cartTotal(),status:"nouvelle",createdAt:serverTimestamp()
+    await addDoc(collection(db, COL_ORDERS), {
+      name, city, district, phone,
+      items: cart.map(c => ({ id: c.id, name: c.name, price: c.price, qty: c.qty })),
+      total: cartTotal(), status: "nouvelle", createdAt: serverTimestamp()
     });
-  }catch(e){ console.warn("Firestore:",e); }
-  const lignes = cart.map(c=>`▪ ${c.name} x${c.qty} — ${fmt(c.price*c.qty)}`).join("%0A");
-  const msg = `🛍 *Nouvelle commande — Boutique Traoré*%0A%0A`
-    +`👤 Nom : ${name}%0A`
-    +`📍 Ville : ${city}%0A`
-    +`🏘 Quartier : ${district}%0A`
-    +`📞 Tél : ${phone}%0A%0A`
-    +`*Articles commandés :*%0A${lignes}%0A%0A`
-    +`💰 *TOTAL : ${fmt(cartTotal())}*%0A%0A`
-    +`_Merci de confirmer la disponibilité et le délai de livraison._`;
-  const waUrl = `https://wa.me/${WA_NUMBER}?text=${msg}`;
-  cart=[]; saveCart(); renderCart();
+  } catch(e){ console.warn(e); }
+  const lignes = cart.map(c => `▪ ${c.name} x${c.qty} = ${fmt(c.price * c.qty)}`).join("%0A");
+  const msg = `🛍 *Commande — Boutique Traoré*%0A%0A`
+    + `👤 ${name}%0A📍 ${city} — ${district}%0A📞 ${phone}%0A%0A`
+    + `*Articles :*%0A${lignes}%0A%0A💰 *TOTAL : ${fmt(cartTotal())}*`;
+  cart = []; saveCart(); renderCart();
   closeCheckout(); closeCartDrawer();
-  window.open(waUrl,"_blank");
+  window.open(`https://wa.me/${WA}?text=${msg}`, "_blank");
   toast("Commande envoyée ! Vérifiez WhatsApp ✓");
 }
 
@@ -1124,176 +800,181 @@ function openCheckout(){
 function closeCheckout(){
   document.getElementById("checkoutModal").classList.remove("show");
 }
-document.getElementById("goCheckout").addEventListener("click",openCheckout);
-document.getElementById("checkoutModal").addEventListener("click",e=>{
-  if(e.target.id==="checkoutModal") closeCheckout();
+document.getElementById("goCheckout").addEventListener("click", openCheckout);
+document.getElementById("closeModalX").addEventListener("click", closeCheckout);
+document.getElementById("checkoutModal").addEventListener("click", e => {
+  if(e.target.id === "checkoutModal") closeCheckout();
 });
-document.getElementById("closeModalX")?.addEventListener("click",closeCheckout);
 
-/* ===== TOAST ===== */
-let toastTimer;
+/* TOAST */
+let toastT;
 function toast(msg){
-  const el=document.getElementById("toast");
-  el.textContent=msg; el.classList.add("show");
-  clearTimeout(toastTimer);
-  toastTimer=setTimeout(()=>el.classList.remove("show"),2400);
+  const el = document.getElementById("toast");
+  el.textContent = msg; el.classList.add("show");
+  clearTimeout(toastT); toastT = setTimeout(() => el.classList.remove("show"), 2400);
 }
 
-/* ===== ADMIN: FORM ===== */
-document.getElementById("f_featured").addEventListener("click",()=>{
-  featuredOn=!featuredOn;
-  document.getElementById("f_featured").classList.toggle("on",featuredOn);
-});
-
-/* ===== PHOTO PICKER LOGIC ===== */
-let pickedPhotos = []; // array of base64 strings
-
+/* PHOTO PICKER */
 document.getElementById("f_imgs").addEventListener("change", async function(){
   const files = Array.from(this.files);
-  for(const file of files){
-    const b64 = await toBase64(file);
-    if(!pickedPhotos.includes(b64)) pickedPhotos.push(b64);
+  for(const f of files){
+    const b64 = await compressImg(f);
+    pickedPhotos.push(b64);
   }
-  renderPreviews();
-  this.value = ""; // reset so same file can be re-added if needed
+  renderPreviews(); this.value = "";
 });
 
-function toBase64(file){
-  return new Promise((res,rej)=>{
-    const r = new FileReader();
-    r.onload = ()=> res(r.result);
-    r.onerror = ()=> rej(new Error("Erreur lecture fichier"));
-    r.readAsDataURL(file);
+function compressImg(file){
+  return new Promise((res, rej) => {
+    const reader = new FileReader();
+    reader.onerror = () => rej(new Error("Erreur lecture"));
+    reader.onload = e => {
+      const img = new Image();
+      img.onerror = () => rej(new Error("Erreur image"));
+      img.onload = () => {
+        const MAX = 800;
+        let w = img.width, h = img.height;
+        if(w > MAX || h > MAX){
+          if(w > h){ h = Math.round(h * MAX / w); w = MAX; }
+          else { w = Math.round(w * MAX / h); h = MAX; }
+        }
+        const canvas = document.createElement("canvas");
+        canvas.width = w; canvas.height = h;
+        canvas.getContext("2d").drawImage(img, 0, 0, w, h);
+        res(canvas.toDataURL("image/jpeg", 0.72));
+      };
+      img.src = e.target.result;
+    };
+    reader.readAsDataURL(file);
   });
 }
 
 function renderPreviews(){
   const wrap = document.getElementById("photoPreviews");
   const picker = document.getElementById("photoPicker");
-  picker.classList.toggle("photo-picker-has", pickedPhotos.length > 0);
-  if(pickedPhotos.length > 0){
-    picker.querySelector(".photo-picker-text").textContent = `${pickedPhotos.length} photo(s) choisie(s)`;
-    picker.querySelector(".photo-picker-icon").textContent = "✅";
-  } else {
-    picker.querySelector(".photo-picker-text").textContent = "Appuyer pour choisir des photos";
-    picker.querySelector(".photo-picker-icon").textContent = "📷";
-  }
-  wrap.innerHTML = pickedPhotos.map((src,i)=>`
-    <div class="preview-wrap">
+  picker.classList.toggle("has", pickedPhotos.length > 0);
+  picker.querySelector(".pp-icon").textContent = pickedPhotos.length > 0 ? "✅" : "📷";
+  picker.querySelector(".pp-text").textContent = pickedPhotos.length > 0
+    ? `${pickedPhotos.length} photo(s) choisie(s)` : "Appuyer pour choisir les photos";
+  wrap.innerHTML = pickedPhotos.map((src, i) => `
+    <div class="prev-wrap">
       <img src="${src}" alt="photo ${i+1}">
-      <button class="preview-del" data-idx="${i}">✕</button>
+      <button class="prev-del" data-idx="${i}">✕</button>
     </div>`).join("");
-  wrap.querySelectorAll(".preview-del").forEach(btn=>{
-    btn.addEventListener("click",e=>{
+  wrap.querySelectorAll(".prev-del").forEach(btn => {
+    btn.addEventListener("click", e => {
       e.stopPropagation();
-      pickedPhotos.splice(parseInt(btn.dataset.idx),1);
+      pickedPhotos.splice(parseInt(btn.dataset.idx), 1);
       renderPreviews();
     });
   });
 }
 
+/* ADMIN FORM */
+document.getElementById("f_featured").addEventListener("click", () => {
+  featuredOn = !featuredOn;
+  document.getElementById("f_featured").classList.toggle("on", featuredOn);
+});
+
 function resetForm(){
-  editingId=null;
-  pickedPhotos=[];
-  document.getElementById("formTitle").textContent="Ajouter un produit";
-  document.getElementById("f_submit").textContent="Ajouter le produit";
-  document.getElementById("f_cancel").style.display="none";
-  ["f_name","f_price","f_oldprice"].forEach(id=>document.getElementById(id).value="");
-  document.getElementById("f_cat").value="";
-  document.getElementById("f_badge").value="";
-  renderPreviews();
-  featuredOn=false;
+  editingId = null; pickedPhotos = [];
+  document.getElementById("formTitle").textContent = "Ajouter un produit";
+  document.getElementById("f_submit").textContent = "Ajouter le produit";
+  document.getElementById("f_cancel").style.display = "none";
+  ["f_name","f_price","f_oldprice"].forEach(id => document.getElementById(id).value = "");
+  document.getElementById("f_cat").value = "";
+  document.getElementById("f_badge").value = "";
+  renderPreviews(); featuredOn = false;
   document.getElementById("f_featured").classList.remove("on");
 }
 
-document.getElementById("f_submit").addEventListener("click",async()=>{
-  const name=document.getElementById("f_name").value.trim();
-  const price=parseFloat(document.getElementById("f_price").value);
-  const oldprice=parseFloat(document.getElementById("f_oldprice").value)||null;
-  const category=document.getElementById("f_cat").value;
-  const badge=document.getElementById("f_badge").value;
-  if(!name||!price){ toast("⚠️ Nom et prix obligatoires"); return; }
-  if(pickedPhotos.length===0){ toast("⚠️ Ajoutez au moins une photo"); return; }
-  const images = pickedPhotos;
-  const image = images[0];
-  const data={name,price,oldprice,category,image,images,badge,featured:featuredOn};
+document.getElementById("f_submit").addEventListener("click", async () => {
+  const name = document.getElementById("f_name").value.trim();
+  const price = parseFloat(document.getElementById("f_price").value);
+  const oldprice = parseFloat(document.getElementById("f_oldprice").value) || null;
+  const category = document.getElementById("f_cat").value;
+  const badge = document.getElementById("f_badge").value;
+  if(!name || !price){ toast("⚠️ Nom et prix obligatoires"); return; }
+  if(!pickedPhotos.length){ toast("⚠️ Ajoutez au moins une photo"); return; }
+  const data = { name, price, oldprice, category, image: pickedPhotos[0], images: pickedPhotos, badge, featured: featuredOn };
   try{
     if(editingId){
-      await updateDoc(doc(db,COL_PROD,editingId),data);
+      await updateDoc(doc(db, COL_PROD, editingId), data);
       toast("✅ Produit modifié");
     } else {
-      await addDoc(collection(db,COL_PROD),{...data,createdAt:serverTimestamp()});
-      toast("✅ Produit ajouté à la boutique");
+      await addDoc(collection(db, COL_PROD), { ...data, createdAt: serverTimestamp() });
+      toast("✅ Produit ajouté !");
     }
     resetForm();
-  }catch(e){ console.error(e); toast("❌ Erreur : vérifiez la connexion"); }
-});
-document.getElementById("f_cancel").addEventListener("click",resetForm);
-
-/* ===== ADMIN LIST ===== */
-function renderAdminList(){
-  const list=document.getElementById("adminList");
-  document.getElementById("adminCount").textContent=products.length;
-  if(!products.length){
-    list.innerHTML=`<div class="empty-state">Aucun produit. Utilisez le formulaire pour en ajouter.</div>`;
-    return;
+  } catch(e){
+    console.error(e);
+    toast("❌ Erreur Firebase — vérifiez les règles Firestore");
   }
-  list.innerHTML=products.map(p=>`
+});
+document.getElementById("f_cancel").addEventListener("click", resetForm);
+
+/* ADMIN LIST */
+function renderAdminList(){
+  const list = document.getElementById("adminList");
+  document.getElementById("adminCount").textContent = products.length;
+  if(!products.length){
+    list.innerHTML = `<div class="empty-state">Aucun produit. Ajoutez-en un.</div>`; return;
+  }
+  list.innerHTML = products.map(p => `
     <div class="admin-item">
-      <img src="${(Array.isArray(p.images)&&p.images[0])||p.image||"https://placehold.co/100x100/1a1410/c9a84c?text=BT"}" alt="">
-      <div class="admin-item-info">
+      <img src="${(Array.isArray(p.images) && p.images[0]) || p.image || "https://placehold.co/100/1a1410/c9a84c?text=BT"}" alt="">
+      <div class="ai-info">
         <div class="n">${p.name}</div>
-        <div class="p">${fmt(p.price)}${p.oldprice?` <span style="text-decoration:line-through;font-size:11px;color:var(--cream-dim)">${fmt(p.oldprice)}</span>`:""}</div>
-        <div class="c">${p.category||"—"}${p.featured?" · ⭐ En avant":""}${p.badge?` · ${p.badge}`:""}</div>
+        <div class="p">${fmt(p.price)}</div>
+        <div class="c">${p.category || "—"}${p.badge ? " · " + p.badge : ""}</div>
       </div>
-      <div class="admin-actions">
-        <button class="icon-action" data-act="edit" data-id="${p.id}" title="Modifier">✎</button>
-        <button class="icon-action danger" data-act="del" data-id="${p.id}" title="Supprimer">🗑</button>
+      <div class="ai-actions">
+        <button class="ia" data-act="edit" data-id="${p.id}">✎</button>
+        <button class="ia del" data-act="del" data-id="${p.id}">🗑</button>
       </div>
     </div>`).join("");
-  list.querySelectorAll("[data-act='edit']").forEach(btn=>btn.addEventListener("click",()=>startEdit(btn.dataset.id)));
-  list.querySelectorAll("[data-act='del']").forEach(btn=>btn.addEventListener("click",()=>deleteProd(btn.dataset.id)));
+  list.querySelectorAll("[data-act='edit']").forEach(btn => btn.addEventListener("click", () => startEdit(btn.dataset.id)));
+  list.querySelectorAll("[data-act='del']").forEach(btn => btn.addEventListener("click", () => deleteProd(btn.dataset.id)));
 }
 
 function startEdit(id){
-  const p=products.find(x=>x.id===id); if(!p) return;
-  editingId=id;
-  document.getElementById("formTitle").textContent="Modifier le produit";
-  document.getElementById("f_submit").textContent="Enregistrer les modifications";
-  document.getElementById("f_cancel").style.display="block";
-  document.getElementById("f_name").value=p.name||"";
-  document.getElementById("f_price").value=p.price||"";
-  document.getElementById("f_oldprice").value=p.oldprice||"";
-  document.getElementById("f_cat").value=p.category||"";
-  document.getElementById("f_badge").value=p.badge||"";
-  // restore photos
-  pickedPhotos = (p.images||[p.image]).filter(Boolean);
-  renderPreviews();
-  featuredOn=!!p.featured;
-  document.getElementById("f_featured").classList.toggle("on",featuredOn);
-  document.querySelector(".admin-panel").scrollIntoView({behavior:"smooth",block:"start"});
+  const p = products.find(x => x.id === id); if(!p) return;
+  editingId = id;
+  document.getElementById("formTitle").textContent = "Modifier";
+  document.getElementById("f_submit").textContent = "Enregistrer";
+  document.getElementById("f_cancel").style.display = "block";
+  document.getElementById("f_name").value = p.name || "";
+  document.getElementById("f_price").value = p.price || "";
+  document.getElementById("f_oldprice").value = p.oldprice || "";
+  document.getElementById("f_cat").value = p.category || "";
+  document.getElementById("f_badge").value = p.badge || "";
+  pickedPhotos = (p.images || [p.image]).filter(Boolean);
+  renderPreviews(); featuredOn = !!p.featured;
+  document.getElementById("f_featured").classList.toggle("on", featuredOn);
+  document.querySelector(".admin-panel").scrollIntoView({ behavior: "smooth", block: "start" });
 }
 
 async function deleteProd(id){
-  if(!confirm("Supprimer définitivement ce produit ?")) return;
-  try{ await deleteDoc(doc(db,COL_PROD,id)); toast("Produit supprimé"); }
-  catch(e){ console.error(e); toast("Erreur lors de la suppression"); }
+  if(!confirm("Supprimer ce produit ?")) return;
+  try{ await deleteDoc(doc(db, COL_PROD, id)); toast("Produit supprimé"); }
+  catch(e){ toast("Erreur suppression"); }
 }
 
-/* ===== ORDERS ===== */
+/* ORDERS */
 function renderOrders(){
-  const container=document.getElementById("ordersList");
-  document.getElementById("orderCount").textContent=orders.length;
-  if(!container) return;
+  const el = document.getElementById("ordersList");
+  document.getElementById("orderCount").textContent = orders.length;
+  if(!el) return;
   if(!orders.length){
-    container.innerHTML=`<div class="empty-state"><span class="big">Aucune commande</span>Les commandes apparaîtront ici.</div>`;
-    return;
+    el.innerHTML = `<div class="empty-state"><b>Aucune commande</b>Elles apparaîtront ici.</div>`; return;
   }
-  container.innerHTML=orders.map(o=>{
-    const date=o.createdAt?.toDate?o.createdAt.toDate().toLocaleDateString("fr-FR",{day:"2-digit",month:"short",year:"numeric",hour:"2-digit",minute:"2-digit"}):"—";
-    const items=(o.items||[]).map(i=>`${i.name} ×${i.qty}`).join(", ");
+  el.innerHTML = orders.map(o => {
+    const date = o.createdAt?.toDate
+      ? o.createdAt.toDate().toLocaleDateString("fr-FR", { day:"2-digit", month:"short", year:"numeric", hour:"2-digit", minute:"2-digit" })
+      : "—";
+    const items = (o.items || []).map(i => `${i.name} ×${i.qty}`).join(", ");
     return `
-    <div class="order-card-admin">
+    <div class="oc">
       <div class="oc-head">
         <div>
           <div class="oc-name">${o.name}</div>
@@ -1302,8 +983,8 @@ function renderOrders(){
         </div>
         <div style="text-align:right;">
           <div class="oc-total">${fmt(o.total)}</div>
-          <span class="order-status ${o.status||"nouvelle"}">${o.status||"nouvelle"}</span>
-          <div style="font-size:11px;color:var(--cream-dim);margin-top:4px;">${date}</div>
+          <span class="ostatus">${o.status || "nouvelle"}</span>
+          <div style="font-size:10.5px;color:var(--cream-dim);margin-top:3px;">${date}</div>
         </div>
       </div>
       <div class="oc-items">🛍 ${items}</div>
@@ -1311,7 +992,7 @@ function renderOrders(){
   }).join("");
 }
 
-/* ===== INIT ===== */
+/* INIT */
 renderCart();
 </script>
 </body>
