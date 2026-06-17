@@ -480,6 +480,29 @@ footer{border-top:1px solid var(--line);padding:52px 28px 32px;margin-top:40px;p
   .section{padding:50px 16px;}
   .hero{padding:46px 16px 40px;}
 }
+
+/* ===== PHOTO PICKER ===== */
+.photo-picker{
+  border:2px dashed var(--gold-dim);border-radius:14px;
+  padding:28px 16px;text-align:center;cursor:pointer;
+  background:rgba(201,168,76,.04);transition:all .25s;
+  display:flex;flex-direction:column;align-items:center;gap:6px;
+}
+.photo-picker:hover{border-color:var(--gold);background:rgba(201,168,76,.09);}
+.photo-picker-icon{font-size:36px;line-height:1;}
+.photo-picker-text{font-size:15px;font-weight:700;color:var(--gold-pale);}
+.photo-picker-sub{font-size:12px;color:var(--cream-dim);}
+.photo-previews{display:flex;flex-wrap:wrap;gap:10px;margin-top:12px;}
+.preview-wrap{position:relative;width:72px;height:72px;border-radius:10px;overflow:hidden;border:1px solid var(--line);}
+.preview-wrap img{width:100%;height:100%;object-fit:cover;}
+.preview-del{
+  position:absolute;top:2px;right:2px;width:20px;height:20px;border-radius:50%;
+  background:rgba(192,57,43,.85);color:#fff;font-size:11px;display:flex;
+  align-items:center;justify-content:center;cursor:pointer;font-weight:700;
+  border:none;line-height:1;
+}
+.preview-del:hover{background:var(--red);}
+.photo-picker-has{border-color:var(--gold);background:rgba(201,168,76,.07);}
 </style>
 </head>
 <body>
@@ -670,11 +693,27 @@ footer{border-top:1px solid var(--line);padding:52px 28px 32px;margin-top:40px;p
             </select>
           </div>
           <div class="admin-field">
-            <label>URLs des images (une par ligne)</label>
-            <textarea id="f_imgs" placeholder="https://image1.com/photo.jpg&#10;https://image2.com/photo.jpg"></textarea>
+            <label>Photos du produit</label>
+            <input type="file" id="f_imgs" accept="image/*" multiple style="display:none;">
+            <div class="photo-picker" id="photoPicker" onclick="document.getElementById('f_imgs').click()">
+              <div class="photo-picker-icon">📷</div>
+              <div class="photo-picker-text">Appuyer pour choisir des photos</div>
+              <div class="photo-picker-sub">Vous pouvez sélectionner plusieurs photos</div>
+            </div>
+            <div class="photo-previews" id="photoPreviews"></div>
           </div>
-          <div class="admin-field"><label>Lien externe (optionnel)</label><input id="f_url" placeholder="https://..."></div>
-          <div class="admin-field"><label>Badge (optionnel)</label><input id="f_badge" placeholder="Ex : Nouveau, Promo, Exclusif"></div>
+          <div class="admin-field">
+            <label>Badge (optionnel)</label>
+            <select id="f_badge">
+              <option value="">-- Pas de badge --</option>
+              <option value="Nouveau">🆕 Nouveau</option>
+              <option value="Promo">🔥 Promo</option>
+              <option value="Exclusif">⭐ Exclusif</option>
+              <option value="Populaire">❤️ Populaire</option>
+              <option value="Dernières pièces">⚠️ Dernières pièces</option>
+              <option value="Soldes">💰 Soldes</option>
+            </select>
+          </div>
           <div class="toggle-row">
             <span>Mettre en avant</span>
             <div class="switch" id="f_featured"></div>
@@ -696,9 +735,7 @@ footer{border-top:1px solid var(--line);padding:52px 28px 32px;margin-top:40px;p
       <div id="ordersList"></div>
     </div>
   </div>
-</div>
-
-<!-- TOAST -->
+</div><!-- TOAST -->
 <div class="toast" id="toast"></div>
 
 <script type="module">
@@ -1108,13 +1145,63 @@ document.getElementById("f_featured").addEventListener("click",()=>{
   document.getElementById("f_featured").classList.toggle("on",featuredOn);
 });
 
+/* ===== PHOTO PICKER LOGIC ===== */
+let pickedPhotos = []; // array of base64 strings
+
+document.getElementById("f_imgs").addEventListener("change", async function(){
+  const files = Array.from(this.files);
+  for(const file of files){
+    const b64 = await toBase64(file);
+    if(!pickedPhotos.includes(b64)) pickedPhotos.push(b64);
+  }
+  renderPreviews();
+  this.value = ""; // reset so same file can be re-added if needed
+});
+
+function toBase64(file){
+  return new Promise((res,rej)=>{
+    const r = new FileReader();
+    r.onload = ()=> res(r.result);
+    r.onerror = ()=> rej(new Error("Erreur lecture fichier"));
+    r.readAsDataURL(file);
+  });
+}
+
+function renderPreviews(){
+  const wrap = document.getElementById("photoPreviews");
+  const picker = document.getElementById("photoPicker");
+  picker.classList.toggle("photo-picker-has", pickedPhotos.length > 0);
+  if(pickedPhotos.length > 0){
+    picker.querySelector(".photo-picker-text").textContent = `${pickedPhotos.length} photo(s) choisie(s)`;
+    picker.querySelector(".photo-picker-icon").textContent = "✅";
+  } else {
+    picker.querySelector(".photo-picker-text").textContent = "Appuyer pour choisir des photos";
+    picker.querySelector(".photo-picker-icon").textContent = "📷";
+  }
+  wrap.innerHTML = pickedPhotos.map((src,i)=>`
+    <div class="preview-wrap">
+      <img src="${src}" alt="photo ${i+1}">
+      <button class="preview-del" data-idx="${i}">✕</button>
+    </div>`).join("");
+  wrap.querySelectorAll(".preview-del").forEach(btn=>{
+    btn.addEventListener("click",e=>{
+      e.stopPropagation();
+      pickedPhotos.splice(parseInt(btn.dataset.idx),1);
+      renderPreviews();
+    });
+  });
+}
+
 function resetForm(){
   editingId=null;
+  pickedPhotos=[];
   document.getElementById("formTitle").textContent="Ajouter un produit";
   document.getElementById("f_submit").textContent="Ajouter le produit";
   document.getElementById("f_cancel").style.display="none";
-  ["f_name","f_price","f_oldprice","f_imgs","f_url","f_badge"].forEach(id=>document.getElementById(id).value="");
+  ["f_name","f_price","f_oldprice"].forEach(id=>document.getElementById(id).value="");
   document.getElementById("f_cat").value="";
+  document.getElementById("f_badge").value="";
+  renderPreviews();
   featuredOn=false;
   document.getElementById("f_featured").classList.remove("on");
 }
@@ -1124,23 +1211,22 @@ document.getElementById("f_submit").addEventListener("click",async()=>{
   const price=parseFloat(document.getElementById("f_price").value);
   const oldprice=parseFloat(document.getElementById("f_oldprice").value)||null;
   const category=document.getElementById("f_cat").value;
-  const url=document.getElementById("f_url").value.trim();
-  const badge=document.getElementById("f_badge").value.trim();
-  const rawImgs=document.getElementById("f_imgs").value;
-  const images=rawImgs.split("\n").map(u=>u.trim()).filter(Boolean);
-  const image=images[0]||"";
-  if(!name||!price){ toast("Nom et prix obligatoires"); return; }
-  const data={name,price,oldprice,category,image,images,url,badge,featured:featuredOn};
+  const badge=document.getElementById("f_badge").value;
+  if(!name||!price){ toast("⚠️ Nom et prix obligatoires"); return; }
+  if(pickedPhotos.length===0){ toast("⚠️ Ajoutez au moins une photo"); return; }
+  const images = pickedPhotos;
+  const image = images[0];
+  const data={name,price,oldprice,category,image,images,badge,featured:featuredOn};
   try{
     if(editingId){
       await updateDoc(doc(db,COL_PROD,editingId),data);
-      toast("Produit modifié ✓");
+      toast("✅ Produit modifié");
     } else {
       await addDoc(collection(db,COL_PROD),{...data,createdAt:serverTimestamp()});
-      toast("Produit ajouté à la boutique ✓");
+      toast("✅ Produit ajouté à la boutique");
     }
     resetForm();
-  }catch(e){ console.error(e); toast("Erreur : vérifiez la connexion"); }
+  }catch(e){ console.error(e); toast("❌ Erreur : vérifiez la connexion"); }
 });
 document.getElementById("f_cancel").addEventListener("click",resetForm);
 
@@ -1179,9 +1265,10 @@ function startEdit(id){
   document.getElementById("f_price").value=p.price||"";
   document.getElementById("f_oldprice").value=p.oldprice||"";
   document.getElementById("f_cat").value=p.category||"";
-  document.getElementById("f_imgs").value=(p.images||[p.image]).filter(Boolean).join("\n");
-  document.getElementById("f_url").value=p.url||"";
   document.getElementById("f_badge").value=p.badge||"";
+  // restore photos
+  pickedPhotos = (p.images||[p.image]).filter(Boolean);
+  renderPreviews();
   featuredOn=!!p.featured;
   document.getElementById("f_featured").classList.toggle("on",featuredOn);
   document.querySelector(".admin-panel").scrollIntoView({behavior:"smooth",block:"start"});
