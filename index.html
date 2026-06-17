@@ -34,6 +34,15 @@ button,input,select,textarea{font-family:'Inter',sans-serif;}
 .firebase-status.ok{background:rgba(34,197,94,.15);color:#22c55e;border:1px solid rgba(34,197,94,.3);}
 .firebase-status.local{background:rgba(201,150,58,.15);color:#C9963A;border:1px solid rgba(201,150,58,.3);}
 
+/* ══ ÉCRAN D'ERREUR DE SECOURS (filet de sécurité) ══ */
+#fatal-error{display:none;position:fixed;inset:0;z-index:10000;background:#0d0006;color:#fff;font-family:'Inter',sans-serif;overflow-y:auto;}
+#fatal-error.show{display:block;}
+#fatal-error .ferr-inner{max-width:680px;margin:0 auto;padding:48px 22px;}
+#fatal-error h1{color:#ef4444;font-size:20px;margin-bottom:14px;font-family:'Syne',sans-serif;}
+#fatal-error p{color:rgba(255,255,255,.7);font-size:14px;line-height:1.7;margin-bottom:14px;}
+#fatal-error pre{background:rgba(255,255,255,.06);border:1px solid rgba(239,68,68,.3);border-radius:10px;padding:14px;font-size:12px;white-space:pre-wrap;word-break:break-word;color:#ffb4b4;margin-bottom:18px;}
+#fatal-error button{background:#C9963A;color:#080810;border:none;border-radius:10px;padding:10px 20px;font-weight:700;cursor:pointer;font-size:14px;}
+
 @keyframes splashSpin{to{transform:rotate(360deg)}}
 @keyframes btPulse{0%,100%{transform:scale(1);opacity:1}50%{transform:scale(1.06);opacity:.85}}
 @keyframes splashTextIn{from{opacity:0;transform:translateY(12px)}to{opacity:1;transform:translateY(0)}}
@@ -171,7 +180,50 @@ select.inp option{background:#1a1a28;}
   <div id="fb-splash-status" class="firebase-status local">⏳ Connexion…</div>
 </div>
 
+<!-- ÉCRAN DE SECOURS : s'affiche uniquement si une erreur JS fatale empêche React de démarrer -->
+<div id="fatal-error">
+  <div class="ferr-inner">
+    <h1>⚠️ Un problème empêche la boutique de s'afficher</h1>
+    <p>Une erreur technique a bloqué le chargement de l'application. Le détail ci-dessous aide à corriger le problème (à transmettre au développeur si besoin) :</p>
+    <pre id="fatal-error-msg"></pre>
+    <p>Causes fréquentes : connexion internet instable, bloqueur de script/pub qui empêche le chargement de React ou Firebase, ou navigateur trop ancien.</p>
+    <button onclick="location.reload()">🔄 Recharger la page</button>
+  </div>
+</div>
+
 <div id="root"></div>
+
+<!-- ══ FILET DE SÉCURITÉ GLOBAL ══
+     Si une erreur JS non interceptée survient n'importe où sur la page
+     (CDN non chargé, exception dans React, etc.), on affiche un écran
+     d'erreur lisible au lieu de laisser un écran noir silencieux. -->
+<script>
+window.__BT_BOOTED = false;
+window.addEventListener('error', function (e) {
+  console.error('[BT] Erreur globale interceptée:', e.message, e.filename, e.lineno);
+  if (window.__BT_BOOTED) return; // si React a déjà démarré, on ne casse pas l'UI pour une erreur mineure ultérieure
+  showFatalError((e.message || 'Erreur inconnue') + '\n' + (e.filename || '') + ':' + (e.lineno || '?'));
+});
+window.addEventListener('unhandledrejection', function (e) {
+  console.error('[BT] Promesse rejetée non gérée:', e.reason);
+});
+function showFatalError(msg) {
+  var box = document.getElementById('fatal-error');
+  var pre = document.getElementById('fatal-error-msg');
+  var splash = document.getElementById('splash');
+  if (pre) pre.textContent = msg;
+  if (box) box.classList.add('show');
+  if (splash) splash.remove();
+}
+// Si après 12 secondes l'app n'a toujours pas démarré (CDN bloqué sans
+// déclencher d'erreur "error" classique, ex: requête qui reste en attente),
+// on affiche aussi l'écran de secours.
+setTimeout(function () {
+  if (!window.__BT_BOOTED) {
+    showFatalError('Le chargement prend trop de temps. Les librairies React/Firebase (chargées depuis internet) ne répondent pas. Vérifiez votre connexion ou désactivez un éventuel bloqueur de scripts pour ce site.');
+  }
+}, 12000);
+</script>
 
 <!-- ══ ÉTAPE 1 : React et Babel en PREMIER ══ -->
 <script src="https://unpkg.com/react@18/umd/react.production.min.js"></script>
@@ -204,12 +256,15 @@ window.ADMIN_SECRET = "BT-TRAORE-2026";
 window.WA = "237655814845";
 window.FREE_DELIVERY = 10000;
 
-/* ══ INIT FIREBASE ══ */
+/* ══ INIT FIREBASE (jamais bloquant : toute erreur retombe en mode local) ══ */
 window.db = null;
 window.FB_READY = false;
 
 (function initFirebase() {
   try {
+    if (typeof firebase === "undefined") {
+      throw new Error("SDK Firebase non chargé (CDN indisponible)");
+    }
     firebase.initializeApp(firebaseConfig);
     window.db = firebase.firestore();
     window.db.enablePersistence({ synchronizeTabs: true }).catch(function(){});
@@ -217,43 +272,47 @@ window.FB_READY = false;
     console.log("[BT] Firebase connecté");
     var el = document.getElementById('fb-splash-status');
     if (el) { el.className = 'firebase-status ok'; el.textContent = '🔥 Firebase connecté — temps réel actif'; }
-  } catch(e) {
+  } catch (e) {
     console.error("[BT] Erreur Firebase:", e.message);
-    var el = document.getElementById('fb-splash-status');
-    if (el) { el.className = 'firebase-status local'; el.textContent = '💾 Mode local'; }
+    window.FB_READY = false;
+    window.db = null;
+    var el2 = document.getElementById('fb-splash-status');
+    if (el2) { el2.className = 'firebase-status local'; el2.textContent = '💾 Mode local'; }
   }
 })();
 
 /* ══ CLOUDINARY ══ */
-window.uploadCLD = function(file, onProg) {
-  return new Promise(function(ok, err) {
+window.uploadCLD = function (file, onProg) {
+  return new Promise(function (ok, err) {
     var fd = new FormData();
     fd.append("file", file);
     fd.append("upload_preset", window.CLD.preset);
     fd.append("folder", window.CLD.folder);
     var xhr = new XMLHttpRequest();
     xhr.open("POST", "https://api.cloudinary.com/v1_1/" + window.CLD.cloud + "/image/upload");
-    xhr.upload.onprogress = function(e) { if (e.lengthComputable && onProg) onProg(~~(e.loaded / e.total * 100)); };
-    xhr.onload = function() { xhr.status === 200 ? ok(JSON.parse(xhr.responseText).secure_url) : err(new Error("Upload échoué")); };
-    xhr.onerror = function() { err(new Error("Réseau")); };
+    xhr.upload.onprogress = function (e) { if (e.lengthComputable && onProg) onProg(~~(e.loaded / e.total * 100)); };
+    xhr.onload = function () { xhr.status === 200 ? ok(JSON.parse(xhr.responseText).secure_url) : err(new Error("Upload échoué")); };
+    xhr.onerror = function () { err(new Error("Réseau")); };
     xhr.send(fd);
   });
 };
 
-/* ══ SPLASH TIMER ══ */
-setTimeout(function() {
+/* ══ SPLASH TIMER ══
+   Le splash se retire après 2.8s, MAIS seulement si l'app a bien démarré.
+   S'il y a eu une erreur fatale, l'écran de secours a déjà retiré le splash. */
+setTimeout(function () {
   var s = document.getElementById('splash');
   if (s) s.classList.add('hide');
-  setTimeout(function() { if (s) s.remove(); }, 700);
+  setTimeout(function () { if (s) s.remove(); }, 700);
 }, 2800);
 </script>
 
 <!-- ══ ÉTAPE 4 : Tout le code React dans type="text/babel" ══ -->
-<script type="text/babel">
+<script type="text/babel" data-presets="react" onerror="showFatalError('Le script principal (text/babel) n\'a pas pu être chargé ou exécuté.')">
 const { useState, useEffect, useRef, useCallback, useMemo } = React;
 
-const BANNER_TEXT = "✦  BOUTIQUE TRAORE — LIVRAISON GRATUITE DÈS 10 000 FCFA  ✦  PAIEMENT SÉCURISÉ  ✦  SATISFACTION GARANTIE  ✦  COMMANDEZ VIA WHATSAPP  ✦  ";
 const FREE_DELIVERY = window.FREE_DELIVERY || 10000;
+const BANNER_TEXT = "✦  BOUTIQUE TRAORE — LIVRAISON GRATUITE DÈS " + FREE_DELIVERY.toLocaleString("fr-FR") + " FCFA  ✦  PAIEMENT SÉCURISÉ  ✦  SATISFACTION GARANTIE  ✦  COMMANDEZ VIA WHATSAPP  ✦  ";
 
 const PM = [
   {id:"orange",n:"Orange Money",icon:"🟠",c:"#FF6600"},
@@ -273,15 +332,20 @@ const BADGES = {
   exclusif:{bg:"#ec4899",c:"#fff",l:"Exclusif"},
 };
 
-const fmt = n => Number(n).toLocaleString("fr-FR") + " FCFA";
+const fmt = n => Number(n || 0).toLocaleString("fr-FR") + " FCFA";
 
 function useStore() {
   const fb = window.FB_READY && !!window.db;
 
   const load = async () => {
     if (fb) {
-      const snap = await window.db.collection("products").orderBy("createdAt","asc").get();
-      return snap.docs.map(d => ({ ...d.data(), id: d.id }));
+      try {
+        const snap = await window.db.collection("products").orderBy("createdAt","asc").get();
+        return snap.docs.map(d => ({ ...d.data(), id: d.id }));
+      } catch (e) {
+        console.error("[BT] Erreur lecture Firestore:", e.message);
+        return [];
+      }
     }
     try { return JSON.parse(localStorage.getItem("akit_p") || "[]"); } catch { return []; }
   };
@@ -312,13 +376,16 @@ function useStore() {
   };
 
   const subscribe = (cb) => {
-    if (fb) {
+    if (!fb) return null;
+    try {
       return window.db.collection("products").orderBy("createdAt","asc").onSnapshot(
         snap => cb(snap.docs.map(d => ({ ...d.data(), id: d.id }))),
-        err => console.error("[BT] Erreur Firestore:", err)
+        err => { console.error("[BT] Erreur Firestore (snapshot):", err); cb([]); }
       );
+    } catch (e) {
+      console.error("[BT] Erreur abonnement Firestore:", e.message);
+      return null;
     }
-    return null;
   };
 
   return { fb, load, add, upd, del, subscribe };
@@ -328,9 +395,11 @@ function useRecentlyViewed() {
   const key = "akit_recent";
   const get = () => { try { return JSON.parse(localStorage.getItem(key) || "[]"); } catch { return []; } };
   const add = (p) => {
-    const list = get().filter(x => x.id !== p.id);
-    list.unshift({ id: p.id, name: p.name, price: p.price, image: p.image, emoji: p.emoji, inStock: p.inStock });
-    localStorage.setItem(key, JSON.stringify(list.slice(0, 6)));
+    try {
+      const list = get().filter(x => x.id !== p.id);
+      list.unshift({ id: p.id, name: p.name, price: p.price, image: p.image, emoji: p.emoji, inStock: p.inStock });
+      localStorage.setItem(key, JSON.stringify(list.slice(0, 6)));
+    } catch (e) { /* localStorage indisponible (mode privé etc.) : on ignore silencieusement */ }
   };
   return { get, add };
 }
@@ -613,6 +682,7 @@ function SwipeView({ products, startIdx, onClose, onAddCart, onQuickOrder, onTog
   const touchStartY = useRef(null);
   const p = products[idx];
   useEffect(() => { document.body.style.overflow = 'hidden'; return () => { document.body.style.overflow = ''; }; }, []);
+  if (!p) return null;
   const go = (dir) => {
     if (dir === "next" && idx < products.length - 1) {
       setAnim("exit-left");
@@ -961,13 +1031,24 @@ function App() {
   const recentlyViewed = useRecentlyViewed();
 
   useEffect(() => {
+    let active = true;
     setLoading(true);
     if (store.fb) {
-      const unsub = store.subscribe(ps => { setProducts(ps); setLoading(false); });
-      return () => unsub && unsub();
+      const unsub = store.subscribe(ps => { if (active) { setProducts(ps); setLoading(false); } });
+      if (!unsub) {
+        // L'abonnement temps réel a échoué : on retombe sur un chargement local simple
+        store.load().then(ps => { if (active) { setProducts(ps); setLoading(false); } });
+      }
+      return () => { active = false; if (unsub) unsub(); };
     } else {
-      store.load().then(ps => { setProducts(ps); setLoading(false); });
+      store.load()
+        .then(ps => { if (active) { setProducts(ps); setLoading(false); } })
+        .catch(() => { if (active) setLoading(false); });
+      return () => { active = false; };
     }
+  }, []);
+
+  useEffect(() => {
     setRecent(recentlyViewed.get());
   }, []);
 
@@ -1391,8 +1472,14 @@ function App() {
   );
 }
 
-const root = ReactDOM.createRoot(document.getElementById("root"));
-root.render(React.createElement(App));
+try {
+  const root = ReactDOM.createRoot(document.getElementById("root"));
+  root.render(React.createElement(App));
+  window.__BT_BOOTED = true;
+} catch (e) {
+  console.error("[BT] Erreur fatale au démarrage de React:", e);
+  showFatalError("Erreur au démarrage de l'application :\n" + (e && e.message ? e.message : e));
+}
 </script>
 </body>
 </html>
